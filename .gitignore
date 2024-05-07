@@ -1,0 +1,9 @@
+.env
+node_modules
+trash
+data/claim-history.json
+data/liquidator-history.json
+constants/config.js
+consolidatedWinnersData.json
+winners.json
+playersToCalculate.json
