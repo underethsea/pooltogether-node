@@ -3,7 +3,10 @@ const fs = require('fs');
 // https://github.com/GenerationSoftware/pt-v5-testnet/blob/v51/deployments/optimismSepolia/contracts.json
 //https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/v51/deployments/optimismSepolia/contracts.json
 // const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/v51/deployments/optimismSepolia/contracts.json"
-const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-mainnet/prod.deploy.3/deployments/optimism/contracts.json"
+//const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-mainnet/prod.deploy.3/deployments/optimism/contracts.json"
+//https://github.com/GenerationSoftware/pt-v5-testnet/blob/main/deployments/baseSepolia/contracts.json
+const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
+
 // Mapping of types to their corresponding keys (case-insensitive)
 const typeKeyMapping = {
     PrizePool: "PRIZEPOOL",
@@ -20,6 +23,7 @@ const typeKeyMapping = {
     ClaimerFactory: "CLAIMERFACTORY",
     //LiquidationRouter: "LIQUIDATIONROUTER",
    TpdaLiquidationRouter: "LIQUIDATIONROUTER",
+   TwabRewards: "TWABREWARDS",
 };
 
 // Function to fetch JSON data from the provided URL

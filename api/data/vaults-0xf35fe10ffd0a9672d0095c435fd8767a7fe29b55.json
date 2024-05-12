@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x03d3ce84279cb6f54f5e6074ff0f8319d830dafe",
-    "poolers": 251,
+    "poolers": 252,
     "name": "Prize USDC",
     "symbol": "przUSDC",
     "decimals": 6,

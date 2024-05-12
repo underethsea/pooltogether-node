@@ -32,6 +32,8 @@ const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHE
 //const opSepoliaEndpoint = "https://sepolia.optimism.io"
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opSepoliaWebsocketEndpoint = "wss://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const baseSepoliaEndpoint = "https://sepolia.base.org" 
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 
 const WS_PROVIDERS = {
@@ -46,7 +48,8 @@ const PROVIDERS = {
     SEPOLIA: new ethers.providers.JsonRpcProvider(sepoliaEndpoint),
     OPGOERLI: new ethers.providers.JsonRpcProvider(opGoerliEndpoint),
     OPTIMISM: new ethers.providers.JsonRpcProvider(opEndpoint),
-
+    BASESEPOLIA: new ethers.providers.JsonRpcProvider(baseSepoliaEndpoint),
+    ARBITRUM: new ethers.providers.JsonRpcProvider(arbEndpoint),
 
     // POLYGON: new ethers.providers.JsonRpcProvider(polygonEndpoint),
     // AVALANCHE: new ethers.providers.JsonRpcProvider(

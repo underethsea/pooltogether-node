@@ -1,5 +1,6 @@
 const DRAWMANAGER = require('./abis/drawmanager');
 const RNG = require('./abis/rng');
+const TOKENFAUCET = require('./abis/tokenfaucet');
 const TWABCONTROLLER = require('./abis/twabcontroller');
 const LIQUIDATIONROUTER = require('./abis/liquidationrouter');
 const VAULTFACTORY = require('./abis/vaultfactory');
@@ -11,6 +12,7 @@ const VAULT = require('./abis/vault');
 const ABI = {
   DRAWMANAGER: DRAWMANAGER,
   RNG: RNG,
+  TOKENFAUCET: TOKENFAUCET,
   TWABCONTROLLER: TWABCONTROLLER,
   LIQUIDATIONROUTER: LIQUIDATIONROUTER,
   VAULTFACTORY: VAULTFACTORY,

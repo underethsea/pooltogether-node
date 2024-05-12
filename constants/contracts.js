@@ -35,11 +35,9 @@ const CONTRACTS = {
   },
   // mainnet
 
-  LINKSIGNER: new ethers.Contract(
-    ADDRESS_AUCTION.MAINNET.LINK,
-    ABI.LINK,
-    MAINNETSIGNER
-  ),*/
+  */
+
+/*
 UNIFLASHLIQUIDATORSIGNER: {
 [CONFIG.CHAINNAME]: new ethers.Contract(
       ADDRESS[CONFIG.CHAINNAME].UNIFLASHLIQUIDATOR,
@@ -54,14 +52,8 @@ UNIFLASHLIQUIDATORSIGNER: {
       SIGNER
     ),
   },
-/*
-  PRIZESANTASIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZESANTA,
-      ABI.PRIZESANTA,
-      SIGNER
-    ),
-  },
+*/
+
   /*  GAS: {
   [CONFIG.CHAINNAME]: new ethers.Contract(
    ADDRESS[CONFIG.CHAINNAME].GAS,
