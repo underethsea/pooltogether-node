@@ -1,0 +1,22 @@
+[
+  {
+    "draw": 2,
+    "tiers": {
+      "1": {
+        "value": "8259931520031237",
+        "totalWins": "4",
+        "totalClaims": "0"
+      },
+      "2": {
+        "value": "76612550914929",
+        "totalWins": "15",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "19153137728732",
+        "totalWins": "65",
+        "totalClaims": "0"
+      }
+    }
+  }
+]

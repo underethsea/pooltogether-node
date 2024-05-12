@@ -1,0 +1,2632 @@
+[
+  {
+    "draw": 1,
+    "tiers": {
+      "1": {
+        "value": "11778254942374971000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "2": {
+        "value": "2331112957345046500",
+        "totalWins": "21",
+        "totalClaims": "21"
+      }
+    }
+  },
+  {
+    "draw": 2,
+    "tiers": {
+      "2": {
+        "value": "1448751234274793700",
+        "totalWins": "13",
+        "totalClaims": "13"
+      },
+      "3": {
+        "value": "299741634677543550",
+        "totalWins": "57",
+        "totalClaims": "46"
+      }
+    }
+  },
+  {
+    "draw": 3,
+    "tiers": {
+      "1": {
+        "value": "10892951050167935000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "1546127384693714000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "318621632066797500",
+        "totalWins": "64",
+        "totalClaims": "47"
+      },
+      "4": {
+        "value": "67941377426008296",
+        "totalWins": "256",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 4,
+    "tiers": {
+      "2": {
+        "value": "2780860980257880000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "465791991066302460",
+        "totalWins": "62",
+        "totalClaims": "51"
+      },
+      "4": {
+        "value": "81276363833883980",
+        "totalWins": "283",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 5,
+    "tiers": {
+      "2": {
+        "value": "4618318234465614000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "684331170186864300",
+        "totalWins": "69",
+        "totalClaims": "69"
+      },
+      "4": {
+        "value": "125748514617971500",
+        "totalWins": "268",
+        "totalClaims": "4"
+      }
+    }
+  },
+  {
+    "draw": 6,
+    "tiers": {
+      "2": {
+        "value": "6170877408999874000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "532462238460615400",
+        "totalWins": "54",
+        "totalClaims": "48"
+      },
+      "4": {
+        "value": "113539742024690060",
+        "totalWins": "256",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 7,
+    "tiers": {
+      "2": {
+        "value": "7525816491764098000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "664690249337456000",
+        "totalWins": "71",
+        "totalClaims": "71"
+      },
+      "4": {
+        "value": "113350485308432060",
+        "totalWins": "258",
+        "totalClaims": "17"
+      }
+    }
+  },
+  {
+    "draw": 8,
+    "tiers": {
+      "2": {
+        "value": "9614783174632960000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "639832553401029900",
+        "totalWins": "68",
+        "totalClaims": "68"
+      },
+      "4": {
+        "value": "136434882710513710",
+        "totalWins": "256",
+        "totalClaims": "15"
+      }
+    }
+  },
+  {
+    "draw": 9,
+    "tiers": {
+      "2": {
+        "value": "9736088051197403000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "781481154659310700",
+        "totalWins": "60",
+        "totalClaims": "57"
+      },
+      "4": {
+        "value": "166639363861176540",
+        "totalWins": "243",
+        "totalClaims": "18"
+      }
+    }
+  },
+  {
+    "draw": 10,
+    "tiers": {
+      "2": {
+        "value": "11460040130106827000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "972841648418096000",
+        "totalWins": "51",
+        "totalClaims": "45"
+      },
+      "4": {
+        "value": "189217994608013120",
+        "totalWins": "257",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 11,
+    "tiers": {
+      "2": {
+        "value": "13321682827130931000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1112349292695987100",
+        "totalWins": "54",
+        "totalClaims": "53"
+      },
+      "4": {
+        "value": "175607139127456480",
+        "totalWins": "259",
+        "totalClaims": "7"
+      }
+    }
+  },
+  {
+    "draw": 12,
+    "tiers": {
+      "3": {
+        "value": "1053618864977724300",
+        "totalWins": "73",
+        "totalClaims": "67"
+      },
+      "4": {
+        "value": "183901331460091500",
+        "totalWins": "248",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 13,
+    "tiers": {
+      "2": {
+        "value": "18377712965670433000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "817876292687115400",
+        "totalWins": "71",
+        "totalClaims": "63"
+      },
+      "4": {
+        "value": "174400091822987840",
+        "totalWins": "261",
+        "totalClaims": "4"
+      }
+    }
+  },
+  {
+    "draw": 14,
+    "tiers": {
+      "2": {
+        "value": "21143227537000645000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "991309724994389600",
+        "totalWins": "71",
+        "totalClaims": "68"
+      },
+      "4": {
+        "value": "208657219336128320",
+        "totalWins": "261",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 15,
+    "tiers": {
+      "2": {
+        "value": "20989005092293280000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "952533179620063500",
+        "totalWins": "76",
+        "totalClaims": "72"
+      },
+      "4": {
+        "value": "203113692713101760",
+        "totalWins": "238",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 16,
+    "tiers": {
+      "2": {
+        "value": "23589587461545850000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "978098796880225000",
+        "totalWins": "67",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "208565184628871520",
+        "totalWins": "287",
+        "totalClaims": "14"
+      }
+    }
+  },
+  {
+    "draw": 17,
+    "tiers": {
+      "2": {
+        "value": "25486607304689860000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1333691918569338600",
+        "totalWins": "74",
+        "totalClaims": "73"
+      },
+      "4": {
+        "value": "258319540439853000",
+        "totalWins": "245",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 18,
+    "tiers": {
+      "2": {
+        "value": "27836852013232067000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1384017655407110000",
+        "totalWins": "57",
+        "totalClaims": "55"
+      },
+      "4": {
+        "value": "295121411814751360",
+        "totalWins": "262",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 19,
+    "tiers": {
+      "2": {
+        "value": "27063166969844965000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "871107847358351700",
+        "totalWins": "65",
+        "totalClaims": "63"
+      },
+      "4": {
+        "value": "144249489503199140",
+        "totalWins": "256",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 20,
+    "tiers": {
+      "1": {
+        "value": "222090118652493700000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "25046252039512300000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "355106295339463100",
+        "totalWins": "67",
+        "totalClaims": "4"
+      },
+      "4": {
+        "value": "72818836922868940",
+        "totalWins": "254",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 21,
+    "tiers": {
+      "2": {
+        "value": "18559460683596423000",
+        "totalWins": "16",
+        "totalClaims": "16"
+      },
+      "3": {
+        "value": "277274980641044600",
+        "totalWins": "61",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 22,
+    "tiers": {
+      "2": {
+        "value": "1017691777014842100",
+        "totalWins": "11",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "210556919382381120",
+        "totalWins": "70",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 23,
+    "tiers": {
+      "1": {
+        "value": "181356854420624100000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "2": {
+        "value": "1060407554707132000",
+        "totalWins": "14",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 24,
+    "tiers": {
+      "2": {
+        "value": "12385412570964318000",
+        "totalWins": "13",
+        "totalClaims": "13"
+      },
+      "3": {
+        "value": "2562499152613307400",
+        "totalWins": "55",
+        "totalClaims": "53"
+      }
+    }
+  },
+  {
+    "draw": 25,
+    "tiers": {
+      "2": {
+        "value": "11473104531835700000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "2287709918694972200",
+        "totalWins": "58",
+        "totalClaims": "57"
+      },
+      "4": {
+        "value": "487820497368780860",
+        "totalWins": "270",
+        "totalClaims": "197"
+      }
+    }
+  },
+  {
+    "draw": 26,
+    "tiers": {
+      "3": {
+        "value": "1334392886517692700",
+        "totalWins": "11",
+        "totalClaims": "10"
+      },
+      "4": {
+        "value": "271043653540107520",
+        "totalWins": "253",
+        "totalClaims": "13"
+      },
+      "5": {
+        "value": "59073616797202920",
+        "totalWins": "1007",
+        "totalClaims": "38"
+      }
+    }
+  },
+  {
+    "draw": 27,
+    "tiers": {
+      "2": {
+        "value": "19870995937838680000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "2320459493649551000",
+        "totalWins": "50",
+        "totalClaims": "43"
+      },
+      "4": {
+        "value": "254723524807773380",
+        "totalWins": "254",
+        "totalClaims": "17"
+      }
+    }
+  },
+  {
+    "draw": 28,
+    "tiers": {
+      "2": {
+        "value": "22617168362945597000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1758428189159218400",
+        "totalWins": "70",
+        "totalClaims": "68"
+      },
+      "4": {
+        "value": "212601434679105380",
+        "totalWins": "259",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 29,
+    "tiers": {
+      "2": {
+        "value": "21599899195922674000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "805862475257343400",
+        "totalWins": "68",
+        "totalClaims": "64"
+      },
+      "4": {
+        "value": "171838321929874700",
+        "totalWins": "235",
+        "totalClaims": "4"
+      }
+    }
+  },
+  {
+    "draw": 30,
+    "tiers": {
+      "2": {
+        "value": "22706256534044545000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "614087759466760200",
+        "totalWins": "76",
+        "totalClaims": "76"
+      },
+      "4": {
+        "value": "130945184003941520",
+        "totalWins": "273",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 31,
+    "tiers": {
+      "3": {
+        "value": "590853342337210900",
+        "totalWins": "72",
+        "totalClaims": "63"
+      },
+      "4": {
+        "value": "125990786233669970",
+        "totalWins": "253",
+        "totalClaims": "13"
+      }
+    }
+  },
+  {
+    "draw": 32,
+    "tiers": {
+      "2": {
+        "value": "26264548217858626000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "662736920434773600",
+        "totalWins": "57",
+        "totalClaims": "48"
+      },
+      "4": {
+        "value": "139350296116631520",
+        "totalWins": "262",
+        "totalClaims": "16"
+      }
+    }
+  },
+  {
+    "draw": 33,
+    "tiers": {
+      "2": {
+        "value": "25496829820655260000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "794521762615933700",
+        "totalWins": "60",
+        "totalClaims": "57"
+      },
+      "4": {
+        "value": "134090356196396820",
+        "totalWins": "243",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 34,
+    "tiers": {
+      "2": {
+        "value": "21184371546558177000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "602338113052801300",
+        "totalWins": "61",
+        "totalClaims": "60"
+      },
+      "4": {
+        "value": "109909423255395740",
+        "totalWins": "250",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 35,
+    "tiers": {
+      "2": {
+        "value": "18154166498176770000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "604118091630334100",
+        "totalWins": "64",
+        "totalClaims": "18"
+      },
+      "4": {
+        "value": "120791814907143280",
+        "totalWins": "268",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 36,
+    "tiers": {
+      "2": {
+        "value": "17704308397134303000",
+        "totalWins": "21",
+        "totalClaims": "18"
+      },
+      "3": {
+        "value": "611182369110140400",
+        "totalWins": "59",
+        "totalClaims": "56"
+      }
+    }
+  },
+  {
+    "draw": 37,
+    "tiers": {
+      "2": {
+        "value": "1772919551928898600",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "443229887982224640",
+        "totalWins": "71",
+        "totalClaims": "70"
+      },
+      "4": {
+        "value": "94512255525621420",
+        "totalWins": "276",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 38,
+    "tiers": {
+      "2": {
+        "value": "3336032149774236000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "473883753458001540",
+        "totalWins": "74",
+        "totalClaims": "32"
+      },
+      "4": {
+        "value": "101048741546191500",
+        "totalWins": "278",
+        "totalClaims": "13"
+      }
+    }
+  },
+  {
+    "draw": 39,
+    "tiers": {
+      "2": {
+        "value": "5374499673533886000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "850809762349358200",
+        "totalWins": "68",
+        "totalClaims": "62"
+      },
+      "4": {
+        "value": "130898299139635040",
+        "totalWins": "222",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 41,
+    "tiers": {
+      "2": {
+        "value": "8967150964489266000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1092703742610196400",
+        "totalWins": "77",
+        "totalClaims": "66"
+      },
+      "4": {
+        "value": "227333545504166080",
+        "totalWins": "307",
+        "totalClaims": "22"
+      }
+    }
+  },
+  {
+    "draw": 42,
+    "tiers": {
+      "2": {
+        "value": "10853632550266776000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "611732130264522200",
+        "totalWins": "66",
+        "totalClaims": "50"
+      },
+      "4": {
+        "value": "130442880718170190",
+        "totalWins": "265",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 44,
+    "tiers": {
+      "2": {
+        "value": "12025819909293433000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1105215277643701900",
+        "totalWins": "70",
+        "totalClaims": "67"
+      },
+      "4": {
+        "value": "207136524634572000",
+        "totalWins": "257",
+        "totalClaims": "16"
+      }
+    }
+  },
+  {
+    "draw": 47,
+    "tiers": {
+      "2": {
+        "value": "17733299137133111000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "1802676679125339400",
+        "totalWins": "64",
+        "totalClaims": "63"
+      },
+      "4": {
+        "value": "384394291872315000",
+        "totalWins": "245",
+        "totalClaims": "20"
+      }
+    }
+  },
+  {
+    "draw": 48,
+    "tiers": {
+      "2": {
+        "value": "16120320081546672000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1010336054303248100",
+        "totalWins": "64",
+        "totalClaims": "58"
+      },
+      "4": {
+        "value": "209433144886511230",
+        "totalWins": "244",
+        "totalClaims": "19"
+      }
+    }
+  },
+  {
+    "draw": 49,
+    "tiers": {
+      "1": {
+        "value": "342008920126958340000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "17661141311863140000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "731804313944213100",
+        "totalWins": "69",
+        "totalClaims": "37"
+      },
+      "4": {
+        "value": "135849073211361950",
+        "totalWins": "249",
+        "totalClaims": "39"
+      }
+    }
+  },
+  {
+    "draw": 50,
+    "tiers": {
+      "2": {
+        "value": "16500401501747538000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "846410991409899300",
+        "totalWins": "72",
+        "totalClaims": "72"
+      },
+      "4": {
+        "value": "114652576084381220",
+        "totalWins": "264",
+        "totalClaims": "48"
+      }
+    }
+  },
+  {
+    "draw": 51,
+    "tiers": {
+      "2": {
+        "value": "15548555574513040000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "535494838585791000",
+        "totalWins": "61",
+        "totalClaims": "49"
+      },
+      "4": {
+        "value": "114186399404323070",
+        "totalWins": "255",
+        "totalClaims": "28"
+      }
+    }
+  },
+  {
+    "draw": 52,
+    "tiers": {
+      "2": {
+        "value": "13838659352790940000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "669817270770084600",
+        "totalWins": "61",
+        "totalClaims": "50"
+      },
+      "4": {
+        "value": "116066245377350420",
+        "totalWins": "274",
+        "totalClaims": "29"
+      }
+    }
+  },
+  {
+    "draw": 53,
+    "tiers": {
+      "1": {
+        "value": "290658294027064600000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "14176781704545470000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "663511220694306000",
+        "totalWins": "59",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "110240235946229040",
+        "totalWins": "225",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 54,
+    "tiers": {
+      "1": {
+        "value": "248068038180343970000",
+        "totalWins": "5",
+        "totalClaims": "4"
+      },
+      "2": {
+        "value": "5952208703550675000",
+        "totalWins": "17",
+        "totalClaims": "17"
+      }
+    }
+  },
+  {
+    "draw": 55,
+    "tiers": {
+      "2": {
+        "value": "2501183229013563000",
+        "totalWins": "13",
+        "totalClaims": "13"
+      },
+      "3": {
+        "value": "517486185313150900",
+        "totalWins": "58",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 56,
+    "tiers": {
+      "2": {
+        "value": "4570138427503210000",
+        "totalWins": "17",
+        "totalClaims": "17"
+      },
+      "3": {
+        "value": "848517221806172400",
+        "totalWins": "62",
+        "totalClaims": "46"
+      }
+    }
+  },
+  {
+    "draw": 57,
+    "tiers": {
+      "2": {
+        "value": "4716941657254227000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "1179235414313556700",
+        "totalWins": "52",
+        "totalClaims": "44"
+      },
+      "4": {
+        "value": "251454610405096670",
+        "totalWins": "241",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 58,
+    "tiers": {
+      "2": {
+        "value": "8210361829906428000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1536674963714425900",
+        "totalWins": "62",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "249093772099277540",
+        "totalWins": "257",
+        "totalClaims": "20"
+      }
+    }
+  },
+  {
+    "draw": 59,
+    "tiers": {
+      "2": {
+        "value": "10679164454647828000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1194145737426517000",
+        "totalWins": "67",
+        "totalClaims": "48"
+      },
+      "4": {
+        "value": "213674850308119070",
+        "totalWins": "265",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 61,
+    "tiers": {
+      "3": {
+        "value": "2133439241206244900",
+        "totalWins": "61",
+        "totalClaims": "59"
+      },
+      "4": {
+        "value": "391266039695873900",
+        "totalWins": "270",
+        "totalClaims": "13"
+      }
+    }
+  },
+  {
+    "draw": 62,
+    "tiers": {
+      "2": {
+        "value": "20819674854800904000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1367485567719508700",
+        "totalWins": "62",
+        "totalClaims": "61"
+      },
+      "4": {
+        "value": "256055207227998940",
+        "totalWins": "251",
+        "totalClaims": "37"
+      }
+    }
+  },
+  {
+    "draw": 63,
+    "tiers": {
+      "3": {
+        "value": "1601578015107856400",
+        "totalWins": "77",
+        "totalClaims": "70"
+      },
+      "4": {
+        "value": "327844387827273000",
+        "totalWins": "235",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 64,
+    "tiers": {
+      "2": {
+        "value": "29573411198765890000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1301571796082769700",
+        "totalWins": "52",
+        "totalClaims": "49"
+      },
+      "4": {
+        "value": "277541044752943550",
+        "totalWins": "278",
+        "totalClaims": "28"
+      }
+    }
+  },
+  {
+    "draw": 65,
+    "tiers": {
+      "2": {
+        "value": "33391539464862224000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1721672506211699700",
+        "totalWins": "60",
+        "totalClaims": "53"
+      },
+      "4": {
+        "value": "302072660872347140",
+        "totalWins": "280",
+        "totalClaims": "48"
+      }
+    }
+  },
+  {
+    "draw": 66,
+    "tiers": {
+      "2": {
+        "value": "33588967114018920000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1910497786709726000",
+        "totalWins": "62",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "344286576591419900",
+        "totalWins": "287",
+        "totalClaims": "159"
+      }
+    }
+  },
+  {
+    "draw": 67,
+    "tiers": {
+      "2": {
+        "value": "36655053283471196000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1530161376858331100",
+        "totalWins": "7",
+        "totalClaims": "7"
+      },
+      "4": {
+        "value": "322837288379903900",
+        "totalWins": "270",
+        "totalClaims": "54"
+      },
+      "5": {
+        "value": "70361973108440584",
+        "totalWins": "1006",
+        "totalClaims": "67"
+      }
+    }
+  },
+  {
+    "draw": 68,
+    "tiers": {
+      "2": {
+        "value": "40322276754896536000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "3425076259229261300",
+        "totalWins": "74",
+        "totalClaims": "73"
+      },
+      "4": {
+        "value": "439750089749849150",
+        "totalWins": "258",
+        "totalClaims": "158"
+      }
+    }
+  },
+  {
+    "draw": 70,
+    "tiers": {
+      "1": {
+        "value": "322749724823794750000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "49451014203528720000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "2912219936453303300",
+        "totalWins": "15",
+        "totalClaims": "14"
+      },
+      "4": {
+        "value": "728054984113325800",
+        "totalWins": "261",
+        "totalClaims": "193"
+      },
+      "5": {
+        "value": "158678650383673570",
+        "totalWins": "992",
+        "totalClaims": "93"
+      }
+    }
+  },
+  {
+    "draw": 71,
+    "tiers": {
+      "1": {
+        "value": "266467308396172740000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "3800485248999559700",
+        "totalWins": "18",
+        "totalClaims": "18"
+      },
+      "4": {
+        "value": "560498137157992960",
+        "totalWins": "263",
+        "totalClaims": "195"
+      },
+      "5": {
+        "value": "83110026288372060",
+        "totalWins": "1027",
+        "totalClaims": "77"
+      }
+    }
+  },
+  {
+    "draw": 72,
+    "tiers": {
+      "2": {
+        "value": "58262715320171890000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "4181882725163947000",
+        "totalWins": "11",
+        "totalClaims": "9"
+      },
+      "4": {
+        "value": "496127184856056300",
+        "totalWins": "276",
+        "totalClaims": "242"
+      },
+      "5": {
+        "value": "79021882024274770",
+        "totalWins": "1071",
+        "totalClaims": "94"
+      }
+    }
+  },
+  {
+    "draw": 73,
+    "tiers": {
+      "2": {
+        "value": "58593274466857780000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "4586800180486924300",
+        "totalWins": "9",
+        "totalClaims": "7"
+      },
+      "4": {
+        "value": "275380633809104860",
+        "totalWins": "247",
+        "totalClaims": "3"
+      },
+      "5": {
+        "value": "54105481186973304",
+        "totalWins": "1011",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 74,
+    "tiers": {
+      "1": {
+        "value": "285151700942683340000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "62821305405910320000",
+        "totalWins": "22",
+        "totalClaims": "21"
+      },
+      "3": {
+        "value": "2390108327050296300",
+        "totalWins": "73",
+        "totalClaims": "62"
+      }
+    }
+  },
+  {
+    "draw": 76,
+    "tiers": {
+      "2": {
+        "value": "14323172210415245000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "3580793052603811300",
+        "totalWins": "60",
+        "totalClaims": "16"
+      },
+      "4": {
+        "value": "763551459746400900",
+        "totalWins": "283",
+        "totalClaims": "47"
+      }
+    }
+  },
+  {
+    "draw": 77,
+    "tiers": {
+      "2": {
+        "value": "27466595261415604000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "6419049683778425000",
+        "totalWins": "66",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "796104352466481000",
+        "totalWins": "242",
+        "totalClaims": "126"
+      }
+    }
+  },
+  {
+    "draw": 78,
+    "tiers": {
+      "2": {
+        "value": "31357125411198960000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "3920841502716236300",
+        "totalWins": "23",
+        "totalClaims": "22"
+      },
+      "4": {
+        "value": "779615073060983300",
+        "totalWins": "243",
+        "totalClaims": "66"
+      },
+      "5": {
+        "value": "169916105667137380",
+        "totalWins": "1060",
+        "totalClaims": "45"
+      }
+    }
+  },
+  {
+    "draw": 79,
+    "tiers": {
+      "2": {
+        "value": "41880846904328770000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "5693937693989967000",
+        "totalWins": "57",
+        "totalClaims": "57"
+      },
+      "4": {
+        "value": "665482928508387300",
+        "totalWins": "262",
+        "totalClaims": "10"
+      }
+    }
+  },
+  {
+    "draw": 80,
+    "tiers": {
+      "2": {
+        "value": "43163891110081800000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2906700185358820400",
+        "totalWins": "69",
+        "totalClaims": "68"
+      },
+      "4": {
+        "value": "487013579060892400",
+        "totalWins": "302",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 81,
+    "tiers": {
+      "1": {
+        "value": "501399225219499160000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "46302189311105590000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2133446147446002700",
+        "totalWins": "55",
+        "totalClaims": "54"
+      },
+      "4": {
+        "value": "454926016734809400",
+        "totalWins": "246",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 82,
+    "tiers": {
+      "2": {
+        "value": "45809813086212870000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "2380672028273331000",
+        "totalWins": "62",
+        "totalClaims": "59"
+      },
+      "4": {
+        "value": "436561110031705200",
+        "totalWins": "226",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 83,
+    "tiers": {
+      "2": {
+        "value": "38848206434670395000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2024479986683616300",
+        "totalWins": "67",
+        "totalClaims": "13"
+      },
+      "4": {
+        "value": "392030952571824300",
+        "totalWins": "246",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 84,
+    "tiers": {
+      "2": {
+        "value": "41144722177828470000",
+        "totalWins": "12",
+        "totalClaims": "12"
+      },
+      "3": {
+        "value": "1982183679239747600",
+        "totalWins": "68",
+        "totalClaims": "63"
+      }
+    }
+  },
+  {
+    "draw": 85,
+    "tiers": {
+      "3": {
+        "value": "1843063241095400400",
+        "totalWins": "49",
+        "totalClaims": "42"
+      },
+      "4": {
+        "value": "393006132292401540",
+        "totalWins": "236",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 86,
+    "tiers": {
+      "2": {
+        "value": "25151402016316215000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2506795115995917300",
+        "totalWins": "65",
+        "totalClaims": "65"
+      },
+      "4": {
+        "value": "399441335876557630",
+        "totalWins": "227",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 87,
+    "tiers": {
+      "2": {
+        "value": "28915121522923377000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1726911189661672400",
+        "totalWins": "62",
+        "totalClaims": "30"
+      },
+      "4": {
+        "value": "368238415442562500",
+        "totalWins": "226",
+        "totalClaims": "6"
+      }
+    }
+  },
+  {
+    "draw": 89,
+    "tiers": {
+      "2": {
+        "value": "39902765033461880000",
+        "totalWins": "9",
+        "totalClaims": "9"
+      },
+      "3": {
+        "value": "3395012854362752500",
+        "totalWins": "76",
+        "totalClaims": "68"
+      }
+    }
+  },
+  {
+    "draw": 90,
+    "tiers": {
+      "2": {
+        "value": "25577325468783694000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2029966441661030100",
+        "totalWins": "57",
+        "totalClaims": "52"
+      },
+      "4": {
+        "value": "432860491236543200",
+        "totalWins": "264",
+        "totalClaims": "6"
+      }
+    }
+  },
+  {
+    "draw": 91,
+    "tiers": {
+      "1": {
+        "value": "695415650669735200000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "29197375430430500000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2484568329572379600",
+        "totalWins": "54",
+        "totalClaims": "52"
+      },
+      "4": {
+        "value": "448636316404905600",
+        "totalWins": "262",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 92,
+    "tiers": {
+      "2": {
+        "value": "33044080496940524000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2796159801723757000",
+        "totalWins": "66",
+        "totalClaims": "65"
+      },
+      "4": {
+        "value": "496902896749552500",
+        "totalWins": "240",
+        "totalClaims": "113"
+      }
+    }
+  },
+  {
+    "draw": 93,
+    "tiers": {
+      "2": {
+        "value": "35306034279893537000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1598115961267644200",
+        "totalWins": "15",
+        "totalClaims": "11"
+      },
+      "4": {
+        "value": "399528990316911040",
+        "totalWins": "250",
+        "totalClaims": "65"
+      },
+      "5": {
+        "value": "87076831222916510",
+        "totalWins": "1046",
+        "totalClaims": "33"
+      }
+    }
+  },
+  {
+    "draw": 94,
+    "tiers": {
+      "2": {
+        "value": "39265719787844910000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "3416674728659285500",
+        "totalWins": "73",
+        "totalClaims": "61"
+      },
+      "4": {
+        "value": "446351569844125100",
+        "totalWins": "262",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 95,
+    "tiers": {
+      "2": {
+        "value": "45345326250213245000",
+        "totalWins": "6",
+        "totalClaims": "6"
+      },
+      "3": {
+        "value": "2293585115183063600",
+        "totalWins": "68",
+        "totalClaims": "53"
+      },
+      "4": {
+        "value": "454922250963511940",
+        "totalWins": "242",
+        "totalClaims": "19"
+      }
+    }
+  },
+  {
+    "draw": 96,
+    "tiers": {
+      "2": {
+        "value": "35636812612138205000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2218205868110821000",
+        "totalWins": "74",
+        "totalClaims": "65"
+      },
+      "4": {
+        "value": "388940307843553150",
+        "totalWins": "255",
+        "totalClaims": "26"
+      }
+    }
+  },
+  {
+    "draw": 97,
+    "tiers": {
+      "2": {
+        "value": "35395979637988114000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1610267347656455400",
+        "totalWins": "75",
+        "totalClaims": "67"
+      },
+      "4": {
+        "value": "343365831485567700",
+        "totalWins": "234",
+        "totalClaims": "8"
+      }
+    }
+  },
+  {
+    "draw": 98,
+    "tiers": {
+      "3": {
+        "value": "1549806083529455600",
+        "totalWins": "63",
+        "totalClaims": "55"
+      },
+      "4": {
+        "value": "330473356046722200",
+        "totalWins": "246",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 99,
+    "tiers": {
+      "2": {
+        "value": "42375290375967240000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2072149626992346400",
+        "totalWins": "56",
+        "totalClaims": "49"
+      },
+      "4": {
+        "value": "395382619473415300",
+        "totalWins": "254",
+        "totalClaims": "6"
+      }
+    }
+  },
+  {
+    "draw": 100,
+    "tiers": {
+      "2": {
+        "value": "44842890371692536000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "2426787892006633000",
+        "totalWins": "64",
+        "totalClaims": "64"
+      },
+      "4": {
+        "value": "413916962295799700",
+        "totalWins": "272",
+        "totalClaims": "24"
+      }
+    }
+  },
+  {
+    "draw": 101,
+    "tiers": {
+      "1": {
+        "value": "821384444960816500000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "40849892662361290000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1804431220897971700",
+        "totalWins": "63",
+        "totalClaims": "63"
+      },
+      "4": {
+        "value": "384768422103243970",
+        "totalWins": "265",
+        "totalClaims": "34"
+      }
+    }
+  },
+  {
+    "draw": 102,
+    "tiers": {
+      "2": {
+        "value": "41959065994395240000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1582046716533807600",
+        "totalWins": "62",
+        "totalClaims": "55"
+      },
+      "4": {
+        "value": "331336190312581060",
+        "totalWins": "258",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 103,
+    "tiers": {
+      "3": {
+        "value": "1923241759380821800",
+        "totalWins": "63",
+        "totalClaims": "58"
+      },
+      "4": {
+        "value": "362663432030730900",
+        "totalWins": "276",
+        "totalClaims": "12"
+      }
+    }
+  },
+  {
+    "draw": 104,
+    "tiers": {
+      "3": {
+        "value": "2058459797203565800",
+        "totalWins": "78",
+        "totalClaims": "74"
+      },
+      "4": {
+        "value": "400489121952844100",
+        "totalWins": "261",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 105,
+    "tiers": {
+      "3": {
+        "value": "1506663694711312400",
+        "totalWins": "61",
+        "totalClaims": "57"
+      },
+      "4": {
+        "value": "321273876078147500",
+        "totalWins": "243",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 106,
+    "tiers": {
+      "2": {
+        "value": "64882426247237570000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1465655794140876300",
+        "totalWins": "68",
+        "totalClaims": "66"
+      },
+      "4": {
+        "value": "277390214142815940",
+        "totalWins": "284",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 107,
+    "tiers": {
+      "2": {
+        "value": "67278908354738864000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1612908436988413000",
+        "totalWins": "72",
+        "totalClaims": "71"
+      },
+      "4": {
+        "value": "343929004946058600",
+        "totalWins": "249",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 108,
+    "tiers": {
+      "1": {
+        "value": "791986385403519400000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "68848143963019670000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "1443541845112997000",
+        "totalWins": "75",
+        "totalClaims": "72"
+      },
+      "4": {
+        "value": "307814069913800800",
+        "totalWins": "254",
+        "totalClaims": "35"
+      }
+    }
+  },
+  {
+    "draw": 109,
+    "tiers": {
+      "2": {
+        "value": "61778074256713700000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1459739321690054700",
+        "totalWins": "70",
+        "totalClaims": "52"
+      },
+      "4": {
+        "value": "311267943595673400",
+        "totalWins": "240",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 112,
+    "tiers": {
+      "2": {
+        "value": "79360310292211580000",
+        "totalWins": "6",
+        "totalClaims": "6"
+      },
+      "3": {
+        "value": "5634542541952506000",
+        "totalWins": "81",
+        "totalClaims": "43"
+      },
+      "4": {
+        "value": "1143120596727448400",
+        "totalWins": "253",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 113,
+    "tiers": {
+      "2": {
+        "value": "60882819536848540000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "4669490672632242000",
+        "totalWins": "61",
+        "totalClaims": "61"
+      },
+      "4": {
+        "value": "601463497283589800",
+        "totalWins": "252",
+        "totalClaims": "11"
+      }
+    }
+  },
+  {
+    "draw": 114,
+    "tiers": {
+      "3": {
+        "value": "2408321110037669400",
+        "totalWins": "60",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "466865612558698240",
+        "totalWins": "270",
+        "totalClaims": "8"
+      }
+    }
+  },
+  {
+    "draw": 115,
+    "tiers": {
+      "2": {
+        "value": "61818786591391280000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2150769388685392400",
+        "totalWins": "47",
+        "totalClaims": "44"
+      },
+      "4": {
+        "value": "394427560646984000",
+        "totalWins": "234",
+        "totalClaims": "8"
+      }
+    }
+  },
+  {
+    "draw": 116,
+    "tiers": {
+      "2": {
+        "value": "60767151625134645000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2341043773381006000",
+        "totalWins": "57",
+        "totalClaims": "55"
+      },
+      "4": {
+        "value": "355874425316822100",
+        "totalWins": "265",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 117,
+    "tiers": {
+      "2": {
+        "value": "56134033481834190000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "2019389977234777900",
+        "totalWins": "65",
+        "totalClaims": "64"
+      },
+      "4": {
+        "value": "360406177952126000",
+        "totalWins": "225",
+        "totalClaims": "7"
+      }
+    }
+  },
+  {
+    "draw": 118,
+    "tiers": {
+      "2": {
+        "value": "55903164095703480000",
+        "totalWins": "4",
+        "totalClaims": "4"
+      },
+      "3": {
+        "value": "1696471199774641000",
+        "totalWins": "59",
+        "totalClaims": "53"
+      },
+      "4": {
+        "value": "361747535246063100",
+        "totalWins": "272",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 119,
+    "tiers": {
+      "2": {
+        "value": "49049513840161260000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2072116179557178000",
+        "totalWins": "67",
+        "totalClaims": "66"
+      },
+      "4": {
+        "value": "379672945373392900",
+        "totalWins": "267",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 120,
+    "tiers": {
+      "2": {
+        "value": "46133545231271360000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1570203809035083500",
+        "totalWins": "67",
+        "totalClaims": "62"
+      },
+      "4": {
+        "value": "334822871044245760",
+        "totalWins": "241",
+        "totalClaims": "2"
+      }
+    }
+  },
+  {
+    "draw": 121,
+    "tiers": {
+      "1": {
+        "value": "973334562045248700000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "49739494448493170000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "1671392817576412400",
+        "totalWins": "47",
+        "totalClaims": "40"
+      },
+      "4": {
+        "value": "345936724321896450",
+        "totalWins": "263",
+        "totalClaims": "7"
+      }
+    }
+  },
+  {
+    "draw": 123,
+    "tiers": {
+      "2": {
+        "value": "59559956913976810000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "3859067523719773000",
+        "totalWins": "72",
+        "totalClaims": "65"
+      },
+      "4": {
+        "value": "689239421299484800",
+        "totalWins": "254",
+        "totalClaims": "54"
+      }
+    }
+  },
+  {
+    "draw": 124,
+    "tiers": {
+      "2": {
+        "value": "59368974405597190000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "1813503026466870800",
+        "totalWins": "68",
+        "totalClaims": "58"
+      },
+      "4": {
+        "value": "386702851231906240",
+        "totalWins": "275",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 126,
+    "tiers": {
+      "2": {
+        "value": "54479083419097390000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "3585744287543599600",
+        "totalWins": "56",
+        "totalClaims": "55"
+      },
+      "4": {
+        "value": "728353845482041100",
+        "totalWins": "244",
+        "totalClaims": "36"
+      }
+    }
+  },
+  {
+    "draw": 127,
+    "tiers": {
+      "2": {
+        "value": "55738041917758380000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "2521456271947859000",
+        "totalWins": "55",
+        "totalClaims": "52"
+      },
+      "4": {
+        "value": "430140576940067400",
+        "totalWins": "258",
+        "totalClaims": "9"
+      }
+    }
+  },
+  {
+    "draw": 128,
+    "tiers": {
+      "1": {
+        "value": "926099090639621000000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "59364006158640200000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2250171016175654100",
+        "totalWins": "58",
+        "totalClaims": "50"
+      },
+      "4": {
+        "value": "379003977870422660",
+        "totalWins": "274",
+        "totalClaims": "6"
+      }
+    }
+  },
+  {
+    "draw": 129,
+    "tiers": {
+      "2": {
+        "value": "54516348476662580000",
+        "totalWins": "3",
+        "totalClaims": "3"
+      },
+      "3": {
+        "value": "2062998277980277200",
+        "totalWins": "58",
+        "totalClaims": "46"
+      },
+      "4": {
+        "value": "334944321158556860",
+        "totalWins": "261",
+        "totalClaims": "5"
+      }
+    }
+  },
+  {
+    "draw": 130,
+    "tiers": {
+      "2": {
+        "value": "50496622570728030000",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "2130740624041875200",
+        "totalWins": "69",
+        "totalClaims": "53"
+      },
+      "4": {
+        "value": "330626091120865800",
+        "totalWins": "281",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 131,
+    "tiers": {
+      "2": {
+        "value": "53258559390400590000",
+        "totalWins": "2",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "1845714977342963700",
+        "totalWins": "54",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "315480323860200200",
+        "totalWins": "257",
+        "totalClaims": "1"
+      }
+    }
+  },
+  {
+    "draw": 132,
+    "tiers": {
+      "1": {
+        "value": "863142545799973400000",
+        "totalWins": "6",
+        "totalClaims": "4"
+      },
+      "2": {
+        "value": "18793294502157095000",
+        "totalWins": "23",
+        "totalClaims": "23"
+      }
+    }
+  },
+  {
+    "draw": 133,
+    "tiers": {
+      "2": {
+        "value": "7796724818751064000",
+        "totalWins": "21",
+        "totalClaims": "20"
+      },
+      "3": {
+        "value": "1613115479741599500",
+        "totalWins": "71",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 134,
+    "tiers": {
+      "2": {
+        "value": "9937260074784653000",
+        "totalWins": "12",
+        "totalClaims": "12"
+      },
+      "3": {
+        "value": "2055984843058894000",
+        "totalWins": "78",
+        "totalClaims": "77"
+      }
+    }
+  },
+  {
+    "draw": 136,
+    "tiers": {
+      "2": {
+        "value": "17544241266438906000",
+        "totalWins": "5",
+        "totalClaims": "5"
+      },
+      "3": {
+        "value": "3764981561935685600",
+        "totalWins": "70",
+        "totalClaims": "64"
+      },
+      "4": {
+        "value": "802826950706874100",
+        "totalWins": "255",
+        "totalClaims": "3"
+      }
+    }
+  },
+  {
+    "draw": 138,
+    "tiers": {
+      "2": {
+        "value": "31248848396744810000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "4796795631517016000",
+        "totalWins": "64",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "1022846127308775400",
+        "totalWins": "254",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 139,
+    "tiers": {
+      "1": {
+        "value": "253569230539513460000",
+        "totalWins": "1",
+        "totalClaims": "0"
+      },
+      "2": {
+        "value": "38753956314683550000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "3377453014080133600",
+        "totalWins": "59",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "608318391651513600",
+        "totalWins": "282",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 140,
+    "tiers": {
+      "2": {
+        "value": "43458195876154190000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "2967620761996542500",
+        "totalWins": "68",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "509018453903265150",
+        "totalWins": "247",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 143,
+    "tiers": {
+      "2": {
+        "value": "62646603903672540000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "6201539702415604000",
+        "totalWins": "76",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "1312499619207888400",
+        "totalWins": "241",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 145,
+    "tiers": {
+      "1": {
+        "value": "402615359643906300000",
+        "totalWins": "1",
+        "totalClaims": "0"
+      },
+      "2": {
+        "value": "73756220987687560000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "4735110642993522000",
+        "totalWins": "61",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "1009692710638324500",
+        "totalWins": "234",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 147,
+    "tiers": {
+      "1": {
+        "value": "372583851602872400000",
+        "totalWins": "1",
+        "totalClaims": "0"
+      },
+      "2": {
+        "value": "82192276331712280000",
+        "totalWins": "1",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "4635854053261739000",
+        "totalWins": "60",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "941198356722581800",
+        "totalWins": "258",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 149,
+    "tiers": {
+      "2": {
+        "value": "84292850309786750000",
+        "totalWins": "1",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "2935918804238202000",
+        "totalWins": "8",
+        "totalClaims": "6"
+      },
+      "4": {
+        "value": "467785128267538300",
+        "totalWins": "232",
+        "totalClaims": "11"
+      },
+      "5": {
+        "value": "83884145464040560",
+        "totalWins": "988",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 150,
+    "tiers": {
+      "2": {
+        "value": "85091510965450380000",
+        "totalWins": "2",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "4085669903714750000",
+        "totalWins": "10",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "423040093276662600",
+        "totalWins": "240",
+        "totalClaims": "0"
+      },
+      "5": {
+        "value": "82642936378549680",
+        "totalWins": "986",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 151,
+    "tiers": {
+      "3": {
+        "value": "4937944361016472000",
+        "totalWins": "9",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "400757601133441150",
+        "totalWins": "223",
+        "totalClaims": "0"
+      },
+      "5": {
+        "value": "81221879666255040",
+        "totalWins": "990",
+        "totalClaims": "0"
+      }
+    }
+  }
+]

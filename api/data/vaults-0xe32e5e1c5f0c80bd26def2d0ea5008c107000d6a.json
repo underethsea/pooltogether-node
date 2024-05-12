@@ -1,0 +1,247 @@
+[
+  {
+    "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
+    "poolers": 250,
+    "name": "Prize USDC.e - Aave",
+    "symbol": "pUSDC.e",
+    "decimals": 6,
+    "asset": "0x7F5c764cBc14f9669B88837ca1490cCa17c31607",
+    "owner": "0x1e0aefca236790179D21f37fa5Fd59a1f00af1Dd",
+    "liquidationPair": "0xe7680701a2794E6E0a38aC72630c535B9720dA5b",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": 2,
+      "total": 3
+    },
+    "price": 0.999406,
+    "contributed7d": "576.836702089739623618",
+    "contributed24h": "141.686341316266560492",
+    "won7d": "341.1669"
+  },
+  {
+    "vault": "0x29cb69d4780b53c1e5cd4d2b817142d2e9890715",
+    "poolers": 35,
+    "name": "Prize WETH - Aave",
+    "symbol": "pWETH",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000006",
+    "owner": "0x1e0aefca236790179D21f37fa5Fd59a1f00af1Dd",
+    "liquidationPair": "0xde5deFa124faAA6d85E98E56b36616d249e543Ca",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": 2,
+      "total": 3
+    },
+    "price": 3436.16,
+    "contributed7d": "0.419072779668883864",
+    "contributed24h": "0.000926898350351024",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
+    "poolers": 22,
+    "name": "Prize DAI - Aave",
+    "symbol": "pDAI",
+    "decimals": 18,
+    "asset": "0xDA10009cBd5D07dd0CeCc66161FC93D7c9000da1",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x7169526daBFD1cDdE174a0A7d8c75DeB582d0990",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": 0,
+      "total": 0
+    },
+    "price": 0.998246,
+    "contributed7d": "4.142759664846577381",
+    "contributed24h": "0.029931675976806361",
+    "won7d": "0.3689"
+  },
+  {
+    "vault": "0xbd8fd33e53ab4120638c34cbd454112b39f6b382",
+    "poolers": 6,
+    "name": "Prize POOL - TokenVault",
+    "symbol": "PPOOL",
+    "decimals": 18,
+    "asset": "0x395Ae52bB17aef68C2888d941736A71dC6d4e125",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0xB1e98c2bb374be2d4672fEe76EE62f423beedF94",
+    "assetSymbol": "POOL",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "price": 0.264774,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x2ac482d67f009acfc242283b6d86bc6dd4e2ee4f",
+    "poolers": 1,
+    "name": "Prize LUSD - Aave",
+    "symbol": "pLUSD",
+    "decimals": 18,
+    "asset": "0xc40F949F8a4e094D1b49a23ea9241D289B7b2819",
+    "owner": "0xbF9B8024a9Dcece566e9dF836a99717c990Cd0eB",
+    "liquidationPair": "0x44c6c83cF608a728D98057Eb1cded955D003525c",
+    "assetSymbol": "LUSD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "price": 0.993712,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xaeed086d841ae6e86fa9003d84a05999a71bc983",
+    "poolers": 1,
+    "name": "Prize USDC Beefy HOP",
+    "symbol": "pUSDCBeefyHOP",
+    "decimals": 18,
+    "asset": "0x2e17b8193566345a2Dd467183526dEdc42d2d5A8",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "HOP-LP-USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xb7211902d759b580a60a8ed91e4022a161f4c084",
+    "poolers": 1,
+    "name": "Prize LUSD - Aave",
+    "symbol": "pLUSD",
+    "decimals": 18,
+    "asset": "0xc40F949F8a4e094D1b49a23ea9241D289B7b2819",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "LUSD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0",
+    "price": 0.993712
+  },
+  {
+    "vault": "0x2ef789080933cabbeb8ce364ce877fc54a6add06",
+    "poolers": 1,
+    "name": "Prize Thales-ETH LP Beefy Velodrome",
+    "symbol": "pThalesETHBeefyVelo",
+    "decimals": 18,
+    "asset": "0xDFF90E4A6c229565f25337B1DB9fA12f6d8cB118",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x80A4Db5f273BA56dBc6F991430657b7217521Ac0",
+    "assetSymbol": "vAMMV2-THALES/WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x77935f2c72b5eb814753a05921ae495aa283906b",
+    "poolers": 15,
+    "name": "Prize USDC - Aave",
+    "symbol": "pUSDC",
+    "decimals": 6,
+    "asset": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+    "owner": "0x1e0aefca236790179D21f37fa5Fd59a1f00af1Dd",
+    "liquidationPair": "0x217ef9C355f7eb59C789e0471dc1f4398e004EDc",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": 2,
+      "total": 3
+    },
+    "price": 0.999529,
+    "contributed7d": "2.768028737524570445",
+    "contributed24h": "0.743524170380578413",
+    "won7d": "0.2724"
+  },
+  {
+    "vault": "0xf0b19f02c63d51b69563a2b675e0160e1c34397c",
+    "poolers": 63,
+    "name": "Prize WETH - Aave",
+    "symbol": "pWETH",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000006",
+    "owner": "0x1e0aefca236790179D21f37fa5Fd59a1f00af1Dd",
+    "liquidationPair": "0x22C33b869Afda26514B8d18132e1548Da200a592",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": 2,
+      "total": 3
+    },
+    "contributed7d": "49.819600392905750283",
+    "contributed24h": "11.923670699858967378",
+    "won7d": "7.7183",
+    "price": 3436.16
+  },
+  {
+    "vault": "0xd32ceefc5fd9e8a67b1a02e4d35c9f460c05ad2c",
+    "poolers": 1,
+    "name": "Prize OP - Aave",
+    "symbol": "pOP",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000042",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "assetSymbol": "OP",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "price": 3.55,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x87b1a4956b51be39781678677b0dd695a0c70f1e",
+    "poolers": 1,
+    "name": "Prize OP - Aave - OP",
+    "symbol": "ptOP",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000042",
+    "owner": "0xF5777c26A144132A3fb708CC98a91f2Bd8207b23",
+    "liquidationPair": "0xF93976A8c8c5FE822c12DC9a791008bc1D4F491f",
+    "assetSymbol": "OP",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0",
+    "price": 3.55
+  },
+  {
+    "vault": "0x457b69984315b53a1d8130b03b618cd98dd482a1",
+    "poolers": 1,
+    "name": "Reaper OP",
+    "symbol": "POP",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000042",
+    "owner": "0x28458788Fb965BCaC5f0Df629916A3735112dAc6",
+    "liquidationPair": "0xea7c6d7b438feA1Cdd980c023db3edF5303b699A",
+    "assetSymbol": "OP",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "price": 3.55,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  }
+]

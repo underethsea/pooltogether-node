@@ -1,0 +1,164 @@
+[
+  {
+    "vault": "0x7fad91a4a29109303188d8758f1a9d60ce988349",
+    "poolers": 1668,
+    "name": "Prize USDC",
+    "symbol": "pUSDC",
+    "decimals": 6,
+    "asset": "0x539486f74DbEb345ef5DB41151a8fd17a2d7e4Dd",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x8385C4321334068b0dF0C0c525DCfa52496AB0E0",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "8.401788112015380132",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x33335296c9b020ca3252e4953c11decfdce816b8",
+    "poolers": 2596,
+    "name": "Prize WETH",
+    "symbol": "pWETH",
+    "decimals": 18,
+    "asset": "0xC355F97a3Aa2808Acb536E555764b8FB26fB4b37",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xe8510B3597E23F0FA250faE4c73C3C6E0a6688b3",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "5.476568448049233591",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x75b2f4b3ec5adf7077f928992524cc547e74f768",
+    "poolers": 2227,
+    "name": "Prize POOL",
+    "symbol": "pPOOL",
+    "decimals": 18,
+    "asset": "0x588bEdb06E351Ce014b893Fe41d633a147444efb",
+    "owner": "0x0000000000000000000000000000000000000000",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "POOL",
+    "gnosis": {
+      "required": 0,
+      "total": 0
+    },
+    "contributed7d": "5.025399702705238415",
+    "contributed24h": "0.50273446537225729",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xe590741416acbdba094f7d70beaef6060cc6d21e",
+    "poolers": 5,
+    "name": "Prize GUSD",
+    "symbol": "pGUSD",
+    "decimals": 2,
+    "asset": "0x71A9828e4adD469c89A610291147b0B5AC1Ad80b",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xb1b771Db262C7358852Db85867f15e946f2A4941",
+    "assetSymbol": "GUSD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.006676986108799688",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xdea4278d8b01b71523bfd6a8fc36fea67f349e47",
+    "poolers": 5,
+    "name": "Prize WBTC",
+    "symbol": "pWBTC",
+    "decimals": 8,
+    "asset": "0x9cb3E04A48DB197Cd26492FAfD2a6bE6E815262A",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x58c6628D696a06CFDbD51419b0b57Da2bB1776fe",
+    "assetSymbol": "WBTC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.011755556313874273",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xc0832b2d1380ec5550f86cd6c6bc2e9402c1f55c",
+    "poolers": 4,
+    "name": "Prize DAI",
+    "symbol": "pDAI",
+    "decimals": 18,
+    "asset": "0x002183F0d3f1b59e181Db1f250Ce69b97539ae96",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xcC2049eb7F08bD2CEdD3e8CD6baA67C8847b135b",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.013700569694876849",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xcc255d71c57a5d5f92183a66b7fc5589151adcd0",
+    "poolers": 3014,
+    "name": "Prize USDC",
+    "symbol": "pUSDC",
+    "decimals": 6,
+    "asset": "0xdED96a50515f1a4620a3C5244fAe15eD7D216d4a",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x726bf70cBA8f3003A7F9F9E395bEfEfbF953a1aa",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x95849a4c2e58f4f8bf868adef10b05747a24ee71",
+    "poolers": 3989,
+    "name": "Prize POOL",
+    "symbol": "pPOOL",
+    "decimals": 18,
+    "asset": "0x24Ffb8Ca3DeA588B267A15F1d94766dCbA034aE6",
+    "owner": "0x0000000000000000000000000000000000000000",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "POOL",
+    "gnosis": {
+      "required": 0,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xed2f166ad10b247f67c3fce7a4c8e0c5e54247ea",
+    "poolers": 2566,
+    "name": "Prize WETH",
+    "symbol": "pWETH",
+    "decimals": 18,
+    "asset": "0x4a61B6f54157840E80e0C47f1A628C0B3744a739",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xA441DD502AEd96B801FfE6Df6eb1573501cacCB0",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  }
+]

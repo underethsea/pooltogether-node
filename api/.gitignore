@@ -1,0 +1,6 @@
+.env
+static/
+.well-known/
+node_modules/
+bin/
+*.pub

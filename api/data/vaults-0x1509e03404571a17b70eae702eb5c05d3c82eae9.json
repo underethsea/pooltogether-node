@@ -1,0 +1,47 @@
+[
+  {
+    "vault": "0xea47f7735eaf6b1e6502c21f50f65e84f7daa824",
+    "poolers": 905,
+    "name": "Prize USDC",
+    "symbol": "pUSDC",
+    "decimals": 6,
+    "asset": "0x523e046612880dbf9558A0E4555cE445C825C36a",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xbce7a29B7777B48Dd3b4A5eCE133BaC2c42893eA",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    }
+  },
+  {
+    "vault": "0x52b0ac5c447dd84c37b85c2fc36a5b23bb4c9868",
+    "poolers": 1839,
+    "name": "Prize POOL",
+    "symbol": "pPOOL",
+    "decimals": 18,
+    "asset": "0x358c07AB17AAF8933778fea01CD5E02411E3f9a1",
+    "owner": "0x0000000000000000000000000000000000000000",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "POOL",
+    "gnosis": {
+      "required": 0,
+      "total": 0
+    }
+  },
+  {
+    "vault": "0x80436148e5fab18b58a33b24f79977d6934ff0e4",
+    "poolers": 1138,
+    "name": "Prize WETH",
+    "symbol": "pWETH",
+    "decimals": 18,
+    "asset": "0x058C8222f77978f4e3Fa3aC1914cd541A1F882Cc",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xd7985FaE25504D9C5335b39FfD8581bEb6BC783c",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    }
+  }
+]

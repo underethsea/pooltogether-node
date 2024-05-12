@@ -1,0 +1,334 @@
+[
+  {
+    "draw": 74,
+    "tiers": {}
+  },
+  {
+    "draw": 75,
+    "tiers": {}
+  },
+  {
+    "draw": 76,
+    "tiers": {}
+  },
+  {
+    "draw": 77,
+    "tiers": {}
+  },
+  {
+    "draw": 78,
+    "tiers": {}
+  },
+  {
+    "draw": 79,
+    "tiers": {
+      "2": {
+        "value": "1157682440496632",
+        "totalWins": "13",
+        "totalClaims": "2"
+      },
+      "3": {
+        "value": "65092120740673",
+        "totalWins": "68",
+        "totalClaims": "68"
+      },
+      "4": {
+        "value": "593617298701",
+        "totalWins": "228",
+        "totalClaims": "228"
+      }
+    }
+  },
+  {
+    "draw": 81,
+    "tiers": {
+      "2": {
+        "value": "1416324397250673",
+        "totalWins": "14",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "105015508413099",
+        "totalWins": "67",
+        "totalClaims": "67"
+      },
+      "4": {
+        "value": "1147420892345",
+        "totalWins": "255",
+        "totalClaims": "255"
+      }
+    }
+  },
+  {
+    "draw": 82,
+    "tiers": {
+      "2": {
+        "value": "1498503244700266",
+        "totalWins": "19",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "59704189028307",
+        "totalWins": "74",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "9285565848169",
+        "totalWins": "226",
+        "totalClaims": "0"
+      }
+    }
+  },
+  {
+    "draw": 83,
+    "tiers": {}
+  },
+  {
+    "draw": 84,
+    "tiers": {}
+  },
+  {
+    "draw": 85,
+    "tiers": {}
+  },
+  {
+    "draw": 86,
+    "tiers": {
+      "2": {
+        "value": "1779874694669072",
+        "totalWins": "12",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "60980285671169",
+        "totalWins": "56",
+        "totalClaims": "56"
+      },
+      "4": {
+        "value": "564271402489",
+        "totalWins": "227",
+        "totalClaims": "227"
+      }
+    }
+  },
+  {
+    "draw": 88,
+    "tiers": {}
+  },
+  {
+    "draw": 89,
+    "tiers": {}
+  },
+  {
+    "draw": 90,
+    "tiers": {}
+  },
+  {
+    "draw": 91,
+    "tiers": {}
+  },
+  {
+    "draw": 92,
+    "tiers": {}
+  },
+  {
+    "draw": 93,
+    "tiers": {}
+  },
+  {
+    "draw": 94,
+    "tiers": {}
+  },
+  {
+    "draw": 95,
+    "tiers": {}
+  },
+  {
+    "draw": 96,
+    "tiers": {}
+  },
+  {
+    "draw": 97,
+    "tiers": {}
+  },
+  {
+    "draw": 98,
+    "tiers": {}
+  },
+  {
+    "draw": 99,
+    "tiers": {}
+  },
+  {
+    "draw": 100,
+    "tiers": {}
+  },
+  {
+    "draw": 101,
+    "tiers": {
+      "2": {
+        "value": "2705881120016680",
+        "totalWins": "8",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "58494252553231",
+        "totalWins": "30",
+        "totalClaims": "30"
+      },
+      "4": {
+        "value": "562058899313",
+        "totalWins": "144",
+        "totalClaims": "144"
+      }
+    }
+  },
+  {
+    "draw": 102,
+    "tiers": {}
+  },
+  {
+    "draw": 103,
+    "tiers": {}
+  },
+  {
+    "draw": 104,
+    "tiers": {}
+  },
+  {
+    "draw": 105,
+    "tiers": {}
+  },
+  {
+    "draw": 106,
+    "tiers": {}
+  },
+  {
+    "draw": 107,
+    "tiers": {}
+  },
+  {
+    "draw": 108,
+    "tiers": {}
+  },
+  {
+    "draw": 109,
+    "tiers": {}
+  },
+  {
+    "draw": 110,
+    "tiers": {}
+  },
+  {
+    "draw": 111,
+    "tiers": {}
+  },
+  {
+    "draw": 112,
+    "tiers": {}
+  },
+  {
+    "draw": 113,
+    "tiers": {}
+  },
+  {
+    "draw": 114,
+    "tiers": {}
+  },
+  {
+    "draw": 115,
+    "tiers": {}
+  },
+  {
+    "draw": 116,
+    "tiers": {}
+  },
+  {
+    "draw": 117,
+    "tiers": {}
+  },
+  {
+    "draw": 118,
+    "tiers": {}
+  },
+  {
+    "draw": 119,
+    "tiers": {}
+  },
+  {
+    "draw": 120,
+    "tiers": {}
+  },
+  {
+    "draw": 121,
+    "tiers": {}
+  },
+  {
+    "draw": 122,
+    "tiers": {}
+  },
+  {
+    "draw": 123,
+    "tiers": {}
+  },
+  {
+    "draw": 124,
+    "tiers": {}
+  },
+  {
+    "draw": 125,
+    "tiers": {
+      "2": {
+        "value": "3486651966010319",
+        "totalWins": "16",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "48882337012506",
+        "totalWins": "47",
+        "totalClaims": "47"
+      },
+      "4": {
+        "value": "543186123108",
+        "totalWins": "121",
+        "totalClaims": "121"
+      }
+    }
+  },
+  {
+    "draw": 126,
+    "tiers": {}
+  },
+  {
+    "draw": 127,
+    "tiers": {}
+  },
+  {
+    "draw": 128,
+    "tiers": {}
+  },
+  {
+    "draw": 129,
+    "tiers": {
+      "2": {
+        "value": "2931283525686027",
+        "totalWins": "5",
+        "totalClaims": "0"
+      },
+      "3": {
+        "value": "54260624789165",
+        "totalWins": "41",
+        "totalClaims": "41"
+      },
+      "4": {
+        "value": "515566543911",
+        "totalWins": "105",
+        "totalClaims": "79"
+      }
+    }
+  },
+  {
+    "draw": 130,
+    "tiers": {}
+  }
+]

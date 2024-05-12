@@ -1,0 +1,38 @@
+[
+  {
+    "vault": "0x6d02b0ce229abee2f155248e66d8e090d3c86bb2",
+    "poolers": 1614,
+    "name": "Prize USDC Low Yield",
+    "symbol": "pUSDC-LY-T",
+    "decimals": 6,
+    "asset": "0x01ce79e045539F560AFa57943DB6CFF3FB097c4b",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x908bCA69CdFB36557129Ab1494EA125A2C8ACB80",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.076685049154737924",
+    "contributed24h": "0.020991027447325157",
+    "won7d": "0.09040000000000001"
+  },
+  {
+    "vault": "0xfaa0a8f7a7621a0add12ddcfe940b3c634bd088e",
+    "poolers": 1232,
+    "name": "Prize DAI Low Yield",
+    "symbol": "pDAI-LY-T",
+    "decimals": 18,
+    "asset": "0x3eb488d3419496742963437378C2130a2EdcB87d",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x0c3FFf4Fe7D0Ba87e3249c946d96a2C2DBebF813",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.029427930718060713",
+    "contributed24h": "0.008107540516359708",
+    "won7d": "0.0239"
+  }
+]

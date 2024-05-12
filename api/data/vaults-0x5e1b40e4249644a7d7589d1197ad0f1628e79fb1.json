@@ -1,0 +1,200 @@
+[
+  {
+    "vault": "0x602d77e900ecd48ac9b51151936dcc5efe2e7fae",
+    "poolers": 521,
+    "name": "Prize USDC Low Yield",
+    "symbol": "pUSDC-LY-T",
+    "decimals": 6,
+    "asset": "0xE9CB1A8c3C1b5bcE7c6C0FB15F31A3A56209207F",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x4e690AA05d9471753cF59F7d59f10B828a081ac5",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.035302793661587398",
+    "contributed24h": "0.010171647099609268",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x332b1eb2cc4046954725ebdfb8143fb8354ea9a7",
+    "poolers": 703,
+    "name": "Prize DAI Low Yield",
+    "symbol": "pDAI-LY-T",
+    "decimals": 18,
+    "asset": "0x34F166839C655F2DcD56638F2CE779fd9B5987a6",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x862cfdc2C03B16be4Db912c99B32fb052B511DC2",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.030112305458685028",
+    "contributed24h": "0.0086139402613566",
+    "won7d": "0.0733"
+  },
+  {
+    "vault": "0x13e37b0ca8b48fc2818c177c24635f90c1495c5c",
+    "poolers": 4,
+    "name": "Prize DAI High Yield",
+    "symbol": "pDAI-HY-T",
+    "decimals": 18,
+    "asset": "0x34F166839C655F2DcD56638F2CE779fd9B5987a6",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x419CA6D3eab772517B025DCB74C0FAf291768e81",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.154446847336923152",
+    "contributed24h": "0.044144149301443667",
+    "won7d": "0.023899999999999998"
+  },
+  {
+    "vault": "0xa2b0321b671a83a98ff1f5a680b700864f57c6e7",
+    "poolers": 5,
+    "name": "Prize USDC High Yield",
+    "symbol": "pUSDC-HY-T",
+    "decimals": 6,
+    "asset": "0xE9CB1A8c3C1b5bcE7c6C0FB15F31A3A56209207F",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x52868fdB5DF8042f3788c43034f56F4CD7D79F8A",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "2.442325772615720489",
+    "contributed24h": "0.70252990608372309",
+    "won7d": "0.7413000000000001"
+  },
+  {
+    "vault": "0xd96702995b2bbd78a9a39ef86f4fa5f9704fdc7d",
+    "poolers": 3,
+    "name": "Prize GUSD",
+    "symbol": "pGUSD-T",
+    "decimals": 2,
+    "asset": "0xCe1fe3170d4ACEFBc3d06595EeF3A918F65000c2",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0xB2E2624Ce7547FaB0B460B825280ee48E290fF44",
+    "assetSymbol": "GUSD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.003857182026514939",
+    "contributed24h": "0.001051752373989161",
+    "won7d": "0.0019"
+  },
+  {
+    "vault": "0xe77db9f8b68bc47a82d4f47e68fb57535df0086e",
+    "poolers": 4,
+    "name": "Prize WBTC",
+    "symbol": "pWBTC-T",
+    "decimals": 8,
+    "asset": "0x42fd018A6ac84478f28b3f7e322271C83064d737",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x0fb047D8deb713e7F11F818675EE9D446Fba29bE",
+    "assetSymbol": "WBTC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.51777957408666937",
+    "contributed24h": "0.162905875486404521",
+    "won7d": "0.22100000000000003"
+  },
+  {
+    "vault": "0x35f65c81b332ed0cdce72e841db4384bc12f8326",
+    "poolers": 1,
+    "name": "Test Prize USDC",
+    "symbol": "PUSDC",
+    "decimals": 6,
+    "asset": "0xE9CB1A8c3C1b5bcE7c6C0FB15F31A3A56209207F",
+    "owner": "0xbE4FeAE32210f682A41e1C41e3eaF4f8204cD29E",
+    "liquidationPair": "0x7b986e9Bba7F7F4B102bcA6A32fE5E89CCD156E6",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x98ced5d595e8981756f063db8d3c44a6be9a8f86",
+    "poolers": 4,
+    "name": "Prize WETH",
+    "symbol": "pWETH-T",
+    "decimals": 18,
+    "asset": "0x1bcd630e1303cef37F19743fbFE84b1b14e7750c",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x1bb2153644aE16999e0f7e679Ddd0AfFE01B953E",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "2.632697529055865479",
+    "contributed24h": "0.920066898707143566",
+    "won7d": "1.2135"
+  },
+  {
+    "vault": "0x383e8d88de4e3999b43c51ca1819516617260e99",
+    "poolers": 1333,
+    "name": "Prize USDC Low Yield",
+    "symbol": "pUSDC-LY-T",
+    "decimals": 6,
+    "asset": "0x0E13bF42f927575475894f2d5076a7Ac77060eA0",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x783EFf635D10cd59852F647686A92708E12Eacdf",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x8f8484f30f7a72c8059e6bd709f898606e38deda",
+    "poolers": 1205,
+    "name": "Prize DAI Low Yield",
+    "symbol": "pDAI-LY-T",
+    "decimals": 18,
+    "asset": "0x8261Cb9519DD1D80B5ce66B0887C6fCEeA8a64eE",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x34BA71d2FCa7D49C581c9c6982C53f1A650158D2",
+    "assetSymbol": "DAI",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x1b751a1f3b558173df9832d4564e6b38db7552c6",
+    "poolers": 1,
+    "name": "Prize WBTC",
+    "symbol": "pWBTC-T",
+    "decimals": 8,
+    "asset": "0x45bbc6B553D2Afc4d3e376B22f70A67d9a26f819",
+    "owner": "0xc516FE1FEE5122d66E9427721a63D6c27E1201Ca",
+    "liquidationPair": "0x729e4DFFfd394e817Be3c23ea5f94919904d601f",
+    "assetSymbol": "WBTC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  }
+]
