@@ -5,6 +5,11 @@ const { BuildTxForSwap } = require("../utilities/1inchSwap.js");
 const { GasEstimate } = require("../utilities/gas.js");
 const { ethers } = require("ethers");
 
+
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
 async function UniFlashSwap(
   pairAddress,
   amtOut,
@@ -19,7 +24,7 @@ async function UniFlashSwap(
   ];
   console.log("swapper args", swapperArgs);
   const gasEstimate = await GasEstimate(
-    CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CONFIG.CHAINNAME],
+    CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CHAINNAME],
     swapperFunctionName,
     swapperArgs,
     CONFIG.PRIORITYFEE
@@ -29,7 +34,7 @@ async function UniFlashSwap(
   } else {
 
 //console.log("passes gas test return for now");return
-    const tryIt = await CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CONFIG.CHAINNAME].flashSwapExactAmountOut(
+    const tryIt = await CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CHAINNAME].flashSwapExactAmountOut(
       ...swapperArgs,
       { maxPriorityFeePerGas: "1000011", gasLimit: "1700000" }
     );
@@ -45,12 +50,12 @@ async function OutAndBack(
   amtIn,
   gasBudget
 ) {
-  console.log("swapper chain", CONFIG.CHAINNAME);
+  console.log("swapper chain", CHAINNAME);
   const swapBackParam = {
     src: depositTokenAddress,
-    dst: ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,
+    dst: ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,
     amount: amtOut.toString(),
-    from: ADDRESS[CONFIG.CHAINNAME].SWAPPER,
+    from: ADDRESS[CHAINNAME].SWAPPER,
     slippage: 1,
     disableEstimate: true, // Set to true to disable estimation of swap details
     allowPartialFill: false, // Set to true to allow partial filling of the swap order
@@ -62,7 +67,7 @@ async function OutAndBack(
   console.log("1 inch swap data", swapBack);
 
   const swapData = swapBack.data;
-  //const swapData = replaceAddressInCalldata(swapBack.data,"0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",ADDRESS[CONFIG.CHAINNAME].SWAPPER)
+  //const swapData = replaceAddressInCalldata(swapBack.data,"0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",ADDRESS[CHAINNAME].SWAPPER)
   // console.log("1 inch SWAPBACK INFO", swapBack);
   const swapperFunctionName = "outAndBack";
   const swapperArgs = [
@@ -73,7 +78,7 @@ async function OutAndBack(
   ];
   console.log("swapper args", swapperArgs);
   const gasEstimate = await GasEstimate(
-    CONTRACTS.SWAPPERSIGNER[CONFIG.CHAINNAME],
+    CONTRACTS.SWAPPERSIGNER[CHAINNAME],
     swapperFunctionName,
     swapperArgs,
     CONFIG.PRIORITYFEE
@@ -81,9 +86,9 @@ async function OutAndBack(
   if (gasEstimate.gt(gasBudget)) {
     console.log("not profitable including gas costs");
   } else {
-console.log(CONTRACTS.SWAPPERSIGNER[CONFIG.CHAINNAME].address,"address for contract")
+console.log(CONTRACTS.SWAPPERSIGNER[CHAINNAME].address,"address for contract")
     //console.log("returning for debuuuug");return
-    const tryIt = await CONTRACTS.SWAPPERSIGNER[CONFIG.CHAINNAME].outAndBack(
+    const tryIt = await CONTRACTS.SWAPPERSIGNER[CHAINNAME].outAndBack(
       ...swapperArgs,
       { maxPriorityFeePerGas: "1000011", gasLimit: "1700000" }
     );
@@ -153,7 +158,7 @@ const go = async () => {
       src: "0x4200000000000000000000000000000000000006",
       dst: "0x395Ae52bB17aef68C2888d941736A71dC6d4e125",
       amount: "2693295755114884",
-      //from: ADDRESS[CONFIG.CHAINNAME].SWAPPER,
+      //from: ADDRESS[CHAINNAME].SWAPPER,
       // hard coding while we try to get estimate
       from: "0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",
       slippage: 1,

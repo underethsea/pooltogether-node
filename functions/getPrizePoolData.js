@@ -1,7 +1,10 @@
-const { CONFIG } = require("../constants/config");
 const { CONTRACTS } = require("../constants/contracts");
 const { ADDRESS } = require("../constants/address");
 const { Multicall } = require("../utilities/multicall")
+
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
 
 const GetPrizePoolData = async (block="latest") => {
   let 
@@ -36,19 +39,19 @@ const GetPrizePoolData = async (block="latest") => {
       maxFeePortionOfPrize,
       firstDrawOpensAt,
     ] = await Multicall([
-      //CONTRACTS.CLAIMER[CONFIG.CHAINNAME].computeMaxFee({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].lastAwardedDrawAwardedAt({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].drawPeriodSeconds({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getLastAwardedDrawId({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].numberOfTiers({blockTag: block}),
-      // CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].grandPrizePeriodDraws({blockTag: block}),
-      CONTRACTS.PRIZETOKEN[CONFIG.CHAINNAME].balanceOf(
-        ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,{blockTag: block}
+      //CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].lastAwardedDrawAwardedAt({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].drawPeriodSeconds({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].getLastAwardedDrawId({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].numberOfTiers({blockTag: block}),
+      // CONTRACTS.PRIZEPOOL[CHAINNAME].grandPrizePeriodDraws({blockTag: block}),
+      CONTRACTS.PRIZETOKEN[CHAINNAME].balanceOf(
+        ADDRESS[CHAINNAME].PRIZEPOOL,{blockTag: block}
       ),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].accountedBalance({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].reserve({blockTag: block}),
-      CONTRACTS.CLAIMER[CONFIG.CHAINNAME].maxFeePortionOfPrize({blockTag: block}),
-      CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].firstDrawOpensAt({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].accountedBalance({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].reserve({blockTag: block}),
+      CONTRACTS.CLAIMER[CHAINNAME].maxFeePortionOfPrize({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].firstDrawOpensAt({blockTag: block}),
     ]);
 
 lastCompletedDrawStartedAt = parseInt(firstDrawOpensAt) + ((lastDrawId) * parseInt(drawPeriodSeconds))
@@ -58,12 +61,12 @@ console.log("number of tiers",numberOfTiers)
 // Iterate over the tiers
 // for (let tier = 0; tier < numberOfTiers; tier++) {
  
-//   multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].calculateTierTwabTimestamps(tier,{blockTag: block}));
+//   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].calculateTierTwabTimestamps(tier,{blockTag: block}));
 
-//   // multicallRequests.push(CONTRACTS.CLAIMER[CONFIG.CHAINNAME].computeMaxFee(tier));
+//   // multicallRequests.push(CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee(tier));
 
-//   // multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierPrizeCount(tier));
-//   multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierPrizeSize(tier));
+//   // multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeCount(tier));
+//   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeSize(tier));
 
 
 // }
@@ -92,18 +95,18 @@ console.log("number of tiers",numberOfTiers)
 // }
 
 for (let tier = 0; tier < numberOfTiers; tier++) {
-  // multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].calculateTierTwabTimestamps(tier, { blockTag: block }));
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierAccrualDurationInDraws(tier))
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierPrizeSize(tier));
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierPrizeCount(tier));
-  //multicallRequests.push(CONTRACTS.CLAIMER[CONFIG.CHAINNAME].computeMaxFee(tier));
-   multicallRequests.push(CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierRemainingLiquidity(tier));
+  // multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].calculateTierTwabTimestamps(tier, { blockTag: block }));
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierAccrualDurationInDraws(tier))
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeSize(tier));
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeCount(tier));
+  //multicallRequests.push(CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee(tier));
+   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierRemainingLiquidity(tier));
 
 } 
 
 // Make the multicall
 const multicallResult = await Multicall(multicallRequests);
-const drawClosesAt = await CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].drawClosesAt(lastDrawId);
+const drawClosesAt = await CONTRACTS.PRIZEPOOL[CHAINNAME].drawClosesAt(lastDrawId);
 for (let i = 0; i < numberOfTiers; i++) {
   const startIndex = i * 4; 
 
@@ -140,7 +143,7 @@ for (let i = 0; i < numberOfTiers; i++) {
   console.log("tiers ", numberOfTiers.toString());
 
   console.log(
-    "prizepool ",ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.SYMBOL," balance ",
+    "prizepool ",ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL," balance ",
     (prizePoolPrizeTokenBalance / 1e18).toFixed(2),
     " accounted balance ",
     (accountedBalance / 1e18).toFixed(2),
@@ -168,7 +171,7 @@ for (let i = 0; i < numberOfTiers; i++) {
   for (q = 0; q < numberOfTiers; q++) {
 
 
-    const tierValue = await CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getTierPrizeSize(q,{blockTag: block})
+    const tierValue = await CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeSize(q,{blockTag: block})
  tierPrizeValues.push(tierValue);
 
 

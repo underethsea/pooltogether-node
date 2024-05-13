@@ -10,6 +10,13 @@ const { MIN_TO_SEND_CLAIM,MAX_INDICES,PERCENTAGE_CLAIM_COST,MIN_PERCENTAGE_CLAIM
 
 MIN_TO_SEND_CLAIM_POOL  = ethers.utils.parseUnits(MIN_TO_SEND_CLAIM)
 
+const {  getChainConfig } = require('./chains');
+
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
+
 async function SendWinBooster(claims) {
   console.log("claims in send", claims);
   let prizeTokenPrice;
@@ -22,7 +29,7 @@ async function SendWinBooster(claims) {
     console.log("error getting pricing", e);
   }
 
-  const grouperContract = CONTRACTS.WINBOOSTERSIGNER[CONFIG.CHAINNAME];
+  const grouperContract = CONTRACTS.WINBOOSTERSIGNER[CHAINNAME];
 
   if (prizeTokenPrice > 0 && ethPrice > 0) {
     // index of addresses that has their funding balance and max claim per prize
@@ -78,7 +85,7 @@ await delay(300)
         // Calculate total gas cost in wei
         let web3TotalGasCost = await web3GasEstimate(
           data,
-          CONFIG.CHAINID,
+          CHAINID,
           CONFIG.WALLET,
           grouperContract.address
         );

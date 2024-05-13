@@ -1,21 +1,27 @@
 const fs = require('fs');
 
-const { CONTRACTS } = require("../constants/contracts.js");
+// const { CONTRACTS } = require("../constants/contracts.js");
 const { PROVIDERS, SIGNER } = require("../constants/providers.js");
 const { ADDRESS } = require("../constants/address.js");
-const { CONFIG } = require("../constants/config.js");
+// const { CONFIG } = require("../constants/config.js");
 const { GetChainName } = require("../constants/address.js")
 const GetTwabPlayers = require("../functions/playersSubgraph.js")
 const { AddWin, AddDraw, AddPoolers } = require("../functions/dbDonkey.js");
-const { GetWinnersByTier } = require("../functions/getWinnersByTier.js");
+// const { GetWinnersByTier } = require("../functions/getWinnersByTier.js");
 const { GetPrizePoolData } = require("../functions/getPrizePoolData.js");
 const chalk = require("chalk");
 const GetFoundryWinnersByVault = require('./foundryCalc')
 const section = chalk.hex("#47FDFB");
 
+
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
+
 async function FoundryPrizeWinsToDb(chainId, block = "latest") {
   if (block === "latest") {
-    block = await PROVIDERS[CONFIG.CHAINNAME].getBlock();
+    block = await PROVIDERS[CHAINNAME].getBlock();
     block = block.number;
   }
   console.log("block", block,"chain id ", chainId, " name ", GetChainName(chainId));
@@ -43,7 +49,7 @@ console.log("last awarded draw id",lastDrawId)
     tierPrizeValues.map(value => +value),
     prizesForTier,
     block,
-    ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,
+    ADDRESS[CHAINNAME].PRIZEPOOL,
   );
 
   const startTime = new Date();
@@ -64,13 +70,13 @@ console.log(section("----- getting winners -----"));
 
     console.log("one draw players", oneDrawPlayers[0]);
 
-const groupedResult = groupPlayersByVaultForFoundry(chainId,ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,oneDrawPlayers)
+const groupedResult = groupPlayersByVaultForFoundry(chainId,ADDRESS[CHAINNAME].PRIZEPOOL,oneDrawPlayers)
  fs.writeFileSync('playersToCalculate.json', JSON.stringify(groupedResult, null, 2));
 //console.log("file written")
 
 
 
-const winnersData = await GetFoundryWinnersByVault(groupedResult,numberOfTiers,PROVIDERS[CONFIG.CHAINNAME].connection.url);
+const winnersData = await GetFoundryWinnersByVault(groupedResult,numberOfTiers,PROVIDERS[CHAINNAME].connection.url);
 fs.writeFileSync('winners.json', JSON.stringify(winnersData, null, 2));
 //console.log(winnersData)
 //console.log(`Fetched winners for Tier ${tier}`);
@@ -106,7 +112,7 @@ let totalAdds = 0
 const addWinPromises = consolidatedArray.map(({ user, vault, tier, indices }) => {
   console.log(`Adding: User: ${user}, Vault: ${vault}, Tier: ${tier}, Indices: ${indices}`);
   totalAdds += indices.length
-  return AddWin(chainId, lastDrawId.toString(), vault, user, tier, indices, ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL);
+  return AddWin(chainId, lastDrawId.toString(), vault, user, tier, indices, ADDRESS[CHAINNAME].PRIZEPOOL);
 });
 
 // Execute all AddWin operations in parallel

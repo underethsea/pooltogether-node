@@ -1,10 +1,23 @@
+const { loadChainConfig, getChainConfig } = require("../chains");
+
+const chainKey = process.argv[2] || "";
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+const CHAINNAME = getChainConfig().CHAINNAME;
+
 const { ethers } = require("ethers");
 const { CONTRACTS } = require("../constants/contracts");
 const { ADDRESS } = require("../constants/address.js");
 const { CONFIG } = require("../constants/config")
 const { ABI } = require("../constants/abi")
 const { PROVIDERS } = require("../constants/providers")
-const chainName = CONFIG.CHAINNAME
+
 
 const assetIcons = {
   'POOL': "https://assets.coingecko.com/coins/images/14003/standard/PoolTogether.png?1696513732",
@@ -54,14 +67,14 @@ function matchGecko(symbol, geckoMap) {
 }
 async function go() {
   let vaults = [];
-  for (let index = 0; index < ADDRESS[chainName].VAULTS.length; index++) {
-    const vault = ADDRESS[chainName].VAULTS[index];
+  for (let index = 0; index < ADDRESS[CHAINNAME].VAULTS.length; index++) {
+    const vault = ADDRESS[CHAINNAME].VAULTS[index];
     console.log(vault)
-    const liquidationpair = await CONTRACTS.VAULTS[chainName][index].VAULT.liquidationPair();
-    const name = await CONTRACTS.VAULTS[chainName][index].VAULT.name();
-    const symbol = await CONTRACTS.VAULTS[chainName][index].VAULT.symbol();
-    const decimals = await CONTRACTS.VAULTS[chainName][index].VAULT.decimals();
-    const asset = await CONTRACTS.VAULTS[chainName][index].VAULT.asset();
+    const liquidationpair = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.liquidationPair();
+    const name = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.name();
+    const symbol = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.symbol();
+    const decimals = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.decimals();
+    const asset = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.asset();
     const assetContract = new ethers.Contract(asset,ABI.ERC20,PROVIDERS[CONFIG.CHAINNAME])
     const assetSymbol = await assetContract.symbol()
     const icon = assetIcons[assetSymbol] || ""

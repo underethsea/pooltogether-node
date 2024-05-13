@@ -1,9 +1,11 @@
-const { ethers } = require("ethers");
 const { PROVIDERS } = require("../constants/providers.js");
-const { CONFIG } = require("../constants/config.js");
 const { MulticallWrapper } = require("ethers-multicall-provider");
 
-async function Multicall(calls,chain = CONFIG.CHAINNAME) {
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
+async function Multicall(calls,chain = CHAINNAME) {
   try{
   const provider = MulticallWrapper.wrap(PROVIDERS[chain]);
 
@@ -14,6 +16,5 @@ async function Multicall(calls,chain = CONFIG.CHAINNAME) {
     throw error; // Throw the error to trigger the retry mechanism
   }
 }
-
 
 module.exports = { Multicall };

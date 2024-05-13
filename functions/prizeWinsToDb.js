@@ -1,7 +1,6 @@
-const { CONTRACTS } = require("../constants/contracts.js");
 const { PROVIDERS, SIGNER } = require("../constants/providers.js");
+const { CONFIG } = require("../constants/config")
 const { ADDRESS } = require("../constants/address.js");
-const { CONFIG } = require("../constants/config.js");
 const { GetChainName } = require("../constants/address.js")
 const GetTwabPlayers = require("../functions/playersSubgraph.js")
 const { AddWin, AddDraw, AddPoolers } = require("../functions/dbDonkey.js");
@@ -9,12 +8,16 @@ const { GetWinnersByTier } = require("../functions/getWinnersByTier.js");
 const { GetPrizePoolData } = require("../functions/getPrizePoolData.js");
 const chalk = require("chalk");
 
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
 const section = chalk.hex("#47FDFB");
 const batchSize = 300;
 
 async function PrizeWinsToDb(chainId, block = "latest") {
   if (block === "latest") {
-    block = await PROVIDERS[CONFIG.CHAINNAME].getBlock();
+    block = await PROVIDERS[CHAINNAME].getBlock();
     block = block.number;
   }
   console.log("block", block,"chain id ", chainId, " name ", GetChainName(chainId));
@@ -42,7 +45,7 @@ async function PrizeWinsToDb(chainId, block = "latest") {
     tierPrizeValues.map(value => +value),
     prizesForTier,
     block,
-    ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,
+    ADDRESS[CHAINNAME].PRIZEPOOL,
   );
 
   const startTime = new Date();
@@ -106,7 +109,7 @@ for (const [vault, winner, _, index] of winners) {
   }
 }
     const addWinPromises = combinedArray.map(([vault, pooler, tier, indices]) =>
-      AddWin(chainId, lastDrawId.toString(), vault, pooler, tier, indices, ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL)
+      AddWin(chainId, lastDrawId.toString(), vault, pooler, tier, indices, ADDRESS[CHAINNAME].PRIZEPOOL)
     );
 
     await Promise.all(addWinPromises);
@@ -130,4 +133,4 @@ for (const [vault, winner, _, index] of winners) {
   const timeDifference = endTime - startTime;
   console.log("Time elapsed (seconds)", timeDifference / 1000);
 }
-PrizeWinsToDb(10)
+PrizeWinsToDb(CONFIG.CHAINID)

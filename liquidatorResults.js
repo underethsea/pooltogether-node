@@ -93,7 +93,6 @@ console.log(`Total Profits: $${totalProfitsUSD.toFixed(2)}`);
 console.log(`Average Pool Pricing (Weighted): $${averagePoolPriceWeighted.toFixed(4)}`);
 console.log('\n');
 
-
 function formatString(str, length) {
     return str.padEnd(length);
 }

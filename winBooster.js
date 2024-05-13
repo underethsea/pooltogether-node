@@ -1,8 +1,8 @@
 const { GetRecentClaims } = require("./functions/getRecentClaims.js")
-const { ethers } = require('ethers');
+// const { ethers } = require('ethers');
 const { PROVIDERS, SIGNER } = require('./constants/providers')
-const { ABI } = require('./constants/abi')
-const { ADDRESS } = require('./constants/address')
+// const { ABI } = require('./constants/abi')
+// const { ADDRESS } = require('./constants/address')
 const { CONFIG } = require("./constants/config")
 const { GetPrizePoolData } = require("./functions/getPrizePoolData.js");
 const { FetchApiPrizes } = require("./functions/fetchApiPrizes.js");
@@ -10,6 +10,12 @@ const { SendWinBooster } = require("./functions/sendWinBooster.js")
 const { CONTRACTS } = require("./constants/contracts.js")
 
 const { MAX_GAS,MAX_CLAIM_INDICES,BLACKLIST,CLAIM_WINDOW_OPEN,CLAIM_WINDOW_CLOSED,RETRY } = CONFIG
+
+const { getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
 
 function isTimeBetween(startHour, endHour) {
   const date = new Date();
@@ -22,7 +28,7 @@ async function runClaims() {
 if(!isTimeBetween(CLAIM_WINDOW_OPEN,CLAIM_WINDOW_CLOSED)){console.log("not in claim window");return}
 
 const gas = await PROVIDERS["MAINNET"].getGasPrice()
-const prizePoolContract = CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME]
+const prizePoolContract = CONTRACTS.PRIZEPOOL[CHAINNAME]
 if((gas/1e9) <= MAX_GAS){
 console.log("gas in range ",(gas/1e9).toFixed(2),"gwei")
 
@@ -55,10 +61,10 @@ if(isFinalized){console.log("draw is finalized, waiting for the next draw to be 
 
 
   let [claims, newWinners] = await Promise.all([
-    GetRecentClaims(CONFIG.CHAINID),
-    GetRecentClaims(CONFIG.CHAINID).then(claims =>
+    GetRecentClaims(CHAINID),
+    GetRecentClaims(CHAINID).then(claims =>
       FetchApiPrizes(
-        CONFIG.CHAINID,
+        CHAINID,
         lastDrawId,
         CONFIG.TIERSTOCLAIM,
         claims
@@ -117,9 +123,9 @@ setTimeout(runClaims, 60000); //60k is 1 min
 
 
 async function getClaimPoolers() {
-    // contract = new ethers.Contract(ADDRESS[CONFIG.CHAINNAME].CLAIMSERVICEFACTORY,ABI.CLAIMSERVICEFACTORY,PROVIDERS[CONFIG.CHAINNAME])
+    // contract = new ethers.Contract(ADDRESS[CHAINNAME].CLAIMSERVICEFACTORY,ABI.CLAIMSERVICEFACTORY,PROVIDERS[CHAINNAME])
     // Fetch the event logs
-     const winBoostContract = CONTRACTS.WINBOOSTER[CONFIG.CHAINNAME];     
+     const winBoostContract = CONTRACTS.WINBOOSTER[CHAINNAME];     
 const filter = winBoostContract.filters.Deposit();
     const logs = await winBoostContract.queryFilter(filter);
 

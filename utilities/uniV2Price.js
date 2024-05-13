@@ -1,7 +1,10 @@
 const { ethers } = require('ethers');
 const { PROVIDERS } = require('../constants/providers');
-const { CONFIG } = require('../constants/config');
 const { Multicall } = require('./multicall');
+
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
 
 // Uniswap V2 Pair ABI including totalSupply
 const uniswapV2PairAbi = [
@@ -12,7 +15,7 @@ const uniswapV2PairAbi = [
 ];
 
 async function uniV2LPPriceInWeth(lpAddress, wethAddress) {
-  const pairContract = new ethers.Contract(lpAddress, uniswapV2PairAbi, PROVIDERS[CONFIG.CHAINNAME]);
+  const pairContract = new ethers.Contract(lpAddress, uniswapV2PairAbi, PROVIDERS[CHAINNAME]);
 
   try {
     const [[reserve0, reserve1], token0Address, token1Address, totalSupply] = await Multicall([

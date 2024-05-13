@@ -3,7 +3,13 @@ const fetch = require('cross-fetch');
 const {CONFIG} = require('../constants/config')
 // Load environment variables from .env file
 
-async function GetPricesForToken(tokenAddress, currency = "USD", chain = CONFIG.CHAINID) {
+const { getChainConfig } = require('../chains');
+
+// const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
+
+async function GetPricesForToken(tokenAddress, currency = "USD", chain = CHAINID) {
   const apiKey = process.env['ONEINCH_KEY'];
 
   if (!apiKey) {

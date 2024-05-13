@@ -3,15 +3,11 @@ const { SupportedChainId, Token, Fetcher, Route } = require('@uniswap/sdk-core')
 const { FeeAmount } = require('@uniswap/v3-sdk')
 const dotenv = require("dotenv").config({path : './.env'});
 
-
 // const { CurrentConfig } = require('../config');
 const { computePoolAddress } = require('@uniswap/v3-sdk');
 const Quoter = require('@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json');
 const IUniswapV3PoolABI = require('@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json');
-// const {
-//   POOL_FACTORY_CONTRACT_ADDRESS,
-//   QUOTER_CONTRACT_ADDRESS,
-// } = require('../libs/constants');
+
 const { PROVIDERS } = require('../constants/providers');
 const { CONFIG } = require('../constants/config');
 const POOL_FACTORY_CONTRACT_ADDRESS = "0x1F98431c8aD98523631AE4a59f267346ea31F984"

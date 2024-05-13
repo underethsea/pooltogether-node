@@ -1,9 +1,25 @@
+const { loadChainConfig, getChainConfig } = require('./chains');
+
+const chainKey = process.argv[2] || '';
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
+
 const fs = require('fs');
 const path = require('path');
 const { CONFIG } = require('./constants/config.js')
 const {ADDRESS } = require('./constants/address.js')
-const DECIMALS = 10 ** ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.DECIMALS
-const PRIZE = ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.NAME
+const DECIMALS = 10 ** ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+const PRIZE = ADDRESS[CHAINNAME].PRIZETOKEN.NAME
 
 const dataFilePath = path.join(__dirname, './data/claim-history.json');
 

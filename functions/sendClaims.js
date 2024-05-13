@@ -2,29 +2,35 @@ const fs = require("fs");
 const { CONTRACTS } = require("../constants/contracts");
 const { CONFIG } = require("../constants/config");
 const { ADDRESS } = require("../constants/address.js");
-const { GetLogs } = require("../utilities/getLogs");
 const { ABI } = require("../constants/abi");
+
 const chalk = require("chalk");
 const ethers = require("ethers");
-const { BuildTxForSwap } = require("../utilities/1inchSwap.js");
+// const { BuildTxForSwap } = require("../utilities/1inchSwap.js");
+const { GetLogs } = require("../utilities/getLogs");
 const { AlchemyTransactionReceipt } = require("../utilities/alchemy");
 //const { web3GasEstimate } = require("../utilities/web3");
 const { GetRecentClaims } = require("./getRecentClaims");
 const { GasEstimate } = require("../utilities/gas.js");
+
+const { getChainConfig } = require("../chains");
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
 
 const section = chalk.hex("#47FDFB");
 
 const {
   MINPROFIT,
   MINPROFITPERCENTAGE,
-  MAXWINNERS,
+  // MAXWINNERS,
   MAXINDICES,
   //USESANTA,
   LAST_IN_LINE,
 } = CONFIG;
 
-const PRIZETOKEN_ADDRESS = ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS;
-const PRIZETOKEN_SYMBOL = ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.SYMBOL;
+// const PRIZETOKEN_ADDRESS = ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS;
+const PRIZETOKEN_SYMBOL = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
 
 const chalkProfit = (message) => {
   console.log(chalk.green(message));
@@ -88,9 +94,8 @@ const SendClaims = async (
     winners = [...regularWinners, ...lastInLineWinners];
     prizeIndices = [...regularPrizeIndices, ...lastInLinePrizeIndices];
 
-
     const originIndiceLength = prizeIndices.flat().length;
-/*
+    /*
     winners = winners.slice(0, MAXWINNERS);
     prizeIndices = prizeIndices.slice(0, MAXWINNERS);
     const totalPrizes = prizeIndices.flat().length;
@@ -133,38 +138,37 @@ const SendClaims = async (
 
 */
 
+    // Flatten prizeIndices for easy manipulation while keeping track of original indices
+    const flatPrizeIndices = [];
+    const originalIndexMap = []; // Maps flattened index back to original [winnerIndex, prizeIndex]
+    prizeIndices.forEach((indices, winnerIndex) => {
+      indices.forEach((index) => {
+        flatPrizeIndices.push(index);
+        originalIndexMap.push([winnerIndex, index]);
+      });
+    });
 
+    // If the total exceeds MAXINDICES, slice the arrays to limit the total indices
+    const limitedPrizeIndices = flatPrizeIndices.slice(0, MAXINDICES);
+    const limitedIndexMap = originalIndexMap.slice(0, MAXINDICES);
 
-// Flatten prizeIndices for easy manipulation while keeping track of original indices
-const flatPrizeIndices = [];
-const originalIndexMap = []; // Maps flattened index back to original [winnerIndex, prizeIndex]
-prizeIndices.forEach((indices, winnerIndex) => {
-  indices.forEach((index) => {
-    flatPrizeIndices.push(index);
-    originalIndexMap.push([winnerIndex, index]);
-  });
-});
+    // Reconstruct the prizeIndices array to match the winners array structure, now limited by MAXINDICES
+    const newPrizeIndices = Array(winners.length)
+      .fill()
+      .map(() => []);
+    limitedIndexMap.forEach(([winnerIndex, index]) => {
+      newPrizeIndices[winnerIndex].push(index);
+    });
 
-// If the total exceeds MAXINDICES, slice the arrays to limit the total indices
-const limitedPrizeIndices = flatPrizeIndices.slice(0, MAXINDICES);
-const limitedIndexMap = originalIndexMap.slice(0, MAXINDICES);
+    // Filter out winners without prizeIndices after the limit
+    const finalWinners = winners.filter(
+      (_, i) => newPrizeIndices[i].length > 0
+    );
+    const finalPrizeIndices = newPrizeIndices.filter(
+      (indices) => indices.length > 0
+    );
 
-// Reconstruct the prizeIndices array to match the winners array structure, now limited by MAXINDICES
-const newPrizeIndices = Array(winners.length).fill().map(() => []);
-limitedIndexMap.forEach(([winnerIndex, index]) => {
-  newPrizeIndices[winnerIndex].push(index);
-});
-
-// Filter out winners without prizeIndices after the limit
-const finalWinners = winners.filter((_, i) => newPrizeIndices[i].length > 0);
-const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
-
-// Now finalWinners and finalPrizeIndices are ready for use, and respect MAXINDICES
-
-
-
-
-
+    // Now finalWinners and finalPrizeIndices are ready for use, and respect MAXINDICES
 
     winners = finalWinners;
     prizeIndices = finalPrizeIndices;
@@ -173,7 +177,7 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
     // console.log(prizeIndices)
 
     let minFeePerPrizeToClaim = await CONTRACTS.CLAIMER[
-      CONFIG.CHAINNAME
+      CHAINNAME
     ].computeFeePerClaim(tier, prizeIndices.flat().length);
     //minFeeToClaim = minFeeToClaim.div(prizeIndices.flat().length)
     //minFeeToClaim = ethers.BigNumber.from(minFeeToClaim); // ensure it's a BigNumber
@@ -193,10 +197,15 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
       console.log("prize claims cropped to max indices of ", MAXINDICES);
     }
 
-    console.log("vault ", vault,"tier ", tier);
+    console.log("vault ", vault, "tier ", tier);
     console.log("winners ", winners);
     console.log("prize indices being claimed", prizeIndices);
-    console.log("fee recipient", feeRecipient, "min fee", minFeePerPrizeToClaim.toString());
+    console.log(
+      "fee recipient",
+      feeRecipient,
+      "min fee",
+      minFeePerPrizeToClaim.toString()
+    );
 
     //console.log("gas limit with +2%",gasLimitWithBuffer)
     console.log(
@@ -208,9 +217,7 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
 
     console.log(section("     ---- profitability -----"));
 
-    let feeEstimate = await CONTRACTS.CLAIMER[
-      CONFIG.CHAINNAME
-    ].callStatic.claimPrizes(
+    let feeEstimate = await CONTRACTS.CLAIMER[CHAINNAME].callStatic.claimPrizes(
       vault,
       tier,
       winners,
@@ -267,14 +274,14 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
     const data = contract.interface.encodeFunctionData(functionName, args);
 
     // calculate total gas cost in wei
-/*console.log("gas estimate",CONTRACTS.CLAIMER[CONFIG.CHAINNAME].address,
+    /*console.log("gas estimate",CONTRACTS.CLAIMER[CHAINNAME].address,
       "claimPrizes",
       args,
       CONFIG.PRIORITYFEE,
       500000 + (50000*prizeIndices.flat()-1))
 */
     const web3TotalGasCost = await GasEstimate(
-      CONTRACTS.CLAIMER[CONFIG.CHAINNAME],
+      CONTRACTS.CLAIMER[CHAINNAME],
       "claimPrizes",
       args,
       CONFIG.PRIORITYFEE
@@ -284,9 +291,9 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
 
     /*    const web3TotalGasCost = await web3GasEstimate(
       data,
-      CONFIG.CHAINID,
+      CHAINID,
       CONFIG.WALLET,
-      ADDRESS[CONFIG.CHAINNAME].CLAIMER
+      ADDRESS[CHAINNAME].CLAIMER
     );
 */
     const web3TotalGasCostUSD =
@@ -321,6 +328,7 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
     //  let txToEstimate = contract.populateTransaction.claimPrizes(vault, tier, winners, prizeIndices, feeRecipient, minFeeToClaim);
     //let estimate = await estimateGas(txToEstimate)
 
+    console.log(estimateNetFromClaims,">",MINPROFIT)
     if (
       estimateNetFromClaims > MINPROFIT &&
       estimateNetPercentage > MINPROFITPERCENTAGE
@@ -373,7 +381,7 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
 
       //return // to not send claims (for testing)
 
-      const recentClaims = await GetRecentClaims(CONFIG.CHAINID, -100000);
+      const recentClaims = await GetRecentClaims(CHAINID, -100000);
       const hasBeenClaimed = checkIfWinHasBeenClaimed(
         drawId,
         recentClaims,
@@ -390,7 +398,13 @@ const finalPrizeIndices = newPrizeIndices.filter(indices => indices.length > 0);
 
         // return
         let tx;
-          console.log("sending w gas limit of ",700000 + 149000 * (prizeIndices.flat().length - 1),"for ",prizeIndices.flat().length - 1,"prizes")
+        console.log(
+          "sending w gas limit of ",
+          700000 + 149000 * (prizeIndices.flat().length - 1),
+          "for ",
+          prizeIndices.flat().length - 1,
+          "prizes"
+        );
         try {
           tx = await contract.claimPrizes(
             vault,
@@ -529,10 +543,9 @@ async function processReceipt(receipt, ethPrice, prizeTokenPrice) {
     L2transactionCost =
       Number(receipt.gasUsed * receipt.effectiveGasPrice) / 1e18;
 
+    //console.log(ethers.utils.formatEther(l2CostActual))
 
-//console.log(ethers.utils.formatEther(l2CostActual))
-
-/*
+    /*
 const l1CostActual = receipt.l1Fee
 console.log("l1 fee",ethers.utils.formatEther(l1CostActual))
 

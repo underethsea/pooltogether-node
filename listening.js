@@ -1,19 +1,32 @@
+const { loadChainConfig, getChainConfig } = require('./chains');
+
+// Assuming the chain name/id is the first argument, default to 'OPTIMISM' if not provided
+const chainKey = process.argv[2] || '';
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
 
 // const { CONTRACTS, ADDRESS, PROVIDERS } = require("./constants/index.js")
 const { ADDRESS } = require("./constants/address")
 const { WS_PROVIDERS, PROVIDERS } = require("./constants/providers")
 const { CONTRACTS } = require("./constants/contracts")
-const { CONFIG } = require("./constants/config")
 const { TOPICS } = require("./constants/events")
 //const { PrizeWinsToDb } = require("./functions/prizeWinsToDb.js")
 //const LiquidateNow  = require("./liquidator.js")
 const { AddClaim } = require("./functions/dbDonkey.js")
-const ethers = require("ethers")
 const { DiscordNotifyClaimPrize } = require("./functions/discordAlert.js")
 //const { DailyReport } = require("./functions/dailyReport")
-const chain = CONFIG.CHAINNAME
-const chainId = CONFIG.CHAINID
-const prizepool = ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL
+const chain = CHAINNAME
+const chainId = CHAINID
+const prizepool = ADDRESS[CHAINNAME].PRIZEPOOL
 const {FoundryPrizeWinsToDb} = require("./functions/foundryPrizeWinsToDb.js")
 
 const LISTENPROVIDER = PROVIDERS[chain]

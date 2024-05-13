@@ -1,8 +1,23 @@
+const { loadChainConfig, getChainConfig } = require('./chains');
+
+const chainKey = process.argv[2] || '';
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
 const { CONTRACTS } = require("./constants/contracts.js");
 const { ADDRESS } = require("./constants/address.js");
 const { PROVIDERS, SIGNER } = require("./constants/providers.js");
 const { ABI } = require("./constants/abi.js");
 const { CONFIG } = require("./constants/config.js");
+
 const { GetLogs } = require("./utilities/getLogs.js");
 const { Multicall } = require("./utilities/multicall.js");
 const { GeckoIDPrices } = require("./utilities/geckoFetch.js");
@@ -11,8 +26,8 @@ const { GetPricesForToken } = require("./utilities/1inch");
 const { GasEstimate } = require("./utilities/gas.js");
 const { LapThePool, OutAndBack } = require("./functions/swapper.js");
 const { UniFlashSwap} = require("./functions/uniFlashSwap.js")
-const { Get1inchQuote } = require("./utilities/1inchQuote");
-const { BuildTxForSwap } = require("./utilities/1inchSwap.js");
+// const { Get1inchQuote } = require("./utilities/1inchQuote");
+// const { BuildTxForSwap } = require("./utilities/1inchSwap.js");
 const { uniV2LPPriceInWeth } = require("./utilities/uniV2Price.js")
 
 const ethers = require("ethers");
@@ -22,7 +37,7 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-const prizeTokenSymbol = ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.SYMBOL;
+const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
 const {
   useCoinGecko,
   slippage,
@@ -38,7 +53,7 @@ const fs = require("fs");
 const section = chalk.hex("#47FDFB").bgBlack;
 
 async function go() {
-  //const isAwarding = await CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].hasOpenDrawFinished()
+  //const isAwarding = await CONTRACTS.PRIZEPOOL[CHAINNAME].hasOpenDrawFinished()
   const isAwarding = false;
   if (!isAwarding) {
     let totalGasSpent = 0;
@@ -50,12 +65,12 @@ async function go() {
     let bestOutValue;
 
     let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
-      CONFIG.CHAINNAME
+      CHAINNAME
     ].balanceOf(CONFIG.WALLET);
 
     const myBalanceFormatted = ethers.utils.formatUnits(
       walletPrizeTokenBalance,
-      ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.DECIMALS
+      ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
     );
     console.log("my prize token balance ", myBalanceFormatted);
 
@@ -76,22 +91,22 @@ async function go() {
 
     // build pairs from factory
     // const numPairs = await CONTRACTS.LIQUIDATIONPAIRFACTORY[
-    //   CONFIG.CHAINNAME
+    //   CHAINNAME
     // ].totalPairs();
     // console.log("num pairs", numPairs.toString());
 
     // for (x = 0; x < numPairs; x++) {
     //   const pairAddress = await CONTRACTS.LIQUIDATIONPAIRFACTORY[
-    //     CONFIG.CHAINNAME
+    //     CHAINNAME
     //   ].allPairs(x);
     //   pairs.push(pairAddress);
     // }
 
-    pairs = [
-      ...ADDRESS[CONFIG.CHAINNAME].VAULTS,
-      ...ADDRESS[CONFIG.CHAINNAME].BOOSTS,
-      ...ADDRESS[CONFIG.CHAINNAME].PAIRS,
-    ];
+     pairs = [
+        ...ADDRESS[CHAINNAME].VAULTS,
+        ...(ADDRESS[CHAINNAME].BOOSTS ?? []),
+        ...(ADDRESS[CHAINNAME].PAIRS ?? []),
+      ];
 
     pairs = pairs.filter(
       (pair) =>
@@ -147,7 +162,7 @@ pairs = pairs.filter(pair => pair.GECKO && pair.GECKO !== '');
       prizeTokenPrice = combinedPrices[combinedPrices.length - 1];
     } else {
       prizeTokenPrice = await GetPricesForToken(
-        ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS
+        ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS
       );
       await delay(1100); // Delays for 1.1 seconds
     }
@@ -164,7 +179,7 @@ pairs = pairs.filter(pair => pair.GECKO && pair.GECKO !== '');
   
 for (const pair of uniV2Pairs) {
   try {
-    const LPprizeTokenPrice = await uniV2LPPriceInWeth(pair.ASSET, ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS);
+    const LPprizeTokenPrice = await uniV2LPPriceInWeth(pair.ASSET, ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
     pair.PRICE = LPprizeTokenPrice / 1e18 * prizeTokenPrice
   } catch (error) {
     console.error(`Error setting price for pair ${pair.ASSET}: ${error}`);
@@ -186,7 +201,7 @@ pairs =  pairs.concat(uniV2Pairs)
       const contract = new ethers.Contract(
         pair.LIQUIDATIONPAIR,
         ABI.LIQUIDATIONPAIR,
-        PROVIDERS[CONFIG.CHAINNAME]
+        PROVIDERS[CHAINNAME]
       );
       multiCallMaxOutArray.push(contract.callStatic.maxAmountOut());
     }
@@ -227,7 +242,7 @@ pairs =  pairs.concat(uniV2Pairs)
         const contract = new ethers.Contract(
           pairAddress,
           ABI.LIQUIDATIONPAIR,
-          PROVIDERS[CONFIG.CHAINNAME]
+          PROVIDERS[CHAINNAME]
         );
         const contractWSigner = new ethers.Contract(
           pairAddress,
@@ -284,7 +299,7 @@ pairs =  pairs.concat(uniV2Pairs)
               //  / Math.pow(10,pairDecimals),
               "amount in ",
               bestOptionIn.toString(),
-              // / Math.pow(10,ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.DECIMALS),
+              // / Math.pow(10,ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS),
               " deadline ",
               unixTimestamp
             );
@@ -297,7 +312,7 @@ pairs =  pairs.concat(uniV2Pairs)
             const poolFromAddress = CONFIG.WALLET;
             const args = [
               pairAddress,
-              //ADDRESS[CONFIG.CHAINNAME].SWAPPER,
+              //ADDRESS[CHAINNAME].SWAPPER,
               poolFromAddress,
               bestOptionOut,
               maxToSendWithSlippage,
@@ -306,7 +321,7 @@ pairs =  pairs.concat(uniV2Pairs)
             //console.log("args",args)
             // Encode the function call
             const data = CONTRACTS.LIQUIDATIONROUTERSIGNER[
-              CONFIG.CHAINNAME
+              CHAINNAME
             ].interface.encodeFunctionData(functionName, args);
 
             const poolOutFormatted = maxToSendWithSlippage / 1e18;
@@ -335,9 +350,9 @@ pairs =  pairs.concat(uniV2Pairs)
               console.log("not profitable...");
             } else {
               const gasBudgetUSD = outValue - prizeTokenValue - profitThreshold;
-              console.log("gas budget USD", gasBudgetUSD);
+              // console.log("gas budget USD", gasBudgetUSD);
               const gasBudgetETH = ethers.BigNumber.from(
-                parseInt((gasBudgetUSD / 3600) * 1e18)
+                parseInt((gasBudgetUSD / 3600) * 1e18).toString()
               );
               console.log("gas budget in ETH", gasBudgetETH.toString());
               //console.log(" no vault?", noVault);
@@ -349,7 +364,7 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
               if (
                 CONFIG.USESWAPPER &&
                 vaultDepositToken.toLowerCase() !==
-                  ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()
+                  ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()
               ) {
                 console.log(
                   "Swapppppper",
@@ -362,7 +377,7 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
                   prizeTokenValue,
                   gasBudgetETH
                 );
-                //const quote = await Get1inchQuote(pairOutAsset,ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,bestOptionOut.toString())
+                //const quote = await Get1inchQuote(pairOutAsset,ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,bestOptionOut.toString())
 
                 //async function Swapper(pairAddress,vaultAddress,depositTokenAddress,amtOut,amtIn,gasBudget){
                 if (noVault) {
@@ -387,14 +402,13 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
                 // calculate total gas cost in wei
                 /*web3TotalGasCost = await web3GasEstimate(
               data,
-              CONFIG.CHAINID,
+              CHAINID,
               poolFromAddress,
-              ADDRESS[CONFIG.CHAINNAME].LIQUIDATIONROUTER
+              ADDRESS[CHAINNAME].LIQUIDATIONROUTER
             );*/
                 const method = functionName;
-
                 web3TotalGasCost = await GasEstimate(
-                  CONTRACTS.LIQUIDATIONROUTERSIGNER[CONFIG.CHAINNAME],
+                  CONTRACTS.LIQUIDATIONROUTERSIGNER[CHAINNAME],
                   method,
                   args,
                   CONFIG.PRIORITYFEE
@@ -481,7 +495,7 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
                 // else{console.log("swap check",swapCheck.toString(),"best option in",bestOptionIn.toString())}
                 try {
                   tx = await CONTRACTS.LIQUIDATIONROUTERSIGNER[
-                    CONFIG.CHAINNAME
+                    CHAINNAME
                   ].swapExactAmountOut(
                     pairAddress,
                     CONFIG.WALLET,
@@ -492,10 +506,10 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
                   );
                   /*
                   tx = await CONTRACTS.LIQUIDATIONROUTERSIGNER[
-                CONFIG.CHAINNAME
+                CHAINNAME
                 ].swapExactAmountOut(
                 pairAddress,
-                ADDRESS[CONFIG.CHAINNAME].SWAPPER,
+                ADDRESS[CHAINNAME].SWAPPER,
                 bestOptionOut,
                 maxToSendWithSlippage,
                 unixTimestamp,

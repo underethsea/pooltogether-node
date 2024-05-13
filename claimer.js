@@ -1,3 +1,18 @@
+const { loadChainConfig, getChainConfig } = require('./chains');
+
+const chainKey = process.argv[2] || '';
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
 const ethers = require("ethers");
 // const { CONTRACTS, PROVIDERS, SIGNER, ABI } = require("./constants/index")
 const { CONTRACTS } = require("./constants/contracts.js")
@@ -7,7 +22,7 @@ const { ABI } = require("./constants/abi.js");
 const { CONFIG } = require("./constants/config.js");
 const { FetchApiPrizes } = require("./functions/fetchApiPrizes.js");
 const { FetchG9ApiPrizes } = require("./functions/fetchG9ApiPrizes.js");
-//const { GetWinners } = require("./functions/winners.js");
+const { GetWinnersByTier } = require("./functions/getWinnersByTier.js");
 const { GetRecentClaims } = require("./functions/getRecentClaims.js");
 const { SendClaims } = require("./functions/sendClaims.js");
 const chalk = require("chalk");
@@ -18,16 +33,15 @@ const { CollectRewards } = require("./collectRewards.js");
 //const settings = require('./constants/liquidator-config');
 const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko } = CONFIG;
 
-
 // covalent, not accurate to get twab players
 // const FetchPlayers = require("./utilities/players.js");
 
 const section = chalk.hex("#47FDFB");
 
-const claimerContract = CONTRACTS.CLAIMERSIGNER[CONFIG.CHAINNAME]
+const claimerContract = CONTRACTS.CLAIMERSIGNER[CHAINNAME]
 
 new ethers.Contract(
-  ADDRESS[CONFIG.CHAINNAME].CLAIMER,
+  ADDRESS[CHAINNAME].CLAIMER,
   ABI.CLAIMER,
   SIGNER
 );
@@ -36,13 +50,13 @@ async function go() {
   console.log(section("----- starting claim bot ------"));
   console.log("time logged | ", Date.now());
 
-  const claimsPromise = GetRecentClaims(CONFIG.CHAINID);
+  const claimsPromise = GetRecentClaims(CHAINID);
   const prizePoolDataPromise = GetPrizePoolData();
 
   // Set up the third promise based on the useCoinGecko flag
   const priceFetchPromise = useCoinGecko
-    ? GeckoIDPrices([ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.GECKO, "ethereum"])
-    : GetPricesForToken(ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS);
+    ? GeckoIDPrices([ADDRESS[CHAINNAME].PRIZETOKEN.GECKO, "ethereum"])
+    : GetPricesForToken(ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
 
   // Use Promise.all to wait for all three promises to resolve
   const [claims, prizePoolData, priceData] = await Promise.all([
@@ -89,25 +103,25 @@ async function go() {
 
   if (CONFIG.USEAPI==="none") {
     // await SendClaims(claimerContract, lastDrawId, []);
-console.log("winners calculation not hooked up.  need to connect to getWinnersByTier")
+// console.log("winners calculation not hooked up.  need to connect to getWinnersByTier")
 newWinners=[] 
-  /* newWinners = await GetWinners(
-      CONFIG.CHAINNAME,
+  newWinners = await GetWinnersByTier(
+      CHAINNAME,
       numberOfTiers,
       lastDrawId,
       tierTimestamps,
       CONFIG.TIERSTOCLAIM,
       prizesForTier,
       "latest"
-    );*/
+    );
   } else if(CONFIG.USEAPI==="g9"){
-newWinners = await FetchG9ApiPrizes(CONFIG.CHAINID,ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,lastDrawId,CONFIG.TIERSTOCLAIM,claims)}
+newWinners = await FetchG9ApiPrizes(CHAINID,ADDRESS[CHAINNAME].PRIZEPOOL,lastDrawId,CONFIG.TIERSTOCLAIM,claims)}
 else {
     console.log("using pooltime api for winner calculations");
   
 
   newWinners = await FetchApiPrizes(
-      CONFIG.CHAINID,
+      CHAINID,
       lastDrawId,
       CONFIG.TIERSTOCLAIM,
       claims

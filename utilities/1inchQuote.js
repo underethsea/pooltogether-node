@@ -1,8 +1,12 @@
 require('../env-setup');
 const fetch = require('cross-fetch');
 const {CONFIG} = require('../constants/config')
+const { getChainConfig } = require('../chains');
+
+const CHAINID = getChainConfig().CHAINID;
+
 // Define the API endpoint URL
-const apiUrl = 'https://api.1inch.dev/swap/v5.2/' + CONFIG.CHAINID + '/quote';
+const apiUrl = 'https://api.1inch.dev/swap/v5.2/' + CHAINID + '/quote';
 
 // Define the headers with the API key from environment variables
 const headers = {

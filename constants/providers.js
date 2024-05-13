@@ -1,6 +1,8 @@
 require('../env-setup');
 const ethers = require("ethers");
-const { CONFIG }= require("./config")
+const {  getChainConfig } = require("../chains");
+
+const CHAINNAME = getChainConfig().CHAINNAME;
 
 // Check if ALCHEMY_KEY environment variable is missing
 if (!process.env.ALCHEMY_KEY) {
@@ -33,8 +35,10 @@ const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHE
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opSepoliaWebsocketEndpoint = "wss://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-const baseSepoliaEndpoint = "https://sepolia.base.org" 
+// const baseSepoliaEndpoint = "https://sepolia.base.org" 
+const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const mainnetEndpoint = "https://eth.llamarpc.com"
+const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
 
 const WS_PROVIDERS = {
     OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
@@ -50,6 +54,7 @@ const PROVIDERS = {
     OPTIMISM: new ethers.providers.JsonRpcProvider(opEndpoint),
     BASESEPOLIA: new ethers.providers.JsonRpcProvider(baseSepoliaEndpoint),
     ARBITRUM: new ethers.providers.JsonRpcProvider(arbEndpoint),
+    ARBSEPOLIA: new ethers.providers.JsonRpcProvider(arbSepoliaEndpoint)
 
     // POLYGON: new ethers.providers.JsonRpcProvider(polygonEndpoint),
     // AVALANCHE: new ethers.providers.JsonRpcProvider(
@@ -60,8 +65,8 @@ const PROVIDERS = {
 }
 
 
-const wally = new ethers.Wallet(process.env.PRIVATE_KEY,PROVIDERS[CONFIG.CHAINNAME])
-const SIGNER = wally.connect(PROVIDERS[CONFIG.CHAINNAME]);
+const wally = new ethers.Wallet(process.env.PRIVATE_KEY,PROVIDERS[CHAINNAME])
+const SIGNER = wally.connect(PROVIDERS[CHAINNAME]);
 const MAINNETSIGNER = wally.connect(PROVIDERS["MAINNET"])
 //console.log("signer",SIGNER)
 module.exports = {PROVIDERS, SIGNER , MAINNETSIGNER, WS_PROVIDERS}

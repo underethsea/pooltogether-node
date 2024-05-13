@@ -5,7 +5,8 @@ const fs = require('fs');
 // const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/v51/deployments/optimismSepolia/contracts.json"
 //const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-mainnet/prod.deploy.3/deployments/optimism/contracts.json"
 //https://github.com/GenerationSoftware/pt-v5-testnet/blob/main/deployments/baseSepolia/contracts.json
-const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
+// const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
+const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/arbitrumSepolia/contracts.json"
 
 // Mapping of types to their corresponding keys (case-insensitive)
 const typeKeyMapping = {

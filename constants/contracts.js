@@ -2,52 +2,53 @@ const ethers = require("ethers");
 const { ABI } = require("./abi.js");
 const { ADDRESS, ADDRESS_AUCTION } = require("./address.js");
 const { PROVIDERS, MAINNETSIGNER, SIGNER } = require("./providers.js");
-const { CONFIG } = require("./config.js");
+const { CHAINS } = require("../chains");
+const { getChainConfig } = require("../chains");
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const isTestnet = CHAINS[CHAINNAME]?.testnet;
+const isOpchain = CHAINS[CHAINNAME]?.opchain
 
 const CONTRACTS = {
-/*  WINBOOSTERSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].WINBOOSTER,
+  /*  WINBOOSTERSIGNER: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].WINBOOSTER,
       ABI.WINBOOSTER,
       SIGNER
     ),
   },
   WINBOOSTER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].WINBOOSTER,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].WINBOOSTER,
       ABI.WINBOOSTER,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
   WINBOOSTSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].WINBOOST,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].WINBOOST,
       ABI.WINBOOST,
       SIGNER
     ),
   },
   WINBOOST: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].WINBOOST,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].WINBOOST,
       ABI.WINBOOST,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
-  // mainnet
 
-  */
-
-/*
 UNIFLASHLIQUIDATORSIGNER: {
-[CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].UNIFLASHLIQUIDATOR,
+[CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].UNIFLASHLIQUIDATOR,
       ABI.UNIFLASHLIQUIDATOR,
       SIGNER
     ),
 },
   SWAPPERSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].SWAPPER,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].SWAPPER,
       ABI.SWAPPER,
       SIGNER
     ),
@@ -55,175 +56,132 @@ UNIFLASHLIQUIDATORSIGNER: {
 */
 
   /*  GAS: {
-  [CONFIG.CHAINNAME]: new ethers.Contract(
-   ADDRESS[CONFIG.CHAINNAME].GAS,
+  [CHAINNAME]: new ethers.Contract(
+   ADDRESS[CHAINNAME].GAS,
    ABI.OPGAS,
-   PROVIDERS[CONFIG.CHAINNAME]
+   PROVIDERS[CHAINNAME]
    ),
-},*/
- GASORACLE: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].GASORACLE,
+},*/ 
+
+
+...(isOpchain
+  ? {
+  GASORACLE: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].GASORACLE,
       ABI.GASORACLE,
-      PROVIDERS[CONFIG.CHAINNAME]
-    ),
-  },
- CLAIMERSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].CLAIMER,
+      PROVIDERS[CHAINNAME]
+    )
+  }
+}: {} ),
+  CLAIMERSIGNER: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].CLAIMER,
       ABI.CLAIMER,
       SIGNER
     ),
   },
   CLAIMER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].CLAIMER,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].CLAIMER,
       ABI.CLAIMER,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
   VAULTS: {
-    [CONFIG.CHAINNAME]: ADDRESS[CONFIG.CHAINNAME].VAULTS.map((vault) => ({
-  /*    LIQUIDATIONPAIR: new ethers.Contract(
+    [CHAINNAME]: ADDRESS[CHAINNAME].VAULTS.map((vault) => ({
+      /*    LIQUIDATIONPAIR: new ethers.Contract(
         vault.LIQUIDATIONPAIR,
         ABI.LIQUIDATIONPAIR,
-        PROVIDERS[CONFIG.CHAINNAME]
+        PROVIDERS[CHAINNAME]
       ),*/
-      VAULT: new ethers.Contract(
-        vault.VAULT,
-        ABI.VAULT,
-        PROVIDERS[CONFIG.CHAINNAME]
-      ),
+      VAULT: new ethers.Contract(vault.VAULT, ABI.VAULT, PROVIDERS[CHAINNAME]),
     })),
   },
   LIQUIDATIONROUTER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].LIQUIDATIONROUTER,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].LIQUIDATIONROUTER,
       ABI.LIQUIDATIONROUTER,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
-/*  LIQUIDATIONPAIRFACTORY: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].LIQUIDATIONPAIRFACTORY,
+  /*  LIQUIDATIONPAIRFACTORY: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].LIQUIDATIONPAIRFACTORY,
       ABI.LIQUIDATIONPAIRFACTORY,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
 */
-PRIZETOKEN: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,
+  PRIZETOKEN: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,
       ABI.ERC20,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
-  /*POOL: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,
-      ABI.POOL,
-      PROVIDERS[CONFIG.CHAINNAME]
-    ),
-  },*/
-/*  TOKENFAUCET: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].TOKENFAUCET,
-      ABI.TOKENFAUCET,
-      SIGNER
-    ),
-  },*/
+  ...(isTestnet
+    ? {
+        TOKENFAUCET: {
+          [CHAINNAME]: new ethers.Contract(
+            ADDRESS[CHAINNAME].TOKENFAUCET,
+            ABI.TOKENFAUCET,
+            SIGNER
+          ),
+        },
+      }
+    : {}),
   PRIZEPOOL: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].PRIZEPOOL,
       ABI.PRIZEPOOL,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
 
   RNG: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].RNG,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].RNG,
       ABI.RNG,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
- DRAWMANAGER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].DRAWMANAGER,
+  DRAWMANAGER: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].DRAWMANAGER,
       ABI.DRAWMANAGER,
-      PROVIDERS[CONFIG.CHAINNAME]
+      PROVIDERS[CHAINNAME]
     ),
   },
- RNGWITHSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].RNG,
-      ABI.RNG,
-      SIGNER
-    ),
+  RNGWITHSIGNER: {
+    [CHAINNAME]: new ethers.Contract(ADDRESS[CHAINNAME].RNG, ABI.RNG, SIGNER),
   },
- DRAWMANAGERWITHSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].DRAWMANAGER,
+  DRAWMANAGERWITHSIGNER: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].DRAWMANAGER,
       ABI.DRAWMANAGER,
       SIGNER
     ),
   },
-/*
-  RNGAUCTION: {
-    MAINNET: new ethers.Contract(
-      ADDRESS_AUCTION.MAINNET.RNGAUCTION,
-      ABI.RNGAUCTION,
-      PROVIDERS["MAINNET"]
-    ),
-  },
-  CHAINLINKDIRECTAUCTIONHELPER: {
-    MAINNET: new ethers.Contract(
-      ADDRESS_AUCTION.MAINNET.CHAINLINKDIRECTAUCTIONHELPER,
-      ABI.CHAINLINKDIRECTAUCTIONHELPER,
-      PROVIDERS["MAINNET"]
-    ),
-  },
-  CHAINLINKDIRECTAUCTIONHELPERWITHSIGNER: {
-    MAINNET: new ethers.Contract(
-      ADDRESS_AUCTION.MAINNET.CHAINLINKDIRECTAUCTIONHELPER,
-      ABI.CHAINLINKDIRECTAUCTIONHELPER,
-      MAINNETSIGNER
-    ),
-  },
-
-  RNGAUCTIONRELAYWITHSIGNER: {
-    MAINNET: new ethers.Contract(
-      ADDRESS_AUCTION.MAINNET.RNGAUCTIONRELAY,
-      ABI.RNGAUCTIONRELAY,
-      MAINNETSIGNER
-    ),
-  },
-*/
   PRIZEPOOLWITHSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].PRIZEPOOL,
       ABI.PRIZEPOOL,
       SIGNER
     ),
   },
 
-PRIZETOKENWITHSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,
+  PRIZETOKENWITHSIGNER: {
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,
       ABI.ERC20,
       SIGNER
     ),
   },
-  /*POOLWITHSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.ADDRESS,
-      ABI.POOL,
-      SIGNER
-    ),
-  },*/
+
   LIQUIDATIONROUTERSIGNER: {
-    [CONFIG.CHAINNAME]: new ethers.Contract(
-      ADDRESS[CONFIG.CHAINNAME].LIQUIDATIONROUTER,
+    [CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].LIQUIDATIONROUTER,
       ABI.LIQUIDATIONROUTER,
       SIGNER
     ),

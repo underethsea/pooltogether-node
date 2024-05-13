@@ -12,6 +12,12 @@ const { ADDRESS } = require("../constants/address")
 const { CONFIG } = require("../constants/config")
 const { MessageEmbed } = require("discord.js");
 
+
+const {getChainConfig } = require('../chains');
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+
+
 // override for manual draw processing
 //const drawToProcess = 663
 
@@ -38,7 +44,6 @@ const fourteenUsdc = (amount) => {
   }
 };
 
-const networks = [{symbol:"OPGOERLI",name:"Optimism Goerli",id:420}];
 
 const cn = {
   host: "localhost", // server name or IP address;
@@ -76,7 +81,7 @@ const payAmount = parseInt(claim.payout) / 1e18
               INSERT INTO v5claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
           `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool]);
-const message = " 🏆 WINNER `" + subscriber.wallet.substring(0,6) + "` WON " + payAmount.toFixed(6) + " " + ADDRESS[CONFIG.CHAINNAME].PRIZETOKEN.SYMBOL + " " + labelMessage;
+const message = " 🏆 WINNER `" + subscriber.wallet.substring(0,6) + "` WON " + payAmount.toFixed(6) + " " + ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL + " " + labelMessage;
       await tellUser(subscriber.discord, message);
 
 

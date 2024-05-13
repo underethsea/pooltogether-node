@@ -2,7 +2,7 @@ const { ABI } = require("../constants/abi");
 const { ethers } = require("ethers");
 const { PROVIDERS } = require("../constants/providers");
 const ADDRESS = "0x90D383dEA4dcE52D3e5D3C93dE75eF36da3Ea9Ea"
-const whiteList = [1, 2, 3, 4];
+const whiteList = [1, 2, 3, 4, 6];
 
 async function GetTwabPromotions() {
     const contract = new ethers.Contract(ADDRESS, ABI.TWABREWARDS, PROVIDERS["OPTIMISM"]);

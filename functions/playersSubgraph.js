@@ -1,14 +1,16 @@
 const axios = require("axios");
-const { CONFIG } = require("../constants/config");
 const { ADDRESS } = require("../constants/address");
+
+const { getChainConfig } = require("../chains");
+
+const CHAINNAME = getChainConfig().CHAINNAME;
 
 async function makeGraphQlQuery(subgraphURL, tierStartTime, tierEndTime) {
   const maxPageSize = 900;
   let lastId = "";
   let results = [];
-  
-  while (true) {
 
+  while (true) {
     const queryString = `{
 
   accounts(first: ${maxPageSize}, where: { id_gt: "${lastId}" }) {
@@ -37,9 +39,9 @@ prizeVault { id }
       #  account{user { address }}
     }
   }
-}`
+}`;
 
-//console.log(queryString)
+    //console.log(queryString)
 
     let data;
     try {
@@ -63,7 +65,7 @@ prizeVault { id }
 
 async function GetTwabPlayers(startTimestamp, endTimestamp) {
   const poolers = await makeGraphQlQuery(
-    ADDRESS[CONFIG.CHAINNAME].PRIZEPOOLSUBGRAPH,
+    ADDRESS[CHAINNAME].PRIZEPOOLSUBGRAPH,
     startTimestamp,
     endTimestamp
   );
@@ -71,10 +73,10 @@ async function GetTwabPlayers(startTimestamp, endTimestamp) {
   const allPoolers = [];
   poolers.forEach((pooler) => {
     let vault, address;
-      // New structure
-      vault = pooler.prizeVault.id;
-      address = pooler.user.address;
-       
+    // New structure
+    vault = pooler.prizeVault.id;
+    address = pooler.user.address;
+
     const balance = pooler.delegateBalance;
     allPoolers.push({ vault: vault, address: address, balance: balance });
   });

@@ -1,8 +1,6 @@
 const { CONTRACTS } = require("../constants/contracts")
 const { ADDRESS } = require("../constants/address")
-const { CONFIG } = require("../constants/config")
-const { ABI } = require("../constants/abi")
-const { ethers } = require("ethers")
+
 const { GeckoIDPrices } = require("../utilities/geckoFetch")
 const { Multicall } = require("../utilities/multicall")
 

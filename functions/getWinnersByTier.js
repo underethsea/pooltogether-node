@@ -1,4 +1,4 @@
-const GetTwabPlayers = require("./playersSubgraph.js");
+// const GetTwabPlayers = require("./playersSubgraph.js");
 const { CONTRACTS } = require("../constants/contracts.js");
 const { CONFIG } = require("../constants/config.js");
 const { Multicall } = require("../utilities/multicall.js");

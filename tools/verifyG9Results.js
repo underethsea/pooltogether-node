@@ -1,4 +1,19 @@
 
+const { loadChainConfig, getChainConfig } = require('./chains');
+
+const chainKey = process.argv[2] || '';
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINID = getChainConfig().CHAINID;
+
 const fetch = require('node-fetch');
 const { CONTRACTS } = require('../constants/contracts');
 const { CONFIG } = require('../constants/config');
@@ -22,7 +37,7 @@ console.log(url)
         Object.entries(user.prizes).forEach(([tier, indices]) => {
           indices.forEach(async (index) => {
             // Prepare the contract call for Multicall or individual execution
-            const contract = CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME];
+            const contract = CONTRACTS.PRIZEPOOL[CHAINNAME];
             const call = () => contract.isWinner(user.user, vaultAddress, tier, index);
 
             if (BATCH_SIZE === 0) {
@@ -61,8 +76,8 @@ console.log(url)
 
 async function go (){
 
-const drawId = await CONTRACTS.PRIZEPOOL[CONFIG.CHAINNAME].getLastAwardedDrawId()
-await verifyWinners(CONFIG.CHAINID, ADDRESS[CONFIG.CHAINNAME].PRIZEPOOL, drawId);
+const drawId = await CONTRACTS.PRIZEPOOL[CHAINNAME].getLastAwardedDrawId()
+await verifyWinners(CHAINID, ADDRESS[CHAINNAME].PRIZEPOOL, drawId);
 }
 go()
 

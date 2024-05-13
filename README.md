@@ -25,19 +25,21 @@ You will need
 
 put key for ALCHEMY in .env
 
-to create a wallet use `node tools/newWallet.js`
+to create a wallet use `node tools/newWallet`
 
 add wallet address and private key to .env
 
 you will need ETH gas on your new wallet. Alchemy has free faucets for testnets
 
-you will need the prize token to liquidate yield. for testnets you can use the faucet and drip to your wallet specified in .env.  do so by running `node tools/dripTestnet.js`
+you will need the prize token to liquidate yield. for testnets you can use the faucet and drip to your wallet specified in .env.  do so by running `node tools/dripTestnet <chain>`
+
+`<chain>` is the chain name defined in constants/address or the id in ./chains
  
-you will need to approve of the prize token spend by the liquidation router, this can be done by running `node tools/approveLiquidationRouter.js`
+you will need to approve of the prize token spend by the liquidation router, this can be done by running `node tools/approveLiquidationRouter <chain>`
 
 new prize network deployments/chains can be added in constants/address.js
 
-## `node claimer.js`
+## `node claimer <chain>`
 
 - Recent claim events are checked to avoid duplicate claims
 - Tier timestamps are used to fetch the Poolers for each tier using the TWAB subgraph
@@ -46,17 +48,17 @@ new prize network deployments/chains can be added in constants/address.js
 - Sends claims if conditions are met
 - Logs claims which can be read back with claimerResults.js
 
-## `node liquidator.js`
+## `node liquidator <chain>`
 
 - Iterrates through the vaults on the configured chain to search for profitable swaps
 - If conditions are met sends the swap
 - Logs liquidations which can be read back with liquidatorResults.js (has bug)
 
-## `node rngAuction.js`
+## `node rngAuction <chain>`
 - runs the bot to complete the RNG auction by sending ETH for a random number
 - also finishes awarding the auction
 
-## `node listener.js`
+## `node listener <chain>`
 - listens for complete draw and claim events to trigger prize calcs and update prize database with draws and claims
 - requires additional setup
 
