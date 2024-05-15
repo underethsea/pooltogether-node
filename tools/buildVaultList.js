@@ -75,7 +75,7 @@ async function go() {
     const symbol = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.symbol();
     const decimals = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.decimals();
     const asset = await CONTRACTS.VAULTS[CHAINNAME][index].VAULT.asset();
-    const assetContract = new ethers.Contract(asset,ABI.ERC20,PROVIDERS[CONFIG.CHAINNAME])
+    const assetContract = new ethers.Contract(asset,ABI.ERC20,PROVIDERS[CHAINNAME])
     const assetSymbol = await assetContract.symbol()
     const icon = assetIcons[assetSymbol] || ""
     const vaultIcon = matchVaultIcon(symbol, vaultIcons)

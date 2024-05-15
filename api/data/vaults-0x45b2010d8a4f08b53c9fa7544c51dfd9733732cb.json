@@ -1,0 +1,82 @@
+[
+  {
+    "vault": "0x6b5a5c55e9dd4bb502ce25bbfbaa49b69cf7e4dd",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize POOL",
+    "symbol": "przPOOL",
+    "decimals": 18,
+    "asset": "0xd652C5425aea2Afd5fb142e120FeCf79e18fafc3",
+    "owner": "0x0000000000000000000000000000000000000000",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "POOL",
+    "gnosis": {
+      "required": 0,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x7f5c2b379b88499ac2b997db583f8079503f25b9",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize USDC - Moonwell",
+    "symbol": "przUSDC",
+    "decimals": 6,
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "owner": "0xDc9522Fc21cF9878781224C54221D4479Dd1a739",
+    "liquidationPair": "0xEBa6Aa26ea2C51874a467cc310181617B3a4A266",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x8d1322cabe5ef2949f6bf4941cc7765187c1091a",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize AERO - Moonwell",
+    "symbol": "przAERO",
+    "decimals": 18,
+    "asset": "0x940181a94A35A4569E4529A3CDfB74e38FD98631",
+    "owner": "0xDc9522Fc21cF9878781224C54221D4479Dd1a739",
+    "liquidationPair": "0xa0297868d4e7c886BdeB8C258767c0a6fC80dc6d",
+    "assetSymbol": "AERO",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x75d700f4c21528a2bb603b6ed899acfde5c4b086",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize wstETH - Moonwell",
+    "symbol": "przWSTETH",
+    "decimals": 18,
+    "asset": "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452",
+    "owner": "0xDc9522Fc21cF9878781224C54221D4479Dd1a739",
+    "liquidationPair": "0xF94F69EeDDDF0A088f0A16D9aC569C1729F6444F",
+    "assetSymbol": "wstETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  }
+]

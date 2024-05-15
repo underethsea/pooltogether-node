@@ -1,7 +1,7 @@
 [
   {
     "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
-    "poolers": 246,
+    "poolers": 245,
     "name": "Prize USDC.e - Aave",
     "symbol": "pUSDC.e",
     "decimals": 6,
@@ -16,7 +16,7 @@
     "price": 0.999406,
     "contributed7d": "501.372798324129370584",
     "contributed24h": "138.880057805799940841",
-    "won7d": "317.8079",
+    "won7d": "346.2962",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
@@ -43,7 +43,7 @@
   },
   {
     "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
-    "poolers": 22,
+    "poolers": 21,
     "name": "Prize DAI - Aave",
     "symbol": "pDAI",
     "decimals": 18,

@@ -12,6 +12,91 @@ const GetChainName = (chainId) => {
 };
 
 const ADDRESS = {
+  BASE: {
+    PRIZEPOOLSUBGRAPH: "https://api.studio.thegraph.com/query/41211/pt-v5-base/version/latest",
+    GASORACLE: "0x420000000000000000000000000000000000000F",
+    SWAPPER: "0x374cBE30c0CFece0a4c2A28E0E7c40c86D517aAa",
+    PRIZETOKEN: {
+      ADDRESS: "0x4200000000000000000000000000000000000006",
+      SYMBOL: "WETH",
+      NAME: "WETH",
+      DECIMALS: 18,
+      GECKO: "weth",
+    },
+    DRAWMANAGER: '0x8a2782bedc79982ebfa3b68b315a2ee40daf6ab0',
+    RNG: '0x74ebf391831c0757b5a4335f2f3abbb1499d18f0',
+    TWABCONTROLLER: '0x7e63601f7e28c758feccf8cdf02f6598694f44c6',
+    TWABREWARDS: '0x86f0923d20810441efc593eb0f2825c6bff2dc09',
+    LIQUIDATIONROUTER: '0xa9c937a0d1d22ad79099aea10efa62a270dfc22c',
+    VAULTFACTORY: '0xe32f6344875494ca3643198d87524519dc396ddf',
+    PRIZEPOOL: '0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb',
+    CLAIMERFACTORY: '0xd58a04fc8d34ce6b3633bf81ee7d5d25c71401e3',
+    CLAIMER: '0x5ffeee76d1e2d2d1d18ba0bc77d8d047b85e1e87',
+    VAULTS: [
+
+  {
+    VAULT: '0x6B5a5c55E9dD4bb502Ce25bBfbaA49b69cf7E4dd',
+    LIQUIDATIONPAIR: '0x0000000000000000000000000000000000000000',
+    SYMBOL: 'przPOOL',
+    NAME: 'Prize POOL',
+    DECIMALS: 18,
+    ASSET: '0xd652C5425aea2Afd5fb142e120FeCf79e18fafc3',
+    ASSETSYMBOL: 'POOL',
+    ICON: 'https://assets.coingecko.com/coins/images/14003/standard/PoolTogether.png?1696513732',
+    GECKO: 'pooltogether',
+    VAULTICON: ''
+  },
+  {
+    VAULT: '0x7f5C2b379b88499aC2B997Db583f8079503f25b9',
+    LIQUIDATIONPAIR: '0xEBa6Aa26ea2C51874a467cc310181617B3a4A266',
+    SYMBOL: 'przUSDC',
+    NAME: 'Prize USDC - Moonwell',
+    DECIMALS: 6,
+    ASSET: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+    ASSETSYMBOL: 'USDC',
+    ICON: 'https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png?1547042389',
+    GECKO: 'usd-coin',
+    VAULTICON: 'https://app.cabana.fi/icons/pUSDC.e.svg'
+  },
+  {
+    VAULT: '0x8d1322CaBe5Ef2949f6bf4941Cc7765187C1091A',
+    LIQUIDATIONPAIR: '0xa0297868d4e7c886BdeB8C258767c0a6fC80dc6d',
+    SYMBOL: 'przAERO',
+    NAME: 'Prize AERO - Moonwell',
+    DECIMALS: 18,
+    ASSET: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
+    ASSETSYMBOL: 'AERO',
+    ICON: '',
+    GECKO: 'aerodrome-finance',
+    VAULTICON: ''
+  },
+  {
+    VAULT: '0x5b623C127254C6fec04b492ecDF4b11c45FBB9D5',
+    LIQUIDATIONPAIR: '0xeBD0A1161e833c090F88D57159c91eEC371E7e67',
+    SYMBOL: 'przCBETH',
+    NAME: 'Prize cbETH - Moonwell',
+    DECIMALS: 18,
+    ASSET: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+    ASSETSYMBOL: 'cbETH',
+    ICON: '',
+    GECKO: 'coinbase-wrapped-staked-eth',
+    VAULTICON: ''
+  },
+  {
+    VAULT: '0x75D700F4C21528A2bb603b6Ed899ACFdE5c4B086',
+    LIQUIDATIONPAIR: '0xF94F69EeDDDF0A088f0A16D9aC569C1729F6444F',
+    SYMBOL: 'przWSTETH',
+    NAME: 'Prize wstETH - Moonwell',
+    DECIMALS: 18,
+    ASSET: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+    ASSETSYMBOL: 'wstETH',
+    ICON: '',
+    GECKO: 'wrapped-steth',
+    VAULTICON: ''
+  }
+	
+    ]
+  },
   OPTIMISM: {
     PRIZEPOOLSUBGRAPH:
       "https://api.studio.thegraph.com/proxy/63100/pt-v5-optimism/version/latest/",
@@ -22,6 +107,7 @@ const ADDRESS = {
       DECIMALS: 18,
       GECKO: "weth",
     },
+    TWABREWARDS: "0x90D383dEA4dcE52D3e5D3C93dE75eF36da3Ea9Ea",
     UNIFLASHLIQUIDATOR: "0xB56D699B27ca6ee4a76e68e585999E552105C10f",
     GASORACLE: "0x420000000000000000000000000000000000000F",
     SWAPPER: "0xc8dd1b10e45d7ae0be9bc656d094565d64e1b11b",

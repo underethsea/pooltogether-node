@@ -8,6 +8,8 @@ const fs = require('fs');
 // const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
 const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/arbitrumSepolia/contracts.json"
 
+const jsonFile = require('./baseDeployment.json')
+
 // Mapping of types to their corresponding keys (case-insensitive)
 const typeKeyMapping = {
     PrizePool: "PRIZEPOOL",
@@ -123,8 +125,10 @@ async function main() {
 
     try {
         // Fetch JSON data from the URL
-        const jsonData = await fetchData(url);
-
+        
+        let jsonData
+        if (jsonFile){jsonData=jsonFile}else{jsonData = await fetchData(url)}
+        
         // Extract contracts array from JSON data
         const contracts = jsonData.contracts || [];
 

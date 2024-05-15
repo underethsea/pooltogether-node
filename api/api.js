@@ -39,7 +39,9 @@ const pricesToFetch = [
   "wrapped-bitcoin",
   "gemini-dollar",
   "coinbase-wrapped-staked-eth",
-  "aerodrome-finance"
+  "aerodrome-finance",
+  "wrapped-steth"
+
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -67,6 +69,13 @@ const chains = [
     prizePool: ADDRESS["ARBSEPOLIA"].PRIZEPOOL.toLowerCase(),
     subgraph: ADDRESS["ARBSEPOLIA"].PRIZEPOOLSUBGRAPH,
   },
+ {
+    id: 8453,
+    name: "BASE",
+    prizePool: ADDRESS["BASE"].PRIZEPOOL.toLowerCase(),
+    subgraph: ADDRESS["BASE"].PRIZEPOOLSUBGRAPH,
+  },
+
   /*
 {
    id:11155420,
@@ -259,13 +268,16 @@ async function fetchAndUpdateStats() {
   let poolPrice = 0;
   let priceResults = {};
   let newPrices = false;
-  try {
+/*  try {
     priceResults.assets = await FindAndPriceUniv2Assets();
   } catch (e) {
     console.log(e);
   }
   try {
     priceResults.geckos = await GeckoPrice(pricesToFetch);
+    const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, priceResults.geckos);
+    priceResults.assets = mergeChainsAssetsPrices(priceResults.assets, chainsAssetsPrices);
+
     // priceResults.address = await PricesFromAddress()
     // Check if all prices fetched are null
     const allNull = Object.values(priceResults).every(
@@ -288,6 +300,53 @@ async function fetchAndUpdateStats() {
   } catch (e) {
     console.log("price fetch bombed", e);
   }
+
+*/
+
+
+try {
+  // Fetch Gecko prices
+  priceResults.geckos = await GeckoPrice(pricesToFetch);
+ if (priceResults.geckos && priceResults.geckos.ethereum > 0 && priceResults.geckos.optimism > 0) {
+
+  ethPrice = priceResults.geckos["ethereum"]
+    // Fetch UNI prices and convert to USD using ETH price
+    let uniAssets;
+    try {
+      const uniPrices = await FindAndPriceUniv2Assets();
+      uniAssets = uniPrices.map(asset => ({
+        ...asset,
+        price: asset.price * ethPrice // Convert UNI prices to USD
+      }));
+    } catch (e) {
+      console.log(e);
+    }
+
+    const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, priceResults.geckos);
+
+    // Merge UNI and Gecko prices
+    priceResults.assets = mergeChainsAssetsPrices(uniAssets, chainsAssetsPrices);
+
+    // Add current date and time
+    const currentTime = new Date().toISOString();
+    priceResults["timestamp"] = currentTime;
+    newPrices = true;
+    await publish(JSON.stringify(priceResults), "/prices");
+    console.log("...published /prices at", currentTime);
+
+  } else {
+    console.log("price is missing in Gecko prices. No new prices fetched.");
+  }
+} catch (e) {
+console.log("2321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312")
+  console.log("price fetch bombed=======================", e);
+}
+
+
+
+
+
+
 
   let vaultOverview = [];
   for (let chain of chains) {
@@ -992,6 +1051,42 @@ async function PublishV5Claims(chainNumber, prizePool) {
   console.log("....published", vaultTotalsPath);
 
   return draws;
+}
+
+function createChainsAssetsPrices(addressObj, geckosObj) {
+    const result = {};
+
+    for (const chain in addressObj) {
+        const vaults = addressObj[chain].VAULTS;
+        result[chain] = {};
+
+        for (const vault of vaults) {
+            const gecko = vault.GECKO;
+            if (geckosObj.hasOwnProperty(gecko)) {
+                result[chain][vault.ASSET.toLowerCase()] = geckosObj[gecko];
+            }
+        }
+    }
+
+    return result;
+}
+
+function mergeChainsAssetsPrices(obj1, obj2) {
+    const merged = { ...obj1 };
+
+    for (const chain in obj2) {
+        if (!merged.hasOwnProperty(chain)) {
+            merged[chain] = { ...obj2[chain] };
+        } else {
+            for (const asset in obj2[chain]) {
+                if (!merged[chain].hasOwnProperty(asset)) {
+                    merged[chain][asset] = obj2[chain][asset];
+                }
+            }
+        }
+    }
+
+    return merged;
 }
 
 go();

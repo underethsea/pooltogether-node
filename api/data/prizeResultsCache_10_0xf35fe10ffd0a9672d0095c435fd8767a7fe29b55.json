@@ -528,5 +528,30 @@
         "totalClaims": "965"
       }
     }
+  },
+  {
+    "draw": 27,
+    "tiers": {
+      "3": {
+        "value": "455242829854305",
+        "totalWins": "4",
+        "totalClaims": "0"
+      },
+      "4": {
+        "value": "72832740314536",
+        "totalWins": "251",
+        "totalClaims": "0"
+      },
+      "5": {
+        "value": "728327403145",
+        "totalWins": "945",
+        "totalClaims": "0"
+      },
+      "6": {
+        "value": "182081850786",
+        "totalWins": "4006",
+        "totalClaims": "0"
+      }
+    }
   }
 ]

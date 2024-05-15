@@ -39,7 +39,7 @@ const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEM
 const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
-
+const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const WS_PROVIDERS = {
     OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
 }
@@ -54,7 +54,8 @@ const PROVIDERS = {
     OPTIMISM: new ethers.providers.JsonRpcProvider(opEndpoint),
     BASESEPOLIA: new ethers.providers.JsonRpcProvider(baseSepoliaEndpoint),
     ARBITRUM: new ethers.providers.JsonRpcProvider(arbEndpoint),
-    ARBSEPOLIA: new ethers.providers.JsonRpcProvider(arbSepoliaEndpoint)
+    ARBSEPOLIA: new ethers.providers.JsonRpcProvider(arbSepoliaEndpoint),
+    BASE: new ethers.providers.JsonRpcProvider(baseEndpoint),
 
     // POLYGON: new ethers.providers.JsonRpcProvider(polygonEndpoint),
     // AVALANCHE: new ethers.providers.JsonRpcProvider(
