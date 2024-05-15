@@ -231,7 +231,8 @@ const ADDRESS = {
     BOOSTS: [],
   },
   ARBSEPOLIA: {
-    PRIZETOKEN: {
+      PRIZEPOOLSUBGRAPH: "https://api.studio.thegraph.com/query/41211/pt-v5-arbitrum-sepolia/version/latest",  
+  PRIZETOKEN: {
       ADDRESS: "0x1A586a874f7C6ca5C3220C434fb5096dDe2ec3f0",
       SYMBOL: "WETH",
       NAME: "WETH",

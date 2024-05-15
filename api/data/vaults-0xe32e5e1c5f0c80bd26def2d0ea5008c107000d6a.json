@@ -1,7 +1,7 @@
 [
   {
     "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
-    "poolers": 250,
+    "poolers": 246,
     "name": "Prize USDC.e - Aave",
     "symbol": "pUSDC.e",
     "decimals": 6,
@@ -14,9 +14,11 @@
       "total": 3
     },
     "price": 0.999406,
-    "contributed7d": "576.836702089739623618",
-    "contributed24h": "141.686341316266560492",
-    "won7d": "341.1669"
+    "contributed7d": "501.372798324129370584",
+    "contributed24h": "138.880057805799940841",
+    "won7d": "317.8079",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x29cb69d4780b53c1e5cd4d2b817142d2e9890715",
@@ -33,9 +35,11 @@
       "total": 3
     },
     "price": 3436.16,
-    "contributed7d": "0.419072779668883864",
-    "contributed24h": "0.000926898350351024",
-    "won7d": "0"
+    "contributed7d": "0.011314965051059864",
+    "contributed24h": "0.000025026255459477",
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
@@ -52,13 +56,15 @@
       "total": 0
     },
     "price": 0.998246,
-    "contributed7d": "4.142759664846577381",
-    "contributed24h": "0.029931675976806361",
-    "won7d": "0.3689"
+    "contributed7d": "6.251475620095463585",
+    "contributed24h": "1.652300869765071041",
+    "won7d": "0.2608",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xbd8fd33e53ab4120638c34cbd454112b39f6b382",
-    "poolers": 6,
+    "poolers": 5,
     "name": "Prize POOL - TokenVault",
     "symbol": "PPOOL",
     "decimals": 18,
@@ -73,7 +79,9 @@
     "price": 0.264774,
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x2ac482d67f009acfc242283b6d86bc6dd4e2ee4f",
@@ -92,7 +100,9 @@
     "price": 0.993712,
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xaeed086d841ae6e86fa9003d84a05999a71bc983",
@@ -110,7 +120,9 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xb7211902d759b580a60a8ed91e4022a161f4c084",
@@ -129,7 +141,9 @@
     "contributed7d": "0.0",
     "contributed24h": "0.0",
     "won7d": "0",
-    "price": 0.993712
+    "price": 0.993712,
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x2ef789080933cabbeb8ce364ce877fc54a6add06",
@@ -147,11 +161,13 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x77935f2c72b5eb814753a05921ae495aa283906b",
-    "poolers": 15,
+    "poolers": 14,
     "name": "Prize USDC - Aave",
     "symbol": "pUSDC",
     "decimals": 6,
@@ -164,13 +180,15 @@
       "total": 3
     },
     "price": 0.999529,
-    "contributed7d": "2.768028737524570445",
-    "contributed24h": "0.743524170380578413",
-    "won7d": "0.2724"
+    "contributed7d": "2.72379533325105431",
+    "contributed24h": "0.020075152600275617",
+    "won7d": "0.2724",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xf0b19f02c63d51b69563a2b675e0160e1c34397c",
-    "poolers": 63,
+    "poolers": 62,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -182,10 +200,12 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "49.819600392905750283",
-    "contributed24h": "11.923670699858967378",
-    "won7d": "7.7183",
-    "price": 3436.16
+    "contributed7d": "43.551621148063368941",
+    "contributed24h": "12.539828321544139468",
+    "won7d": "3.739",
+    "price": 3436.16,
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xd32ceefc5fd9e8a67b1a02e4d35c9f460c05ad2c",
@@ -204,7 +224,9 @@
     "price": 3.55,
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x87b1a4956b51be39781678677b0dd695a0c70f1e",
@@ -223,7 +245,9 @@
     "contributed7d": "0.0",
     "contributed24h": "0.0",
     "won7d": "0",
-    "price": 3.55
+    "price": 3.55,
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x457b69984315b53a1d8130b03b618cd98dd482a1",
@@ -242,6 +266,8 @@
     "price": 3.55,
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "c": 10,
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   }
 ]

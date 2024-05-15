@@ -23,14 +23,12 @@ const CONFIG = {
   MINPROFITPERCENTAGE: 1.001, // Minimum profit percentage for acceptance, 1.01 = 101%
   MAXWINNERS: 14, // Maximum number of winners to claim per transaction
   MAXINDICES: 16, // Maximum number of prize indices to claim per transaction
-//  GASCOSTFACTOR: 1.2, // Multiplier for estimated gas cost calculation
 //  USESANTA: false, // Use contract for claims with contract to sell claim fees back to WETH
   MINTOCLAIM: .005, // the claimer will collect rewards once the minimum is reached (.1 = .1 or more prize tokens)
   LAST_IN_LINE: [ // these addresses are pushed to back of claim list (deprioritized)
 ],
   // Liquidator Configuration
   slippage: 5, // Slippage tolerance for transactions (basis points)
-  maxGas: 600000, // Estimated gas amount per transaction
   profitThreshold: .001, // Profit threshold in $ for considering a transaction
   profitPercentage: 1.0001, // Required profit percentage over cost
 //  ONLYLIQUIDATE: ['0x7d72e1043FBaCF54aDc0610EA8649b23055462f0','0x006e714accBFEecD561a9B590e919402e871a91D'], // array of pairs to liquidate

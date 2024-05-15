@@ -17,7 +17,7 @@ function loadChainConfig(chainKey = CONFIG.CHAINNAME) {
   let chainConfig = CHAINS[chainKey.toUpperCase()] || Object.values(CHAINS).find(c => c.id === parseInt(chainKey));
 
   if (!chainConfig) {
-    console.error(`Chain not specified: ${chainKey}. Using default from ./constants/config ${CONFIG.CHAINNAME}`);
+    console.error(`Chain not specified or found. Using default from ./constants/config ${CONFIG.CHAINNAME}`);
     chainConfig = CHAINS[CONFIG.CHAINNAME]; // Fallback to the default chain name
   }
 

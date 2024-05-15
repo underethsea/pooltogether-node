@@ -29,6 +29,8 @@ const DONTSEND = false; // true to not send the txs
 
 const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
 
+
+const FORFREE = false // !!!!!!!!!!!!! bypasses profitability and sends auctions regardless of cost/reward
 async function checkAndCompleteRng() {
   const callsMain = [
     CONTRACTS.DRAWMANAGER[CHAINNAME].canStartDraw(),
@@ -99,7 +101,7 @@ async function handleOpenDraw(openDrawId) {
     );
     // Calculate percentage of the reward covered by the total cost
     const costPercentage = startDrawAward.mul(100).div(estimateFee);
-    if (startDrawAward.gt(estimateFee)) {
+    if (startDrawAward.gt(estimateFee) || FORFREE) {
       console.log(
         "Reward greater than ",
         estimateFee / 1e18,
@@ -131,7 +133,7 @@ async function handleOpenDraw(openDrawId) {
 
     
 
-        if (startDrawAward.gt(totalStartDrawCost)) {
+        if (startDrawAward.gt(totalStartDrawCost) || FORFREE) {
           if (DONTSEND) {
             console.log("DONT SEND is on, returning before tx send");
             return;
@@ -240,7 +242,7 @@ async function handleCloseDraw(drawIdToAward, openDrawId) {
         { maxFeePerGas: CHAINNAME === "ARBSEPOLIA" ? 17537000000 : 68000000}
       );
 
-      if (gasEstimate.lt(finishReward)) {
+      if (gasEstimate.lt(finishReward) || FORFREE) {
         try {
           if (DONTSEND) {
             console.log("DONTSEND is true, not sending the tx");

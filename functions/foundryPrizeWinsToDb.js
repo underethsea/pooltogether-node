@@ -1,4 +1,15 @@
 const fs = require('fs');
+const { loadChainConfig, getChainConfig } = require("../chains");
+
+const chainKey = process.argv[2] || "";
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
 
 // const { CONTRACTS } = require("../constants/contracts.js");
 const { PROVIDERS, SIGNER } = require("../constants/providers.js");
@@ -12,9 +23,6 @@ const { GetPrizePoolData } = require("../functions/getPrizePoolData.js");
 const chalk = require("chalk");
 const GetFoundryWinnersByVault = require('./foundryCalc')
 const section = chalk.hex("#47FDFB");
-
-
-const {getChainConfig } = require('../chains');
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 
@@ -163,5 +171,5 @@ function groupPlayersByVaultForFoundry(chain,prizePool,players) {
 }
 
 
-//FoundryPrizeWinsToDb(10)
+//FoundryPrizeWinsToDb(421614)
 module.exports = {FoundryPrizeWinsToDb}

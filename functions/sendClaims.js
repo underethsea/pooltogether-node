@@ -593,9 +593,9 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
         totalFee += fee;
         console.log(
           "prize payout ",
-          (payout / 1e18).toFixed(4),
+          payout > 0 ? (payout / 1e18).toFixed(6) : "canary",
           " fee collected ",
-          (fee / 1e18).toFixed(4)
+          (fee / 1e18).toFixed(6)
         );
       }
     });
@@ -626,9 +626,9 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
 
     console.log(
       "total payout ",
-      (totalPayout / 1e18).toFixed(4),
+      (totalPayout / 1e18).toFixed(6),
       " total fee collected ",
-      (totalFee / 1e18).toFixed(4)
+      (totalFee / 1e18).toFixed(6)
     );
 
     const netFromClaims =

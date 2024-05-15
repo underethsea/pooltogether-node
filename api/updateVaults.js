@@ -2,7 +2,7 @@ const ethers = require('ethers');
 const fs = require('fs');
 const axios = require('axios');
 const { ABI } = require('./constants/abi.js');
-const { PROVIDERS } = require('./constants/providers.js');
+const { PROVIDERS } = require('../constants/providers.js');
 const { OwnerInfo } = require("./functions/getVaultOwner.js")
 const updateTimeFile = './data/lastUpdateV5Vaults.json';
 
@@ -77,11 +77,10 @@ if (currentTime - lastUpdateTime >= 6 * 60 * 60 * 1000) {
       
       // Only consider prizes from the last 7 draws
       const won7d = getVault7dPrize(prizeData, vault.vault, lastAwardedDrawId);
-
       vault.contributed7d = contributedBetween;
       vault.contributed24h = contributed24h;
       vault.won7d = won7d; // Add this line to update the won7d value for each vault
-
+    
       
 try {
 ownerInfo = await OwnerInfo(vault.vault,PROVIDERS[chainName])
@@ -91,6 +90,10 @@ vault.gnosis = ownerInfo
 
       await setLastUpdateTime(vault.vault);
     }
+
+// Add chainId and prizePoolAddress to each vault
+    vault.c = chainId;
+    vault.pp = prizePoolAddress;
 
     updatedVaults.push(vault);
   }
@@ -186,6 +189,8 @@ try {
   
   existingData.push({ 
     ...newVault, 
+    c: chainId,
+    pp: prizePool,
     name, 
     symbol, 
     decimals, 

@@ -1,3 +1,15 @@
+const { loadChainConfig, getChainConfig } = require("../chains");
+
+const chainKey = process.argv[2] || "";
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
 const { PROVIDERS, SIGNER } = require("../constants/providers.js");
 const { CONFIG } = require("../constants/config")
 const { ADDRESS } = require("../constants/address.js");
@@ -8,7 +20,6 @@ const { GetWinnersByTier } = require("../functions/getWinnersByTier.js");
 const { GetPrizePoolData } = require("../functions/getPrizePoolData.js");
 const chalk = require("chalk");
 
-const {getChainConfig } = require('../chains');
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 

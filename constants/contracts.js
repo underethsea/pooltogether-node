@@ -8,7 +8,8 @@ const { getChainConfig } = require("../chains");
 const CHAINNAME = getChainConfig().CHAINNAME;
 const isTestnet = CHAINS[CHAINNAME]?.testnet;
 const isOpchain = CHAINS[CHAINNAME]?.opchain
-
+const hasSwapper = ADDRESS[CHAINNAME].SWAPPER
+const hasUniFlashLiquidator = ADDRESS[CHAINNAME].UNIFLASHLIQUIDATOR
 const CONTRACTS = {
   /*  WINBOOSTERSIGNER: {
     [CHAINNAME]: new ethers.Contract(
@@ -38,22 +39,27 @@ const CONTRACTS = {
       PROVIDERS[CHAINNAME]
     ),
   },
-
+*/
+...(hasUniFlashLiquidator ? {
 UNIFLASHLIQUIDATORSIGNER: {
 [CHAINNAME]: new ethers.Contract(
       ADDRESS[CHAINNAME].UNIFLASHLIQUIDATOR,
       ABI.UNIFLASHLIQUIDATOR,
       SIGNER
     ),
-},
-  SWAPPERSIGNER: {
-    [CHAINNAME]: new ethers.Contract(
-      ADDRESS[CHAINNAME].SWAPPER,
-      ABI.SWAPPER,
-      SIGNER
-    ),
-  },
-*/
+}
+}: {}),
+
+...(hasSwapper ? {
+    SWAPPERSIGNER: {
+      [CHAINNAME]: new ethers.Contract(
+        ADDRESS[CHAINNAME].SWAPPER,
+        ABI.SWAPPER,
+        SIGNER
+      ),
+    }
+  } : {}),
+
 
   /*  GAS: {
   [CHAINNAME]: new ethers.Contract(
