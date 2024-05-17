@@ -102,7 +102,7 @@ async function OutAndBack(
 
   const swapBack = await BuildTxForSwap(swapBackParam);
 
-  console.log("1 inch swap data", swapBack);
+  //console.log("1 inch swap data", swapBack);
 
   const swapData = swapBack.data;
   //const swapData = replaceAddressInCalldata(swapBack.data,"0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",ADDRESS[CHAINNAME].SWAPPER)

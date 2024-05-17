@@ -339,12 +339,13 @@ pairs =  pairs.concat(uniV2Pairs)
                 (outValue - prizeTokenValue).toFixed(2)
             );
 
+            if(!CONFIG.USESWAPPER){
             if (maxToSendWithSlippage.gt(walletPrizeTokenBalance)) {
               console.log(
                 "not enough prize token to estimate and send liquidation"
               );
               continue;
-            }
+            }}
 
             if (outValue - profitThreshold < prizeTokenValue) {
               console.log("not profitable...");

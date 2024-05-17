@@ -24,7 +24,8 @@ const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
 const PrizeLeaderboard = require("./functions/getPrizeLeaderboard");
 
 const { ADDRESS } = require("../constants/address");
-
+const { ABI } = require("../constants/abi")
+const { PROVIDERS } = require("../constants/providers")
 dotenv.config();
 // var sanitizer = require('sanitize');
 const waitTime = 120000;
@@ -63,12 +64,12 @@ const chains = [
     subgraph:
       "https://api.studio.thegraph.com/proxy/63100/pt-v5-optimism/version/latest/",
   },
-  {
+/*  {
     id: 421614,
     name: "ARBSEPOLIA",
     prizePool: ADDRESS["ARBSEPOLIA"].PRIZEPOOL.toLowerCase(),
     subgraph: ADDRESS["ARBSEPOLIA"].PRIZEPOOLSUBGRAPH,
-  },
+  },*/
  {
     id: 8453,
     name: "BASE",
@@ -314,14 +315,29 @@ try {
     let uniAssets;
     try {
       const uniPrices = await FindAndPriceUniv2Assets();
-      uniAssets = uniPrices.map(asset => ({
-        ...asset,
-        price: asset.price * ethPrice // Convert UNI prices to USD
-      }));
+console.log("UNI PRICES",uniPrices)
+console.log("eth price",ethPrice)
+console.log("")
+console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("")
+// Flatten the uniPrices object into an array
+  const flattenedUniPrices = Object.entries(uniPrices).flatMap(([chain, assets]) =>
+    Object.entries(assets).map(([address, price]) => ({
+      chain,
+      address,
+      price: parseFloat(price), // Ensure price is a number
+    }))
+  );  
+
+
+  // Convert UNI prices to USD using ETH price
+  uniAssets = flattenedUniPrices.map(asset => ({
+    ...asset,
+    price: asset.price * ethPrice, // Convert UNI prices to USD
+  }));
     } catch (e) {
       console.log(e);
     }
-
+console.log("uni asssets",uniAssets)
     const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, priceResults.geckos);
 
     // Merge UNI and Gecko prices
@@ -347,9 +363,19 @@ console.log("2321323123312232132312331223213231233122321323123312232132312331223
 
 
 
-
+  let pendingPrize = {}
+   // todo meta poolers
   let vaultOverview = [];
   for (let chain of chains) {
+
+try{
+const prizePoolContract = new ethers.Contract(chain.prizePool,ABI.PRIZEPOOL,PROVIDERS[chain.name])
+const wethPrizeBalance = await prizePoolContract.accountedBalance()
+pendingPrize[chain.name] = wethPrizeBalance.toString()
+console.log("GOT PENDING PRIZE",chain.name,wethPrizeBalance.toString())
+console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");
+} catch(e){console.log("error trying to get prize pool totals",e)}
+
     let v5Prizes;
     try {
       // Fetch prizes for each chain and prize pool
@@ -446,6 +472,9 @@ console.log("2321323123312232132312331223213231233122321323123312232132312331223
     }
   }
   await publish(vaultOverview, "/vaults");
+metaOverview = {pendingPrize: pendingPrize}  
+try{
+await publish(JSON.stringify(metaOverview),"/overview")}catch(e){console.log("error publishing meta overview /overview",e)}
 
   await delay(60000);
 

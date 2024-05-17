@@ -85,7 +85,14 @@ if (currentTime - lastUpdateTime >= 6 * 60 * 60 * 1000) {
 try {
 ownerInfo = await OwnerInfo(vault.vault,PROVIDERS[chainName])
 vault.gnosis = ownerInfo
-}catch(e){console.log("error getting vault owner info",e)}
+}catch(error){
+
+ console.error(`Error fetching vault owner for ${vault.vault} : ${error.message}`);
+  console.error(`Reason: ${error.reason || error.code}`);
+  console.error(`URL: ${error.transaction?.url || error.config?.url}`);
+  console.error(`Headers: ${JSON.stringify(error.config?.headers || {}, null, 2)}`);
+
+}
 
 
       await setLastUpdateTime(vault.vault);
@@ -201,7 +208,7 @@ try {
     gnosis 
   });  contractAddresses.push(asset);
 } catch (error) {
-  console.error(`Error fetching data for vault ${newVault.vault}:`, error);
+  console.error(`Error fetching data for vault ${newVault.vault}:`, error.message);
 }
 
     }
@@ -266,12 +273,28 @@ async function fetchTokenPricesAndUpdateVaults(existingData, chain) {
       }
     });
   } catch (error) {
-    console.error('Error fetching token prices:', error);
+    console.error('Error fetching token prices:', logError(error));
   }
 
   return existingData; // Return the updated array
 }
 
+const logError = (error) => {
+  if (error.response) {
+    // The request was made and the server responded with a status code that falls out of the range of 2xx
+    console.error(`Error fetching token prices: ${error.message}`);
+    console.error(`Status Code: ${error.response.status}`);
+    console.error(`URL: ${error.config.url}`);
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error(`Error fetching token prices: No response received`);
+    console.error(`URL: ${error.config.url}`);
+    console.error(`Headers: ${JSON.stringify(error.config.headers, null, 2)}`);
+  } else {
+    // Something happened in setting up the request that triggered an Error
+    console.error(`Error fetching token prices for vaults: ${error.message}`);
+  }
+};
 
 
 // Example usage:/

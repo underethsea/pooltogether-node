@@ -1,7 +1,7 @@
 [
   {
     "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
-    "poolers": 245,
+    "poolers": 243,
     "name": "Prize USDC.e - Aave",
     "symbol": "pUSDC.e",
     "decimals": 6,
@@ -14,9 +14,9 @@
       "total": 3
     },
     "price": 0.999406,
-    "contributed7d": "501.372798324129370584",
-    "contributed24h": "138.880057805799940841",
-    "won7d": "346.2962",
+    "contributed7d": "489.805416989337111988",
+    "contributed24h": "143.901334574122085499",
+    "won7d": "201.2647",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
@@ -35,15 +35,15 @@
       "total": 3
     },
     "price": 3436.16,
-    "contributed7d": "0.011314965051059864",
-    "contributed24h": "0.000025026255459477",
+    "contributed7d": "0.003394489515317959",
+    "contributed24h": "0.000007507876637843",
     "won7d": "0",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
-    "poolers": 21,
+    "poolers": 20,
     "name": "Prize DAI - Aave",
     "symbol": "pDAI",
     "decimals": 18,
@@ -56,8 +56,8 @@
       "total": 0
     },
     "price": 0.998246,
-    "contributed7d": "6.251475620095463585",
-    "contributed24h": "1.652300869765071041",
+    "contributed7d": "6.110039389909914125",
+    "contributed24h": "0.495690260929521318",
     "won7d": "0.2608",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
@@ -180,15 +180,15 @@
       "total": 3
     },
     "price": 0.999529,
-    "contributed7d": "2.72379533325105431",
-    "contributed24h": "0.020075152600275617",
+    "contributed7d": "2.722936123239986011",
+    "contributed24h": "0.006022545780082685",
     "won7d": "0.2724",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xf0b19f02c63d51b69563a2b675e0160e1c34397c",
-    "poolers": 62,
+    "poolers": 61,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -200,9 +200,9 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "43.551621148063368941",
-    "contributed24h": "12.539828321544139468",
-    "won7d": "3.739",
+    "contributed7d": "42.987482585171542858",
+    "contributed24h": "12.952872037956710838",
+    "won7d": "4.0974",
     "price": 3436.16,
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"

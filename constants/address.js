@@ -15,7 +15,7 @@ const ADDRESS = {
   BASE: {
     PRIZEPOOLSUBGRAPH: "https://api.studio.thegraph.com/query/41211/pt-v5-base/version/latest",
     GASORACLE: "0x420000000000000000000000000000000000000F",
-    SWAPPER: "0x374cBE30c0CFece0a4c2A28E0E7c40c86D517aAa",
+    SWAPPER: "0x0A52822Bf48c1FAfe1A89d2a41C74419FDC8864c",
     PRIZETOKEN: {
       ADDRESS: "0x4200000000000000000000000000000000000006",
       SYMBOL: "WETH",
@@ -95,7 +95,103 @@ const ADDRESS = {
     VAULTICON: ''
   }
 	
-    ]
+    ],
+BOOSTS : [
+  {
+    LIQUIDATIONPAIR: "0xAb4470Ef16f94da262B40A49360e8fC1AdCb6c1a",
+    SYMBOL:"wethBooster",
+    NAME: "booster",
+    DECIMALS: 18,
+    ASSET: "0x4200000000000000000000000000000000000006",
+    ASSETSYMBOL: "WETH",
+    GECKO: "ethereum"
+  },
+  {
+    LIQUIDATIONPAIR: "0xC5e1f487c71fc6BadA3D9Ab44d57B417aF65710A",
+    SYMBOL:"wethBooster",    
+    NAME: "booster",
+    DECIMALS: 18,
+    ASSET: "0x4200000000000000000000000000000000000006",
+    ASSETSYMBOL: "WETH",
+    GECKO: "ethereum"
+  },
+  {
+    LIQUIDATIONPAIR: "0xeC885af409f5Fe10264E9531257bde773c5596a5",
+    SYMBOL:"wethBooster",
+    NAME: "booster",
+    DECIMALS: 18,
+    ASSET: "0x4200000000000000000000000000000000000006",
+    ASSETSYMBOL: "WETH",
+    GECKO: "ethereum"
+  },
+  {
+    LIQUIDATIONPAIR: "0x46909bA075129459E5060ddCaA42D7140E4808eF",
+    SYMBOL:"wethBooster",
+    NAME: "booster",
+    DECIMALS: 18,
+    ASSET: "0x4200000000000000000000000000000000000006",
+    ASSETSYMBOL: "WETH",
+    GECKO: "ethereum"
+  }
+],
+
+PAIRS: [
+ {
+        VAULT: "0xFc266fE91b15B2c9FdA967552fEb8DDF69F06968",
+        LIQUIDATIONPAIR: "0x906b6829cc14d74a4686af3900099f55771518a0",
+        SYMBOL: "WELLCbethRwd",
+        NAME: "MoonWell CBETH Reweard",
+        DECIMALS: 18,
+        ASSET: "0xA88594D404727625A9437C3f886C7643872296AE",
+        ASSETSYMBOL: "WELL",
+        GECKO: "moonwell-artemis",
+        NOVAULT: true,
+      },
+ {
+        VAULT: "0x7f5C2b379b88499aC2B997Db583f8079503f25b9",
+        LIQUIDATIONPAIR: "0xbbFdf66eBFa713f6d9ade5f0cAa5C91cfdA8d56a",
+        SYMBOL: "WELLUSDCRwd",
+        NAME: "MoonWell USDC Reweard",
+        DECIMALS: 18,
+        ASSET: "0xA88594D404727625A9437C3f886C7643872296AE",
+        ASSETSYMBOL: "WELL",
+        GECKO: "moonwell-artemis",
+        NOVAULT: true,
+      },
+{
+        VAULT: "0x8d1322CaBe5Ef2949f6bf4941Cc7765187C1091A",
+        LIQUIDATIONPAIR: "0xd7b8470CCEe4d2Cb56f2Ba354736aCA3AAe363a9",
+        SYMBOL: "WELLAeroRWD",
+        NAME: "MoonWell Aero Reweard",
+        DECIMALS: 18,
+        ASSET: "0xA88594D404727625A9437C3f886C7643872296AE",
+        ASSETSYMBOL: "WELL",
+        GECKO: "moonwell-artemis",
+        NOVAULT: true,
+      },
+ {
+        VAULT: "0x7f5C2b379b88499aC2B997Db583f8079503f25b9",
+        LIQUIDATIONPAIR: "0xbbfdf66ebfa713f6d9ade5f0caa5c91cfda8d56a",
+        SYMBOL: "WELLUSDCUSDRWD",
+        NAME: "Moonwell Usdc Usdc RWD",
+        DECIMALS: 18,
+        ASSET: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        ASSETSYMBOL: "USDC",
+        GECKO: "usd-coin",
+        NOVAULT: true,
+      },
+      {
+        VAULT: "0x75D700F4C21528A2bb603b6Ed899ACFdE5c4B086",
+        LIQUIDATIONPAIR: "0x8b79cA469DE63ACBCbAf747F61E8EE71fa4Cc1eD",
+        SYMBOL: "WELLwstETH",
+        NAME: "MoonWell wstETH",
+        DECIMALS: 18,
+        ASSET: "0xA88594D404727625A9437C3f886C7643872296AE",
+        ASSETSYMBOL: "WELL",
+        GECKO: "moonwell-artemis",
+        NOVAULT: true,
+      },
+    ],
   },
   OPTIMISM: {
     PRIZEPOOLSUBGRAPH:

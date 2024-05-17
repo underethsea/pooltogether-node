@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x6b5a5c55e9dd4bb502ce25bbfbaa49b69cf7e4dd",
-    "poolers": 1,
+    "poolers": 7,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize POOL",
@@ -21,7 +21,7 @@
   },
   {
     "vault": "0x7f5c2b379b88499ac2b997db583f8079503f25b9",
-    "poolers": 1,
+    "poolers": 16,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize USDC - Moonwell",
@@ -41,7 +41,7 @@
   },
   {
     "vault": "0x8d1322cabe5ef2949f6bf4941cc7765187c1091a",
-    "poolers": 1,
+    "poolers": 9,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize AERO - Moonwell",
@@ -61,7 +61,7 @@
   },
   {
     "vault": "0x75d700f4c21528a2bb603b6ed899acfde5c4b086",
-    "poolers": 1,
+    "poolers": 8,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize wstETH - Moonwell",
@@ -71,6 +71,66 @@
     "owner": "0xDc9522Fc21cF9878781224C54221D4479Dd1a739",
     "liquidationPair": "0xF94F69EeDDDF0A088f0A16D9aC569C1729F6444F",
     "assetSymbol": "wstETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x1e56e11bf011b46546540036dbee8820ddce5cdf",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize Lonser",
+    "symbol": "przLONSER",
+    "decimals": 18,
+    "asset": "0x6fBD576DD4AbcA30CD261ebF7300E407630E1F3e",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "LONSER",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x850ec48d2605aad9c3de345a6a357a9a14b8cf1b",
+    "poolers": 2,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize POOL/LUSD Beefy",
+    "symbol": "przPOOLLUSD",
+    "decimals": 18,
+    "asset": "0x0b15b1d434f86eCaa83d14398C8Db6d162F3921e",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "vAMM-LUSD/POOL",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": 0,
+    "contributed24h": 0,
+    "won7d": "0"
+  },
+  {
+    "vault": "0x5b623c127254c6fec04b492ecdf4b11c45fbb9d5",
+    "poolers": 4,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize cbETH - Moonwell",
+    "symbol": "przCBETH",
+    "decimals": 18,
+    "asset": "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22",
+    "owner": "0xDc9522Fc21cF9878781224C54221D4479Dd1a739",
+    "liquidationPair": "0xeBD0A1161e833c090F88D57159c91eEC371E7e67",
+    "assetSymbol": "cbETH",
     "gnosis": {
       "required": -1,
       "total": 0

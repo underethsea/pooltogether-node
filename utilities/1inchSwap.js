@@ -46,7 +46,10 @@ async function approve() {
 
 const broadcastApiUrl =
   "https://api.1inch.dev/tx-gateway/v1.1/" + chainId + "/broadcast";
-const apiBaseUrl = "https://api.1inch.dev/swap/v5.2/" + chainId;
+
+let version
+if(parseInt(chainId) === 8453){version="5.2"} else {version = "5.2"} 
+const apiBaseUrl = "https://api.1inch.dev/swap/v"+version+"/" + chainId;
 function apiRequestUrl(methodName, queryParams) {
   return (
     apiBaseUrl + methodName + "?" + new URLSearchParams(queryParams).toString()
