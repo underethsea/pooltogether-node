@@ -1,1 +1,82 @@
-[]
+[
+  {
+    "draw": 1,
+    "tiers": {
+      "2": {
+        "value": "18929678031538776",
+        "totalWins": "19",
+        "totalClaims": "19"
+      },
+      "3": {
+        "value": "189296780315387",
+        "totalWins": "65",
+        "totalClaims": "65"
+      },
+      "4": {
+        "value": "47324195078846",
+        "totalWins": "261",
+        "totalClaims": "259"
+      }
+    }
+  },
+  {
+    "draw": 2,
+    "tiers": {
+      "1": {
+        "value": "90651823248435420",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "2": {
+        "value": "11423459480882692",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "933319445142520",
+        "totalWins": "76",
+        "totalClaims": "76"
+      },
+      "4": {
+        "value": "9333194451425",
+        "totalWins": "264",
+        "totalClaims": "262"
+      },
+      "5": {
+        "value": "2333298612856",
+        "totalWins": "1028",
+        "totalClaims": "991"
+      }
+    }
+  },
+  {
+    "draw": 3,
+    "tiers": {
+      "2": {
+        "value": "12232489515477776",
+        "totalWins": "1",
+        "totalClaims": "1"
+      },
+      "3": {
+        "value": "670664310432267",
+        "totalWins": "10",
+        "totalClaims": "10"
+      },
+      "4": {
+        "value": "72875821460791",
+        "totalWins": "274",
+        "totalClaims": "274"
+      },
+      "5": {
+        "value": "728758214607",
+        "totalWins": "1017",
+        "totalClaims": "0"
+      },
+      "6": {
+        "value": "182189553651",
+        "totalWins": "4013",
+        "totalClaims": "0"
+      }
+    }
+  }
+]

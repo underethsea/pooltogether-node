@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x6b5a5c55e9dd4bb502ce25bbfbaa49b69cf7e4dd",
-    "poolers": 7,
+    "poolers": 19,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize POOL",
@@ -16,12 +16,12 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.035684123773436623",
+    "won7d": "0.0443"
   },
   {
     "vault": "0x7f5c2b379b88499ac2b997db583f8079503f25b9",
-    "poolers": 16,
+    "poolers": 67,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize USDC - Moonwell",
@@ -36,12 +36,12 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.012588278289856073",
+    "won7d": "0.0021999999999999997"
   },
   {
     "vault": "0x8d1322cabe5ef2949f6bf4941cc7765187c1091a",
-    "poolers": 9,
+    "poolers": 19,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize AERO - Moonwell",
@@ -56,12 +56,12 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.015794525047488543",
+    "won7d": "0.0037"
   },
   {
     "vault": "0x75d700f4c21528a2bb603b6ed899acfde5c4b086",
-    "poolers": 8,
+    "poolers": 28,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize wstETH - Moonwell",
@@ -76,8 +76,8 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.002900546397063699",
+    "won7d": "0.0004"
   },
   {
     "vault": "0x1e56e11bf011b46546540036dbee8820ddce5cdf",
@@ -96,8 +96,8 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.0",
+    "won7d": "0.0757"
   },
   {
     "vault": "0x850ec48d2605aad9c3de345a6a357a9a14b8cf1b",
@@ -116,12 +116,12 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
+    "contributed24h": "0.0",
     "won7d": "0"
   },
   {
     "vault": "0x5b623c127254c6fec04b492ecdf4b11c45fbb9d5",
-    "poolers": 4,
+    "poolers": 23,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize cbETH - Moonwell",
@@ -136,7 +136,7 @@
       "total": 0
     },
     "contributed7d": 0,
-    "contributed24h": 0,
-    "won7d": "0"
+    "contributed24h": "0.00277155240783045",
+    "won7d": "0.0001"
   }
 ]

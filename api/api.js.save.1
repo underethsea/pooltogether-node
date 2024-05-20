@@ -231,12 +231,11 @@ async function update() {
   console.log("updating ", chains.length, "chains");
   let chainDraws;
 
-const prizepools = chains
-  .filter(chain => !chain.hideFromApp)
-  .map(chain => chain.prizePool);
+const prizepools = chains.map(chain => chain.prizePool);
+
     try {
-        const leaders = await PrizeLeaderboard(prizepools);
-      await publish(JSON.stringify(leaders), "/prizeleaderboard");
+        const result = await PrizeLeaderboard(prizepools);
+      await publish(JSON.stringify(l), "/prizeleaderboard");
     } catch (error) {
         console.error("Error calling PrizeLeaderboard:", error);
    }

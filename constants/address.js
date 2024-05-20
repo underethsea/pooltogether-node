@@ -152,7 +152,7 @@ PAIRS: [
         LIQUIDATIONPAIR: "0xbbFdf66eBFa713f6d9ade5f0cAa5C91cfdA8d56a",
         SYMBOL: "WELLUSDCRwd",
         NAME: "MoonWell USDC Reweard",
-        DECIMALS: 18,
+        DECIMALS: 6,
         ASSET: "0xA88594D404727625A9437C3f886C7643872296AE",
         ASSETSYMBOL: "WELL",
         GECKO: "moonwell-artemis",

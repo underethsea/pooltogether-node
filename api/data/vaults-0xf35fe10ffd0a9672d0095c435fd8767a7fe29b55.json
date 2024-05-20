@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x1f16d3ccf568e96019cedc8a2c79d2ca6257894e",
-    "poolers": 49,
+    "poolers": 40,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize LUSD",
@@ -15,13 +15,13 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.091029378761084448",
-    "contributed24h": "0.033614689848133532",
-    "won7d": "0.043000000000000003"
+    "contributed7d": "0.108324006805903565",
+    "contributed24h": "0.011827466301577786",
+    "won7d": "0.0335"
   },
   {
     "vault": "0x03d3ce84279cb6f54f5e6074ff0f8319d830dafe",
-    "poolers": 284,
+    "poolers": 320,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize USDC",
@@ -35,13 +35,13 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.604340654431417273",
-    "contributed24h": "0.182083602220612991",
-    "won7d": "0.19569999999999999"
+    "contributed7d": "0.670855167907266757",
+    "contributed24h": "0.122461011862662998",
+    "won7d": "0.22879999999999998"
   },
   {
     "vault": "0xa52e38a9147f5ea9e0c5547376c21c9e3f3e5e1f",
-    "poolers": 151,
+    "poolers": 155,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize POOL",
@@ -55,13 +55,13 @@
       "required": 0,
       "total": 0
     },
-    "contributed7d": "0.092086714724530805",
-    "contributed24h": "0.024825330622715201",
-    "won7d": "0.0271"
+    "contributed7d": "0.105670113289355958",
+    "contributed24h": "0.021190894067616261",
+    "won7d": "0.052199999999999996"
   },
   {
     "vault": "0x2998c1685e308661123f64b333767266035f5020",
-    "poolers": 137,
+    "poolers": 209,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize WETH",
@@ -75,13 +75,13 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.039093965492342635",
-    "contributed24h": "0.011600310244142435",
-    "won7d": "0.0017000000000000001"
+    "contributed7d": "0.042747072101112985",
+    "contributed24h": "0.006235558836338556",
+    "won7d": "0.02"
   },
   {
     "vault": "0x3e8dbe51da479f7e8ac46307af99ad5b4b5b41dc",
-    "poolers": 106,
+    "poolers": 95,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize DAI",
@@ -95,9 +95,9 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.186434993821991749",
-    "contributed24h": "0.078091455559743547",
-    "won7d": "0.0533"
+    "contributed7d": "0.191079611973468989",
+    "contributed24h": "0.018196399655990626",
+    "won7d": "0.0534"
   },
   {
     "vault": "0x182d3050f7261494757638ff3345c7163e5990f3",
@@ -121,7 +121,7 @@
   },
   {
     "vault": "0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de",
-    "poolers": 21,
+    "poolers": 17,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize OP - Beefy Sonne",
@@ -135,8 +135,8 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.001094357876366",
-    "contributed24h": "0.000469050103702349",
+    "contributed7d": "0.001485878392923706",
+    "contributed24h": "0.000185660055088875",
     "won7d": "0"
   },
   {
@@ -175,9 +175,9 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "0.189081731934738475",
-    "contributed24h": "0.065393319363180368",
-    "won7d": "0.0391"
+    "contributed7d": "0.231851852261541725",
+    "contributed24h": "0.033126181876898328",
+    "won7d": "0.1162"
   },
   {
     "vault": "0x37e49c9dbf195f5d436c7a7610fe703cdcd8147b",
@@ -221,7 +221,7 @@
   },
   {
     "vault": "0xa46de5b77dbe59a7b9213f3dd1634da25e7e3bfb",
-    "poolers": 2,
+    "poolers": 3,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "BanklessDAO Test WETH Vault",
@@ -255,8 +255,28 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": "0.000845657663639851",
-    "contributed24h": "0.000354764805721777",
+    "contributed7d": "0.010808357459086948",
+    "contributed24h": "0.009484669336045747",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x171d898849cd21a1ca6e111933dad1f5b8664c88",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize BLVD - Sponsored",
+    "symbol": "przBLVD",
+    "decimals": 18,
+    "asset": "0xeeD725482c9268293E1E2313AA099Fd4ec8C163E",
+    "owner": "0x957B022767E8427E08De78ab5445fF006Ab41f61",
+    "liquidationPair": "0x921252e29b6612968Ba8523a7ef6C9Eeb9CC2890",
+    "assetSymbol": "BLVD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
     "won7d": "0"
   }
 ]

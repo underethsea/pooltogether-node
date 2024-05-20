@@ -171,5 +171,5 @@ function groupPlayersByVaultForFoundry(chain,prizePool,players) {
 }
 
 
-//FoundryPrizeWinsToDb(421614)
+//FoundryPrizeWinsToDb()
 module.exports = {FoundryPrizeWinsToDb}

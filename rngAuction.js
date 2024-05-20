@@ -70,7 +70,7 @@ async function checkAndCompleteRng() {
 }
 
 async function handleExpiredDraw(openDrawClosesAt) {
-  const waitTime = parseInt(openDrawClosesAt) * 1000 - Date.now() + 5200;
+  const waitTime = parseInt(openDrawClosesAt) * 1000 - Date.now() + 7200;
   if (waitTime > 0) {
     console.log(
       `Waiting ${waitTime / 1000} seconds until the next draw closes.`

@@ -1,7 +1,7 @@
 [
   {
     "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
-    "poolers": 243,
+    "poolers": 241,
     "name": "Prize USDC.e - Aave",
     "symbol": "pUSDC.e",
     "decimals": 6,
@@ -14,15 +14,15 @@
       "total": 3
     },
     "price": 0.999406,
-    "contributed7d": "489.805416989337111988",
-    "contributed24h": "143.901334574122085499",
-    "won7d": "201.2647",
+    "contributed7d": "453.334101694516180433",
+    "contributed24h": "59.704761126049534199",
+    "won7d": "165.8904",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0x29cb69d4780b53c1e5cd4d2b817142d2e9890715",
-    "poolers": 35,
+    "poolers": 34,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -35,15 +35,15 @@
       "total": 3
     },
     "price": 3436.16,
-    "contributed7d": "0.003394489515317959",
-    "contributed24h": "0.000007507876637843",
+    "contributed7d": "0.000027495365074075",
+    "contributed24h": "0.000000014033954023",
     "won7d": "0",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
-    "poolers": 20,
+    "poolers": 21,
     "name": "Prize DAI - Aave",
     "symbol": "pDAI",
     "decimals": 18,
@@ -56,9 +56,9 @@
       "total": 0
     },
     "price": 0.998246,
-    "contributed7d": "6.110039389909914125",
-    "contributed24h": "0.495690260929521318",
-    "won7d": "0.2608",
+    "contributed7d": "7.941495436983769529",
+    "contributed24h": "0.397585520866608487",
+    "won7d": "0",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
@@ -180,15 +180,15 @@
       "total": 3
     },
     "price": 0.999529,
-    "contributed7d": "2.722936123239986011",
-    "contributed24h": "0.006022545780082685",
-    "won7d": "0.2724",
+    "contributed7d": "0.022055782598243886",
+    "contributed24h": "0.000011257527881231",
+    "won7d": "0",
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
   },
   {
     "vault": "0xf0b19f02c63d51b69563a2b675e0160e1c34397c",
-    "poolers": 61,
+    "poolers": 60,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -200,9 +200,9 @@
       "required": 2,
       "total": 3
     },
-    "contributed7d": "42.987482585171542858",
-    "contributed24h": "12.952872037956710838",
-    "won7d": "4.0974",
+    "contributed7d": "47.780859287243799306",
+    "contributed24h": "7.450691509259461651",
+    "won7d": "12.3839",
     "price": 3436.16,
     "c": 10,
     "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"

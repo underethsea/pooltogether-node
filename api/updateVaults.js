@@ -43,7 +43,8 @@ async function getPrizePoolData(prizePoolContract, vaultAddress, lastAwardedDraw
 
 async function getContributed24h(prizePoolContract, vaultAddress, lastAwardedDrawId) {
   try {
-    const contributed24h = await prizePoolContract.getContributedBetween(vaultAddress, lastAwardedDrawId - 1, lastAwardedDrawId);
+    // draw ids are inclusive on both sides
+    const contributed24h = await prizePoolContract.getContributedBetween(vaultAddress, lastAwardedDrawId, lastAwardedDrawId);
     return ethers.utils.formatUnits(contributed24h, 18);
   } catch (error) {
     console.error('Error fetching contributed24h data:', error);
