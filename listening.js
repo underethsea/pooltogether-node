@@ -90,7 +90,8 @@ const args = decodedLog.args
           fee: args.claimReward,
           miner: args.claimRewardRecipient.toLowerCase(),
           hash: claimEvent.transactionHash.toLowerCase(),
-          block: claimEvent.blockNumber
+          block: claimEvent.blockNumber,
+          chainName: chain
         };
         AddClaim(chainId,prizepool,claim).then((finished)=>{})
         

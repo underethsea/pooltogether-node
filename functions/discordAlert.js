@@ -81,7 +81,9 @@ const payAmount = parseInt(claim.payout) / 1e18
               INSERT INTO v5claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
               VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
           `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool]);
-const message = " 🏆 WINNER `" + subscriber.wallet.substring(0,6) + "` WON " + payAmount.toFixed(6) + " " + ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL + " " + labelMessage;
+const message = " 🏆 WINNER " + claim.chainName + " `" + 
+subscriber.wallet.substring(0,6) + "` WON " + payAmount.toFixed(6) + " " + 
+ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL + " " + labelMessage;
       await tellUser(subscriber.discord, message);
 
 
