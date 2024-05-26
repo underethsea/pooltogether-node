@@ -1,6 +1,6 @@
 const ethers = require('ethers');
 const { ABI } = require('../constants/abi');
-const { PROVIDERS } = require("../constants/providers")
+const { PROVIDERS } = require("../../constants/providers")
 
 // not sure this works right
 async function isContractAddress(address, provider) {

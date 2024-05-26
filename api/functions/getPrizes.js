@@ -1,6 +1,6 @@
 const ethers = require("ethers")
 const {ABI} = require("../constants/abi")
-const {PROVIDERS} = require("../constants/providers")
+const {PROVIDERS} = require("../../constants/providers")
 
 async function GetPrizes(chainName,prizepoolAddress) {
  const prizepoolContract = new ethers.Contract(prizepoolAddress,ABI.PRIZEPOOLFINAL,PROVIDERS[chainName])
@@ -18,7 +18,7 @@ async function GetPrizes(chainName,prizepoolAddress) {
           prizepoolContract.prizeToken()
         ]);
   const prizeTokenContract = new ethers.Contract(prizetokenAddress,ABI.ERC20,PROVIDERS[chainName])
-        const prizePoolPOOLBalance = await  prizeTokenContract.balanceOf(prizepoolAddress)
+        const prizePoolPrizeBalance = await  prizeTokenContract.balanceOf(prizepoolAddress)
         let tierPrizeValues = [];
         let tierData = [];
         const multicallData = [];
@@ -63,7 +63,7 @@ async function GetPrizes(chainName,prizepoolAddress) {
           drawPeriodSeconds: drawPeriodSeconds,
           nextDrawId: nextDrawId,
           numberOfTiers: numberOfTiers,
-          prizePoolPOOLBalance: prizePoolPOOLBalance.toString(),
+          prizePoolPrizeBalance: prizePoolPrizeBalance.toString(),
           tierData,
           //prizeTokenPrice: Number((prizeAssetPrice).price)
         };
@@ -78,3 +78,4 @@ async function GetPrizes(chainName,prizepoolAddress) {
 module.exports = { GetPrizes };
  
 //GetPrizes("0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A","0x395Ae52bB17aef68C2888d941736A71dC6d4e125")
+//GetPrizes("BASE","0x45b2010d8A4f08b53c9fa7544C51dFd9733732cb")

@@ -240,12 +240,21 @@ const prizepools = chains
     } catch (error) {
         console.error("Error calling PrizeLeaderboard:", error);
    }
-
+ let allPoolsUniqueWinners = new Set();
   for (let chain of chains) {
     let allDrawsOverview = [];
     let allDrawsOverviewClaims = [];
 
     chainDraws = await updateChain(chain.id, chain.prizePool);
+console.log("unique winners",chainDraws.uniqueWinners)  
+  // meta unique winners
+if (chainDraws.uniqueWinners instanceof Set) {
+      chainDraws.uniqueWinners.forEach(value => {
+        allPoolsUniqueWinners.add(value);
+      });
+    } else {
+      console.error('uniqueWinners is not a Set for chain', chain.id);
+    }
     allDrawsOverview.push({ chain: chain.id, draws: chainDraws.wins });
     allDrawsOverviewClaims.push({
       chain: chain.id,
@@ -259,7 +268,8 @@ const prizepools = chains
     );
     // Determine the path suffix based on whether prizePool is provided
     const pathSuffix = chain.prizePool ? `-${chain.prizePool}` : "";
-
+const uniqueOverview = {total:allPoolsUniqueWinners.size}
+await publish(JSON.stringify(uniqueOverview),"/totalunique")
     await publish(
       JSON.stringify(allDrawsOverview),
       `/draws-${chain.id}${pathSuffix}`
@@ -350,6 +360,7 @@ console.log("");console.log("");console.log("");console.log("");console.log("");
     }
 console.log("uni asssets",uniAssets)
     const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, priceResults.geckos);
+console.log("created chain asset prices",chainsAssetsPrices)
 
     // Merge UNI and Gecko prices
     priceResults.assets = mergeChainsAssetsPrices(uniAssets, chainsAssetsPrices);
@@ -365,26 +376,19 @@ console.log("uni asssets",uniAssets)
     console.log("price is missing in Gecko prices. No new prices fetched.");
   }
 } catch (e) {
-console.log("2321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312232132312331223213231233122321323123312")
   console.log("price fetch bombed=======================", e);
 }
-
-
-
-
-
 
   let pendingPrize = {}
    // todo meta poolers
   let vaultOverview = [];
   for (let chain of chains) {
-
+pendingPrize[chain.name] = {}
 try{
 const prizePoolContract = new ethers.Contract(chain.prizePool,ABI.PRIZEPOOL,PROVIDERS[chain.name])
 const wethPrizeBalance = await prizePoolContract.accountedBalance()
-pendingPrize[chain.name] = wethPrizeBalance.toString()
-console.log("GOT PENDING PRIZE",chain.name,wethPrizeBalance.toString())
-console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");
+pendingPrize[chain.name].total = wethPrizeBalance.toString()
+console.log("got pending prize",chain.name,wethPrizeBalance.toString())
 } catch(e){console.log("error trying to get prize pool totals",e)}
 
     let v5Prizes;
@@ -392,6 +396,7 @@ console.log("");console.log("");console.log("");console.log("");console.log("");
       // Fetch prizes for each chain and prize pool
       console.log("fetching GetPrizes for ", chain.name, chain.prizePool);
       v5Prizes = await GetPrizes(chain.name, chain.prizePool);
+      pendingPrize[chain.name].prizes = v5Prizes
       //console.log(chain.name,"overview info",v5Prizes)
     } catch (e) {
       console.log(e);
@@ -537,8 +542,9 @@ async function updateHolders(chainNumber) {
 
 async function updateChain(chainNumber, prizePool) {
   let claims;
+  let uniqueWinners
   try {
-    claims = await PublishV5Claims(chainNumber, prizePool);
+    [claims, uniqueWinners] = await PublishV5Claims(chainNumber, prizePool);
     console.log(chainNumber, prizePool, "published claims");
   } catch (e) {
     console.log(e);
@@ -633,7 +639,7 @@ async function updateChain(chainNumber, prizePool) {
   await publish(top100Winners, "/bigwinnersv1-" + chainNumber);
 
   //await publish(history,"/history-"+chainNumber)
-  const returnData = { wins: draws, claims: claims };
+  const returnData = { wins: draws, claims: claims, uniqueWinners: uniqueWinners };
   // console.log("----------------------------draws", draws);
   //console.log("returnData claims", claims);
   return returnData;
@@ -852,24 +858,45 @@ async function openPlayerEndpoints() {
     }
   });
 
-  app.get("/player-claims", async (req, res, next) => {
-    if (req.query.address && ethers.utils.isAddress(req.query.address)) {
-      let address = req.query.address.toLowerCase();
-      let claimsQuery = `SELECT network, hash, draw, vault, tier, index, payout, prizepool FROM claims WHERE winner='${address}'`;
+app.get("/player-claims", async (req, res, next) => {
+  const address = req.query.address && ethers.utils.isAddress(req.query.address) ? req.query.address.toLowerCase() : null;
 
-      try {
-        let claims = await v5dbFinal.any(claimsQuery);
-        res.send(claims);
-      } catch (err) {
-        console.error(err);
-        next(err);
-      }
-    } else {
-      res.status(400).send("ERROR - Invalid or missing address");
+  console.log("player claims query", address);
+
+  if (address) {
+    const claimsQuery = `
+      SELECT 
+        c.network,
+        c.draw,
+        c.vault,
+        c.tier,
+        c.index,
+        c.payout,
+        c.prizepool,
+        d.startedat + (d.periodseconds / 2) * interval '1 second' AS claim_time
+      FROM 
+        claims c
+      JOIN 
+        draws d 
+        ON c.network = d.network AND c.prizepool = d.prizepool AND c.draw = d.draw
+      WHERE 
+        c.winner = $1 
+AND CAST(c.payout AS numeric) > 0
+    `;
+
+    try {
+      let wins = await v5dbFinal.any(claimsQuery, [address]);
+      console.log("player claims query success");
+      res.send(wins);
+    } catch (e) {
+      console.log("player claims query error", e);
+      next(e);
     }
-  });
+  } else {
+    res.status(400).send({ error: "Invalid address" });
+  }
+});
 }
-
 async function openV5Pooler() {
   app.get("/poolerVaults", async (req, res, next) => {
     if (
@@ -907,23 +934,49 @@ async function openV5Pooler() {
       let claims = req.query.claims;
       // console.log('query for address' + address)
       let addressQuery;
+
+// same query sillies
       if (claims === "true") {
-        addressQuery =
-          "select network,draw,vault,tier,index,payout from " +
-          "claims" +
-          " where winner='" +
-          address +
-          "'";
+addressQuery = `
+  SELECT 
+    c.network,
+    c.draw,
+    c.vault,
+    c.tier,
+    c.index,
+    c.payout,
+    c.prizepool,
+  FROM 
+    claims c
+  JOIN 
+    draws d 
+    ON c.network = d.network AND c.prizepool = d.prizepool AND c.draw = d.draw
+  WHERE 
+    c.winner = LOWER($1);
+`;
+
       } else if (wins === "true") {
-        addressQuery =
-          "select network,draw,vault,tier,index,payout from " +
-          "claims" +
-          " where winner='" +
-          address +
-          "'";
+addressQuery = `
+  SELECT 
+    c.network,
+    c.draw,
+    c.vault,
+    c.tier,
+    c.index,
+    c.payout,
+    c.prizepool,
+  FROM 
+    claims c
+  JOIN 
+    draws d 
+    ON c.network = d.network AND c.prizepool = d.prizepool AND c.draw = d.draw
+  WHERE 
+    c.winner = LOWER($1);
+`;
+
       }
 
-      let addressPrizes = await v5dbFinal.any(addressQuery);
+      let addressPrizes = await v5dbFinal.any(addressQuery,[address]);
       res.send(addressPrizes);
     } else {
       next("ERROR - Invalid address");
@@ -979,6 +1032,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
   console.log("...published", bigWinnersPath);
   // 2.5 Finding the biggest win in a single draw across all draws
   let bigWins = [];
+    let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
   for (let drawNumber in claimsData) {
     let drawWinnersPayouts = {};
     for (let claim of claimsData[drawNumber].claimsList) {
@@ -1028,7 +1082,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     let totalPayout = BigInt(0);
     let totalFees = BigInt(0);
     let uniqueTiers = new Set();
-    let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
+    //let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
     let canaryPrizesCount = 0; // Counter for canary prizes
 
     for (let claim of claimsList) {
@@ -1090,8 +1144,9 @@ async function PublishV5Claims(chainNumber, prizePool) {
   await publish(vaultTotals, vaultTotalsPath);
   console.log("....published", vaultTotalsPath);
 
-  return draws;
+  return [draws,uniqueWinners];
 }
+
 
 function createChainsAssetsPrices(addressObj, geckosObj) {
     const result = {};
@@ -1107,12 +1162,15 @@ function createChainsAssetsPrices(addressObj, geckosObj) {
             }
         }
     }
-
+console.log("merged",result)
     return result;
 }
 
+
+/*
 function mergeChainsAssetsPrices(obj1, obj2) {
-    const merged = { ...obj1 };
+console.log("trying to merge prices of obj1",obj1,"and obj2",obj2) 
+   const merged = { ...obj1 };
 
     for (const chain in obj2) {
         if (!merged.hasOwnProperty(chain)) {
@@ -1125,6 +1183,25 @@ function mergeChainsAssetsPrices(obj1, obj2) {
             }
         }
     }
+
+    return merged;
+}*/
+
+function mergeChainsAssetsPrices(obj1, obj2) {
+    //console.log("trying to merge prices of obj1", obj1, "and obj2", obj2);
+
+    // Start with a copy of obj2
+    const merged = { ...obj2 };
+
+    // Iterate over obj1 to merge it into the merged object
+    obj1.forEach(({ chain, address, price }) => {
+        if (!merged[chain]) {
+            merged[chain] = {};
+        }
+        if (!merged[chain].hasOwnProperty(address)) {
+            merged[chain][address] = price;
+        }
+    });
 
     return merged;
 }
