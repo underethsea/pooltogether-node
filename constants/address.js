@@ -191,6 +191,22 @@ PAIRS: [
         GECKO: "moonwell-artemis",
         NOVAULT: true,
       },
+/*
+{
+        VAULT: "0x850ec48d2605aad9c3de345a6a357a9a14b8cf1b",
+        LIQUIDATIONPAIR: "0x0000000000000000000000000000000000000000",
+        SYMBOL: "przPOOLLUSD",
+        NAME: "Prize POOL/LUSD Beefy",
+        DECIMALS: "18",
+        ASSET: "0x0b15b1d434f86eCaa83d14398C8Db6d162F3921e",
+        ASSETSYMBOL: "vAMM-LUSD/POOL",
+        GECKO: "",
+        UNIV2: true,
+        PAIRBASETOKEN: "", // the token thats the base token
+        PAIRFORBASE: "" // the pair for the base token / weth
+      },
+
+*/
     ],
   },
   OPTIMISM: {

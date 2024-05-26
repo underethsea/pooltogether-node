@@ -1,53 +1,52 @@
-const { loadChainConfig, getChainConfig } = require("./chains");
-
-const chainKey = process.argv[2] || "";
-
-try {
-  // Load the configuration with the provided chainKey or default
-  loadChainConfig(chainKey);
-} catch (error) {
-  console.error(`Error loading chain configuration: ${error.message}`);
-  process.exit(1);
-}
-
-const { CONTRACTS } = require("./constants/contracts");
+//const { CONTRACTS } = require("./constants/contracts");
 //const { CONFIG, PROVIDERS, ADDRESS } = require("./constants");
 const { CONFIG } = require("./constants/config");
 const { PROVIDERS } = require("./constants/providers.js");
-const { ADDRESS } = require("./constants/address.js");
+//const { ADDRESS } = require("./constants/address.js");
+const { ABI } = require("./constants/abi.js")
 // const { GeckoIDPrices } = require("./utilities/geckoFetch.js");
 const { Multicall } = require("./utilities/multicall.js");
-const { GasEstimate } = require("./utilities/gas.js");
-
+const { GasEstimate } = require("./utilities/gasCanary.js");
 const ethers = require("ethers");
 
-const CHAINNAME = getChainConfig().CHAINNAME;
-const CHAINID = getChainConfig().CHAINID;
+const CHAINNAME = "OPTIMISM"
+const wally = new ethers.Wallet(process.env.PRIVATE_KEY,PROVIDERS[CHAINNAME])
+const SIGNER = wally.connect(PROVIDERS["OPTIMISM"]);
+
+const MAX_FEE = ethers.BigNumber.from(51123069777996)
+const MAX_GAS = ethers.BigNumber.from(51123069777996)
+const CHAINID = 10 ;
+
+const CONTRACTS = {}
+const ADDRESS = {}
+ADDRESS.DRAWMANAGER = '0x7e8e79Eb264B42dCBa887047F40B6db12C4f0940'
+CONTRACTS.DRAWMANAGER = new ethers.Contract('0x7e8e79Eb264B42dCBa887047F40B6db12C4f0940',ABI.DRAWMANAGER,PROVIDERS["OPTIMISM"])
+CONTRACTS.PRIZEPOOL = new ethers.Contract('0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A',ABI.PRIZEPOOL,PROVIDERS["OPTIMISM"])
+CONTRACTS.RNG = new ethers.Contract('0x18928a03829A609292133d605FF6007151b9EECb',ABI.RNG,PROVIDERS["OPTIMISM"])
+CONTRACTS.RNGWITHSIGNER = new ethers.Contract('0x18928a03829A609292133d605FF6007151b9EECb',ABI.RNG,SIGNER)
+CONTRACTS.DRAWMANAGERWITHSIGNER = new ethers.Contract('0x7e8e79Eb264B42dCBa887047F40B6db12C4f0940',ABI.DRAWMANAGER,SIGNER)
 
 const RETRYTIME = CONFIG.RNGRETRY * 1000;
+
 const DONTSEND = false; // true to not send the txs
 
-const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
+const prizeTokenSymbol = "POOL";
 
 
 const FORFREE = false // !!!!!!!!!!!!! bypasses profitability and sends auctions regardless of cost/reward
 async function checkAndCompleteRng() {
   const callsMain = [
-    CONTRACTS.DRAWMANAGER[CHAINNAME].canStartDraw(),
-    CONTRACTS.PRIZEPOOL[CHAINNAME].getDrawIdToAward(),
-    CONTRACTS.PRIZEPOOL[CHAINNAME].getOpenDrawId(),
-    CONTRACTS.DRAWMANAGER[CHAINNAME].auctionDuration(),
+    CONTRACTS.DRAWMANAGER.canStartDraw(),
+    CONTRACTS.PRIZEPOOL.getDrawIdToAward(),
+    CONTRACTS.PRIZEPOOL.getOpenDrawId(),
+    CONTRACTS.DRAWMANAGER.auctionDuration(),
   ];
 
   try {
     const [canStartDraw, drawIdToAward, openDrawId, auctionDuration] =
       await Multicall(callsMain, CHAINNAME);
-    const openDrawClosesAt = await CONTRACTS.PRIZEPOOL[
-      CHAINNAME
-    ].drawClosesAt(openDrawId);
-    const drawToAwardClosedAt = await CONTRACTS.PRIZEPOOL[
-      CHAINNAME
-    ].drawClosesAt(drawIdToAward);
+    const openDrawClosesAt = await CONTRACTS.PRIZEPOOL.drawClosesAt(openDrawId);
+    const drawToAwardClosedAt = await CONTRACTS.PRIZEPOOL.drawClosesAt(drawIdToAward);
 
     console.log(
       `Open draw ${openDrawId} closes in ${timeUntil(openDrawClosesAt)}`
@@ -84,16 +83,16 @@ async function handleOpenDraw(openDrawId) {
     const gasPrice = await PROVIDERS[CHAINNAME].getGasPrice();
     const [startDrawAward, estimateFee] = await Multicall(
       [
-        CONTRACTS.DRAWMANAGER[CHAINNAME].startDrawReward(),
-        CONTRACTS.RNG[CHAINNAME].estimateRandomizeFee(gasPrice),
+        CONTRACTS.DRAWMANAGER.startDrawReward(),
+        CONTRACTS.RNG.estimateRandomizeFee(gasPrice),
       ],
       CHAINNAME
     );
-//console.log("estimate fee",estimateFee.toString())
+
     console.log(
       `RNG auction is open, starting draw award: ${ethers.utils.formatUnits(
         startDrawAward,
-        ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+        18
       )} ${prizeTokenSymbol}, payable fee estimate: ${ethers.utils.formatUnits(
         estimateFee,
         18
@@ -101,9 +100,9 @@ async function handleOpenDraw(openDrawId) {
     );
     // Calculate percentage of the reward covered by the total cost
     const costPercentage = startDrawAward.mul(100).div(estimateFee);
-    if (startDrawAward.gt(estimateFee) || FORFREE) {
+    if (MAX_FEE.gt(estimateFee) || FORFREE) {
       console.log(
-        "Reward greater than ",
+        "****",MAX_FEE.toString(),"MAX FEE*****  Reward greater than ",
         estimateFee / 1e18,
         "ETH",
         " fee, lets check gas cost"
@@ -112,7 +111,7 @@ async function handleOpenDraw(openDrawId) {
         
          const args = [
           CHAINNAME === "BASESEPOLIA" ? estimateFee.div(10).toString() : estimateFee.toString(),
-          ADDRESS[CHAINNAME].DRAWMANAGER,
+          ADDRESS.DRAWMANAGER,
           CONFIG.WALLET,
         ]
         let web3TotalGasCost;
@@ -125,7 +124,7 @@ async function handleOpenDraw(openDrawId) {
 
 //console.log(temp.lastBaseFeePerGas.toString())
           web3TotalGasCost = await GasEstimate(
-            CONTRACTS.RNGWITHSIGNER[CHAINNAME],
+            CONTRACTS.RNGWITHSIGNER,
             "startDraw",
             args,
            CONFIG.PRIORITYFEE,
@@ -141,17 +140,15 @@ async function handleOpenDraw(openDrawId) {
         const totalStartDrawCost = web3TotalGasCost.add(estimateFee);
 
 
-        if (startDrawAward.gt(totalStartDrawCost) || FORFREE) {
+        if (MAX_GAS.add(MAX_FEE).gt(totalStartDrawCost) || FORFREE) {
           if (DONTSEND) {
             console.log("DONT SEND is on, returning before tx send");
             return;
           } else {
             //console.log("est gas", web3TotalGasCost / 1e18, "ETH");
-            const rngTx = await CONTRACTS.RNGWITHSIGNER[
-              CHAINNAME
-            ].startDraw(
+            const rngTx = await CONTRACTS.RNGWITHSIGNER.startDraw(
               estimateFee.toString(),
-              ADDRESS[CHAINNAME].DRAWMANAGER,
+              ADDRESS.DRAWMANAGER,
               CONFIG.WALLET,
               {
                 maxPriorityFeePerGas: "1000001",
@@ -229,22 +226,18 @@ async function executeTransaction(startDrawAward, estimateFee) {
 }
 */
 async function handleCloseDraw(drawIdToAward, openDrawId) {
-  const canFinish = await CONTRACTS.DRAWMANAGER[
-    CHAINNAME
-  ].canFinishDraw();
+  const canFinish = await CONTRACTS.DRAWMANAGER.canFinishDraw();
   if (canFinish) {
-    const finishReward = await CONTRACTS.DRAWMANAGER[
-      CHAINNAME
-    ].finishDrawReward();
+    const finishReward = await CONTRACTS.DRAWMANAGER.finishDrawReward();
     if (finishReward.gt(0)) {
       console.log(
         `Finish draw reward available: ${ethers.utils.formatUnits(
           finishReward,
-          ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+          18
         )} ${prizeTokenSymbol}`
       );
       const gasEstimate = await GasEstimate(
-        CONTRACTS.DRAWMANAGERWITHSIGNER[CHAINNAME],
+        CONTRACTS.DRAWMANAGERWITHSIGNER,
         "finishDraw",
         [CONFIG.WALLET],
         CONFIG.PRIORITYFEE,
@@ -253,15 +246,14 @@ async function handleCloseDraw(drawIdToAward, openDrawId) {
         }
       );
 
-      if (gasEstimate.lt(finishReward) || FORFREE) {
+      if (gasEstimate.lt(MAX_GAS) || FORFREE) {
         try {
           if (DONTSEND) {
             console.log("DONTSEND is true, not sending the tx");
             return;
           } else {
-            const finishTx = await CONTRACTS.DRAWMANAGERWITHSIGNER[
-              CHAINNAME
-            ].finishDraw(CONFIG.WALLET, {
+            console.log("MAX_GAS",MAX_GAS.toString(),"greater than cost")
+            const finishTx = await CONTRACTS.DRAWMANAGERWITHSIGNER.finishDraw(CONFIG.WALLET, {
               maxPriorityFeePerGas: "1000000",
               //maxFeePerGas: CHAINNAME === "ARBSEPOLIA" ? 17537000000 : 68000000,
             });
@@ -279,11 +271,11 @@ async function handleCloseDraw(drawIdToAward, openDrawId) {
       } else {
         const gasCost = ethers.utils.formatUnits(
           gasEstimate,
-          ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+          18
         );
         const rewardAmount = ethers.utils.formatUnits(
           finishReward,
-          ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+          18
         );
         const rewardPercentage = (rewardAmount / gasCost) * 100;
         console.log(
@@ -306,9 +298,7 @@ async function handleCloseDraw(drawIdToAward, openDrawId) {
       );
       setTimeout(checkAndCompleteRng, RETRYTIME / 5);
     } else {
-      const drawClosesAt = await CONTRACTS.PRIZEPOOL[
-        CHAINNAME
-      ].drawClosesAt(drawIdToAward);
+      const drawClosesAt = await CONTRACTS.PRIZEPOOL.drawClosesAt(drawIdToAward);
       const waitTime = parseInt(drawClosesAt) * 1000 - Date.now() + 1000;
       if (waitTime > 0) {
         console.log(
