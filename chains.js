@@ -7,7 +7,8 @@ const CHAINS = {
   BASESEPOLIA: { name: "BaseSepolia", id: 84532, testnet: true, opchain: true },
   BASE: { name: "Base", id: 8453, opchain: true },
   OPSEPOLIA: {name: "OpSepolia", id: 11155420, testnet: true, opchain: true},
-  ARBSEPOLIA: {name: "ArbSepolia", id: 421614, testnet: true}
+  ARBSEPOLIA: {name: "ArbSepolia", id: 421614, testnet: true},
+  ARBITRUM: {name:"Arbitrum",id:42161}
 };
 
 let config = {};

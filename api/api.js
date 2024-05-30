@@ -30,6 +30,8 @@ dotenv.config();
 // var sanitizer = require('sanitize');
 const waitTime = 120000;
 const pricesToFetch = [
+  "arbitrum",
+  "tether",
   "pooltogether",
   "dai",
   "usd-coin",
@@ -64,6 +66,12 @@ const chains = [
     subgraph:
       "https://api.studio.thegraph.com/proxy/63100/pt-v5-optimism/version/latest/",
   },
+{
+id: 42161,
+name: "ARBITRUM",
+prizePool: ADDRESS["ARBITRUM"].PRIZEPOOL.toLowerCase(),
+subgraph: ADDRESS["ARBITRUM"].PRIZEPOOLSUBGRAPH,
+},
 /*  {
     id: 421614,
     name: "ARBSEPOLIA",
@@ -488,7 +496,7 @@ console.log("got pending prize",chain.name,wethPrizeBalance.toString())
     }*/
   }
   await publish(vaultOverview, "/vaults");
-metaOverview = {pendingPrize: pendingPrize}  
+metaOverview = {pendingPrize: pendingPrize, prices: priceResults}  
 try{
 await publish(JSON.stringify(metaOverview),"/overview")}catch(e){console.log("error publishing meta overview /overview",e)}
 

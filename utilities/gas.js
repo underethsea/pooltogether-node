@@ -1,14 +1,14 @@
 require("../env-setup");
 const ethers = require("ethers");
-const { CONTRACTS } = require("../constants/contracts");
+//const { CONTRACTS } = require("../constants/contracts");
 const { PROVIDERS } = require("../constants/providers");
 const { CONFIG } = require("../constants/config");
 //require('dotenv').config(); // Adjust the path as needed
 
 const { getChainConfig } = require("../chains");
 
-const CHAINNAME = getChainConfig().CHAINNAME;
-
+//const CHAINNAME = getChainConfig().CHAINNAME;
+const CHAINNAME = "ARBITRUM"
 const parseGweiToWei = (num) => ethers.utils.parseUnits(num.toString(), "gwei");
 const parseGwei = (num) => ethers.utils.parseUnits(num.toString(), "gwei");
 
@@ -49,18 +49,22 @@ async function GasEstimate(
 
     // Calculations using BigNumber for accuracy
     const baseFeeWei = feeData.lastBaseFeePerGas;
-console.log("base feee",baseFeeWei/1e9)
-    const priorityFeeWei = parseGweiToWei(priorityFee);
+    console.log("base feee",baseFeeWei/1e9)
+    const priorityFeeWei = parseGweiToWei(priorityFee || '0');
     const maxFeeWei = baseFeeWei.add(priorityFeeWei);
 
     const serialized = ethers.utils.serializeTransaction(tx);
     let l1Fee = ethers.BigNumber.from(0);  // Default to 0 if GASORACLE is not available
-    if (CONTRACTS.GASORACLE && CONTRACTS.GASORACLE[CHAINNAME]) {
+if (typeof CONTRACTS !== 'undefined' && CONTRACTS?.GASORACLE?.[CHAINNAME]) {
+
       l1Fee = await CONTRACTS.GASORACLE[CHAINNAME].getL1Fee(serialized);
     }
+    else {l1Fee = ethers.BigNumber.from(0)}
     //        console.log("l1 fee", ethers.utils.formatEther(l1Fee), "ETH");
 
-    const l2executionFee = gasEstimate.mul(maxFeeWei);
+    let l2executionFee
+    if(CHAINNAME!=="ARBITRUM"){l2executionFee = gasEstimate.mul(maxFeeWei)}
+else{l2executionFee = gasEstimate.mul(feeData.gasPrice)}
     //        console.log("l2 fee", ethers.utils.formatEther(l2executionFee), "ETH");
 
     const totalFee = l2executionFee.add(l1Fee);
@@ -92,8 +96,8 @@ async function test() {
 
     const totalFee = await GasEstimate(contract, method, args, baseFee, priorityFee);
     console.log("Total gas fee for transaction:", ethers.utils.formatEther(totalFee), "ETH");
-const tx = await CONTRACTS.TOKENFAUCET[CHAINNAME].drip("0x493c7081FAab6e5B2d6b18d9311918580e88c6bF",{maxPriorityFeePerGas: parseGwei(priorityFee) ,
-maxFeePerGas: parseGwei(priorityFee)})
+    const tx = await CONTRACTS.TOKENFAUCET[CHAINNAME].drip("0x493c7081FAab6e5B2d6b18d9311918580e88c6bF",{maxPriorityFeePerGas: parseGwei(priorityFee) ,
+    maxFeePerGas: parseGwei(priorityFee)})
 
 const receipt = await tx.wait()
 console.log(receipt.transactionHash)
