@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x6b5a5c55e9dd4bb502ce25bbfbaa49b69cf7e4dd",
-    "poolers": 19,
+    "poolers": 32,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize POOL",
@@ -15,13 +15,17 @@
       "required": 0,
       "total": 0
     },
-    "contributed7d": 0,
-    "contributed24h": "0.035684123773436623",
-    "won7d": "0.0443"
+    "contributed7d": "0.007229731572519415",
+    "contributed24h": "0.001293198278813636",
+    "won7d": "0.0015",
+    "prizesPerDraw7d": 198,
+    "prizesPerDraw30": 198,
+    "prizes7d": 0,
+    "prizes30d": 68
   },
   {
     "vault": "0x7f5c2b379b88499ac2b997db583f8079503f25b9",
-    "poolers": 67,
+    "poolers": 78,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize USDC - Moonwell",
@@ -35,13 +39,17 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
-    "contributed24h": "0.012588278289856073",
-    "won7d": "0.0021999999999999997"
+    "contributed7d": "0.024790867812867495",
+    "contributed24h": "0.002683196581894526",
+    "won7d": "0.1724",
+    "prizesPerDraw7d": 599,
+    "prizesPerDraw30": 599,
+    "prizes7d": 26,
+    "prizes30d": 150
   },
   {
     "vault": "0x8d1322cabe5ef2949f6bf4941cc7765187c1091a",
-    "poolers": 19,
+    "poolers": 55,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize AERO - Moonwell",
@@ -55,13 +63,17 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
-    "contributed24h": "0.015794525047488543",
-    "won7d": "0.0037"
+    "contributed7d": "0.027616058416117449",
+    "contributed24h": "0.004170885214210148",
+    "won7d": "0.2698",
+    "prizesPerDraw7d": 762,
+    "prizesPerDraw30": 762,
+    "prizes7d": 32,
+    "prizes30d": 172
   },
   {
     "vault": "0x75d700f4c21528a2bb603b6ed899acfde5c4b086",
-    "poolers": 28,
+    "poolers": 16,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize wstETH - Moonwell",
@@ -75,9 +87,13 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
-    "contributed24h": "0.002900546397063699",
-    "won7d": "0.0004"
+    "contributed7d": "0.000925587065981034",
+    "contributed24h": "0.000126381048798771",
+    "won7d": "0.052",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x1e56e11bf011b46546540036dbee8820ddce5cdf",
@@ -95,13 +111,17 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
+    "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0.0757"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x850ec48d2605aad9c3de345a6a357a9a14b8cf1b",
-    "poolers": 2,
+    "poolers": 1,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize POOL/LUSD Beefy",
@@ -115,13 +135,17 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
+    "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x5b623c127254c6fec04b492ecdf4b11c45fbb9d5",
-    "poolers": 23,
+    "poolers": 18,
     "c": 8453,
     "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
     "name": "Prize cbETH - Moonwell",
@@ -135,8 +159,144 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": 0,
-    "contributed24h": "0.00277155240783045",
-    "won7d": "0.0001"
+    "contributed7d": "0.001683604710591086",
+    "contributed24h": "0.000241967063636551",
+    "won7d": "0.0001",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
+  },
+  {
+    "vault": "0x32b27d1ab97607bf276ce3c915ef9d66fb35b73c",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Test Nutsplus- Aloe",
+    "symbol": "TestNutsplus",
+    "decimals": 18,
+    "asset": "0x39030FAE8909cFf20Bf101fc3c18d2bEBBA2bFA7",
+    "owner": "0x3C126A3Dd6a54765Ea13b91ad081d4A9d274c0b2",
+    "liquidationPair": "0x77EEc1a48D57b203C155a30e0D084011B2559926",
+    "assetSymbol": "NUTS",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
+  },
+  {
+    "vault": "0x6bb041d7e70b7040611ef688b5e707a799ade60a",
+    "poolers": 6,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize USDA - Angle stUSD",
+    "symbol": "przUSDA",
+    "decimals": 18,
+    "asset": "0x0000206329b97DB379d5E1Bf586BbDB969C63274",
+    "owner": "0xA9DdD91249DFdd450E81E1c56Ab60E1A62651701",
+    "liquidationPair": "0xDC56760ee30Ff160546B18430d89ed99e19005b6",
+    "assetSymbol": "USDA",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "contributed7d": "0.000021559017902132",
+    "contributed24h": "0.000002272182851512",
+    "won7d": "0.0001",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
+  },
+  {
+    "vault": "0x985c54cdf07703b07f303a3039459d6b1dd7330a",
+    "poolers": 3,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "susu Prize USDC",
+    "symbol": "suPrzUSDC",
+    "decimals": 6,
+    "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+    "owner": "0x3432008c48b97320b1fF62EcAfDC16Ec5496F4fC",
+    "liquidationPair": "0x16eC09b6E4F4256A6F1b5b3e191281Bb7737DabD",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x50b2271c06b528223063ca340c496a0ed6c08714",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize Dude",
+    "symbol": "przDUDE",
+    "decimals": 18,
+    "asset": "0xCb2861a1ec1D0392afb9E342d5AA539e4f75b633",
+    "owner": "0xb60cAe3Ad662dE9FbAA795B3a50AD6bAD11D679d",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "DUDE",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xb9fa079c6f78bda8df61952679161d41f7d8f833",
+    "poolers": 1,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize TimBit",
+    "symbol": "przTIMBIT",
+    "decimals": 18,
+    "asset": "0xb2401B7599B2B19C2199EE7dF9de9602c6b6473e",
+    "owner": "0x3994537274f3fF3eefc413E0D669b05D6446D46b",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "TIMBIT",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.004",
+    "contributed24h": "0.004",
+    "won7d": "0.001"
+  },
+  {
+    "vault": "0x813c1fa57ce3f5e8d622925f6062b34fe89e24b5",
+    "poolers": 3,
+    "c": 8453,
+    "pp": "0x45b2010d8a4f08b53c9fa7544c51dfd9733732cb",
+    "name": "Prize 747 Airlines (boeing)",
+    "symbol": "przCRASH",
+    "decimals": 18,
+    "asset": "0x621E87AF48115122Cd96209F820fE0445C2ea90e",
+    "owner": "0x20a2d6c8cabB3179f42F26Eb85fd9C98aC15983e",
+    "liquidationPair": "0x0000000000000000000000000000000000000000",
+    "assetSymbol": "CRASH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
   }
 ]

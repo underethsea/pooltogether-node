@@ -5,9 +5,9 @@ const { ADDRESS } = require("../../constants/address");
 
 const chains = Object.keys(ADDRESS); // Dynamically get the list of chains
 const whiteLists = {
-    OPTIMISM: [1, 2, 3, 4, 6],
+    OPTIMISM: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20],
     BASESEPOLIA: [], // Add BASE whitelist here
-    // Add more chain-specific whitelists as needed
+    ARBITRUM: [1,2],    // Add more chain-specific whitelists as needed
 };
 console.log("chains",chains)
 async function GetTwabPromotions() {

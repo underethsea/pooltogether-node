@@ -1,7 +1,7 @@
 [
   {
     "vault": "0x1f16d3ccf568e96019cedc8a2c79d2ca6257894e",
-    "poolers": 40,
+    "poolers": 39,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize LUSD",
@@ -13,15 +13,19 @@
     "assetSymbol": "LUSD",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.108324006805903565",
-    "contributed24h": "0.011827466301577786",
-    "won7d": "0.0335"
+    "contributed7d": "0.023253407611380906",
+    "contributed24h": "0.003001616508233782",
+    "won7d": "0.0042",
+    "prizesPerDraw7d": 105,
+    "prizesPerDraw30": 105,
+    "prizes7d": 7,
+    "prizes30d": 20
   },
   {
     "vault": "0x03d3ce84279cb6f54f5e6074ff0f8319d830dafe",
-    "poolers": 320,
+    "poolers": 512,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize USDC",
@@ -33,15 +37,19 @@
     "assetSymbol": "USDC",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.670855167907266757",
-    "contributed24h": "0.122461011862662998",
-    "won7d": "0.22879999999999998"
+    "contributed7d": "0.758971207512727983",
+    "contributed24h": "0.118264681598241579",
+    "won7d": "1.1557",
+    "prizesPerDraw7d": 1218,
+    "prizesPerDraw30": 1218,
+    "prizes7d": 310,
+    "prizes30d": 224
   },
   {
     "vault": "0xa52e38a9147f5ea9e0c5547376c21c9e3f3e5e1f",
-    "poolers": 155,
+    "poolers": 178,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize POOL",
@@ -55,13 +63,17 @@
       "required": 0,
       "total": 0
     },
-    "contributed7d": "0.105670113289355958",
-    "contributed24h": "0.021190894067616261",
-    "won7d": "0.052199999999999996"
+    "contributed7d": "0.077981905938746305",
+    "contributed24h": "0.011297728653789338",
+    "won7d": "0.017800000000000003",
+    "prizesPerDraw7d": 191,
+    "prizesPerDraw30": 191,
+    "prizes7d": 30,
+    "prizes30d": 33
   },
   {
     "vault": "0x2998c1685e308661123f64b333767266035f5020",
-    "poolers": 209,
+    "poolers": 170,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize WETH",
@@ -73,15 +85,19 @@
     "assetSymbol": "WETH",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.042747072101112985",
-    "contributed24h": "0.006235558836338556",
-    "won7d": "0.02"
+    "contributed7d": "0.049569281677201661",
+    "contributed24h": "0.0068577604953351",
+    "won7d": "0.0149",
+    "prizesPerDraw7d": 101,
+    "prizesPerDraw30": 101,
+    "prizes7d": 25,
+    "prizes30d": 16
   },
   {
     "vault": "0x3e8dbe51da479f7e8ac46307af99ad5b4b5b41dc",
-    "poolers": 95,
+    "poolers": 94,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize DAI",
@@ -93,11 +109,15 @@
     "assetSymbol": "DAI",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.191079611973468989",
-    "contributed24h": "0.018196399655990626",
-    "won7d": "0.0534"
+    "contributed7d": "0.080810846609708646",
+    "contributed24h": "0.010821958726328978",
+    "won7d": "0.0153",
+    "prizesPerDraw7d": 183,
+    "prizesPerDraw30": 183,
+    "prizes7d": 26,
+    "prizes30d": 34
   },
   {
     "vault": "0x182d3050f7261494757638ff3345c7163e5990f3",
@@ -117,11 +137,15 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de",
-    "poolers": 17,
+    "poolers": 10,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize OP - Beefy Sonne",
@@ -133,15 +157,20 @@
     "assetSymbol": "OP",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.001485878392923706",
-    "contributed24h": "0.000185660055088875",
-    "won7d": "0"
+    "contributed7d": "0.000072986287901127",
+    "contributed24h": "0.000007797510145614",
+    "won7d": "0",
+    "status": 1,
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x4b9a4edbdb67ee8d880964732c1f56e4c13f2c04",
-    "poolers": 2,
+    "poolers": 3,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "COMMETA",
@@ -157,11 +186,15 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x9b53ef6f13077727d22cb4acad1119c79a97be17",
-    "poolers": 31,
+    "poolers": 44,
     "c": 10,
     "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
     "name": "Prize POOL/WETH Beefy",
@@ -173,11 +206,15 @@
     "assetSymbol": "vAMMV2-POOL/WETH",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "0.231851852261541725",
-    "contributed24h": "0.033126181876898328",
-    "won7d": "0.1162"
+    "contributed7d": "0.127915671948792025",
+    "contributed24h": "0.018997515442408603",
+    "won7d": "0.0332",
+    "prizesPerDraw7d": 218,
+    "prizesPerDraw30": 218,
+    "prizes7d": 56,
+    "prizes30d": 44
   },
   {
     "vault": "0x37e49c9dbf195f5d436c7a7610fe703cdcd8147b",
@@ -197,7 +234,11 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x3d87b066dcf93661c66cd5158a449483259a3bc1",
@@ -215,9 +256,13 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": "0.0",
-    "contributed24h": "0.0",
-    "won7d": "0"
+    "contributed7d": "0.007106497553226448",
+    "contributed24h": "0.001131222216452574",
+    "won7d": "0.0012",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 2,
+    "prizes30d": 0
   },
   {
     "vault": "0xa46de5b77dbe59a7b9213f3dd1634da25e7e3bfb",
@@ -237,7 +282,11 @@
     },
     "contributed7d": "0.0",
     "contributed24h": "0.0",
-    "won7d": "0"
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xe5f8c4e783839e14080daf3e28d64e3140596989",
@@ -255,9 +304,13 @@
       "required": -1,
       "total": 0
     },
-    "contributed7d": "0.010808357459086948",
-    "contributed24h": "0.009484669336045747",
-    "won7d": "0"
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x171d898849cd21a1ca6e111933dad1f5b8664c88",
@@ -275,6 +328,201 @@
       "required": -1,
       "total": 0
     },
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
+  },
+  {
+    "vault": "0x9b4c0de59628c64b02d7ce86f21db9a579539d5a",
+    "poolers": 5,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize WSTETH-ETH Beefy",
+    "symbol": "przWSTETH-ETH",
+    "decimals": 18,
+    "asset": "0x6dA98Bde0068d10DDD11b468b197eA97D96F96Bc",
+    "owner": "0x1e0aefca236790179D21f37fa5Fd59a1f00af1Dd",
+    "liquidationPair": "0x1eceF235f5354DBDf53e32912921ed086cDa49E2",
+    "assetSymbol": "vAMMV2-wstETH/WETH",
+    "gnosis": {
+      "required": 2,
+      "total": 4
+    },
+    "prizes7d": 0,
+    "prizes30d": 0,
+    "contributed7d": "0.000000060869031639",
+    "contributed24h": "0.000000060869031639",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xcf6abb37336e3a756b564e2c29222bf187a0de2a",
+    "poolers": 2,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize sUSD - Yearn",
+    "symbol": "przsUSD",
+    "decimals": 18,
+    "asset": "0x8c6f28f2F1A3C87F0f938b96d27520d9751ec8d9",
+    "owner": "0x78d4BDEBc0B4140f01BAB63085F94A5a7A1294f2",
+    "liquidationPair": "0xF14E6C9B65308b232F45093b1CDC5d3149AF9ACe",
+    "assetSymbol": "sUSD",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "prizes30d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xe13ee913c132af8c4887a6c037c0da10b6d43d18",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize USDC - USDC SILO Beefy",
+    "symbol": "przUSDC",
+    "decimals": 6,
+    "asset": "0x0b2C639c533813f4Aa9D7837CAf62653d097Ff85",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0xFAfe27e94806D7BA6F271bDbf7E8d8e60E4B58Db",
+    "assetSymbol": "USDC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xfdd33b8413a69ba9ce140b479f27ee7ab133850e",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize OP - OP SILO Beefy",
+    "symbol": "przOP",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000042",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x087b5C27E2A4beF5B315451552b30D0e225305C9",
+    "assetSymbol": "OP",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x7affb8cb92ddf9f9d0ba6fdcd7cd7905cb6d2ec1",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize rETH - rETH SILO Beefy",
+    "symbol": "przrETH",
+    "decimals": 18,
+    "asset": "0x9Bcef72be871e61ED4fBbc7630889beE758eb81D",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0xf08c2C31078BC297324dB65405Cd8FdC2aEb6DD8",
+    "assetSymbol": "rETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xa58163334eba40fa6e81a77c2b36f252a945928a",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize WETH - WETH SILO Beefy",
+    "symbol": "przWETH",
+    "decimals": 18,
+    "asset": "0x4200000000000000000000000000000000000006",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x4fD0443AD5B8560cc0f7600489dDdcb5471CB89c",
+    "assetSymbol": "WETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0xcc3fefb704be360245f8dd0386ac206941e66467",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize wstETH - wstETH SILO Beefy",
+    "symbol": "przwstETH",
+    "decimals": 18,
+    "asset": "0x1F32b1c2345538c0c6f582fCB022739c4A194Ebb",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x750E960b6bA874651BE847bD6B5e5e073fF263E4",
+    "assetSymbol": "wstETH",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x8b47c737179cb1354e8950acec6bd43f26af0290",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize VELO - VELO SILO Beefy",
+    "symbol": "przVELO",
+    "decimals": 18,
+    "asset": "0x9560e827aF36c94D2Ac33a39bCE1Fe78631088Db",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x275e66A5D567f2D2CdE6fEC8DC4EcFf5db40E6d9",
+    "assetSymbol": "VELO",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
+    "contributed7d": "0.0",
+    "contributed24h": "0.0",
+    "won7d": "0"
+  },
+  {
+    "vault": "0x934c51eedbd0d558ab1c171498271930b4716295",
+    "poolers": 1,
+    "c": 10,
+    "pp": "0xf35fe10ffd0a9672d0095c435fd8767a7fe29b55",
+    "name": "Prize tBTC - tBTC SILO Beefy",
+    "symbol": "prztBTC",
+    "decimals": 18,
+    "asset": "0x6c84a8f1c29108F47a79964b5Fe888D4f4D0dE40",
+    "owner": "0xe0e7b7C5aE92Fe94D2ae677D81214D6Ad7A11C27",
+    "liquidationPair": "0x826b30eAf864435216b1709EADA0Ab6548bB0fF2",
+    "assetSymbol": "tBTC",
+    "gnosis": {
+      "required": -1,
+      "total": 0
+    },
+    "prizes7d": 0,
     "contributed7d": "0.0",
     "contributed24h": "0.0",
     "won7d": "0"

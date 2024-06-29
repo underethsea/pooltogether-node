@@ -1,3 +1,4 @@
+
 require('../env-setup');
 const ethers = require("ethers");
 const {  getChainConfig } = require("../chains");
@@ -27,30 +28,35 @@ const goerliEndpoint = "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCH
 const mumbaiEndpoint = "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const sepoliaEndpoint = "https://eth-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const sepoliaInfura = "https://sepolia.infura.io/v3/" + process.env.INFURA_KEY
-const opGoerliEndpoint = "https://opt-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const opGoerliEndpoint = "https://opt-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opEndpoint =  "https://opt-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const mainnetEndpoint = "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHEMY_KEY
+//const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHEMY_KEY
 //const opSepoliaEndpoint = "https://sepolia.optimism.io"
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opSepoliaWebsocketEndpoint = "wss://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const ws_arbEndpoint = "wss://arbitrum-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
+const ws_opEndpoint = "wss://optimism-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
+//const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 // const baseSepoliaEndpoint = "https://sepolia.base.org" 
 const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
 const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const WS_PROVIDERS = {
-    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
+//    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
+ARBITRUM: new ethers.providers.WebSocketProvider(ws_arbEndpoint),
+OPTIMISM: new ethers.providers.WebSocketProvider(ws_opEndpoint)
 }
 
 const PROVIDERS = {
     MAINNET: new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     OPSEPOLIA: new ethers.providers.JsonRpcProvider(opSepoliaEndpoint),
-    GOERLI: new ethers.providers.JsonRpcProvider(goerliEndpoint),
-    MUMBAI: new ethers.providers.JsonRpcProvider(mumbaiEndpoint),
+    //  GOERLI: new ethers.providers.JsonRpcProvider(goerliEndpoint),
+    //  MUMBAI: new ethers.providers.JsonRpcProvider(mumbaiEndpoint),
     SEPOLIA: new ethers.providers.JsonRpcProvider(sepoliaEndpoint),
-    OPGOERLI: new ethers.providers.JsonRpcProvider(opGoerliEndpoint),
+    //  OPGOERLI: new ethers.providers.JsonRpcProvider(opGoerliEndpoint),
     OPTIMISM: new ethers.providers.JsonRpcProvider(opEndpoint),
     BASESEPOLIA: new ethers.providers.JsonRpcProvider(baseSepoliaEndpoint),
     ARBITRUM: new ethers.providers.JsonRpcProvider(arbEndpoint),

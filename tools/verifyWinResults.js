@@ -99,8 +99,8 @@ async function verifyWinners(network, prizePool, drawId) {
 
 // Example usage
 async function go() {
-  const chain = "BASE"
-  const chainId = 8453
+  const chain = "OPTIMISM"
+  const chainId = 10
   const drawId = await CONTRACTS.PRIZEPOOL[chain].getLastAwardedDrawId();
   await verifyWinners(chainId, ADDRESS[chain].PRIZEPOOL, drawId);
 }

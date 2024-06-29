@@ -77,8 +77,8 @@ Returns a list of win events for the specified player address, detailing each wi
 - `tier`: The prize tier of the win.
 - `prizeindices`: An array of indices representing the specific prizes won within the tier.
 
-`/<chainId>-<prizePoolAddress>-twabrewards`  
-Retrieves Time-Weighted Average Balance (TWAB) rewards information for a specific prize pool.
+`/twabrewards`  
+Retrieves Time-Weighted Average Balance (TWAB) rewards information for all chains.
 
 - `promotionId`: The identifier of the promotion.
 - `vault`: The address of the vault associated with the promotion.

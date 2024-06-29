@@ -21,7 +21,7 @@ const cnFinal = {
 const dbFinally = pgp(cnFinal);
 */
 
-async function PublishV5PrizeHistory(chainId, prizePool, dbFinal) {
+async function PublishPrizeHistory(chainId, prizePool, dbFinal) {
     try {
         let claims = {};
         const queryString = "SELECT * from draws WHERE network=$1 and prizepool=$2";
@@ -32,5 +32,5 @@ const modifiedArray = queryResults.map(({ network,prizeindices, periodseconds, i
 return modifiedArray
 }catch(e){console.log(e)}
 }
-//PublishV5PrizeHistory(10)
-module.exports = { PublishV5PrizeHistory };
+//PublishPrizeHistory(10)
+module.exports = { PublishPrizeHistory };

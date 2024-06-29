@@ -32,7 +32,7 @@ const { GetPricesForToken } = require("./utilities/1inch.js");
 const { CollectRewards } = require("./collectRewards.js");
 //const settings = require('./constants/liquidator-config');
 const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko } = CONFIG;
-
+const useApiPriceOverride = true 
 // covalent, not accurate to get twab players
 // const FetchPlayers = require("./utilities/players.js");
 
@@ -54,9 +54,10 @@ async function go() {
   const prizePoolDataPromise = GetPrizePoolData();
 
   // Set up the third promise based on the useCoinGecko flag
-  const priceFetchPromise = useCoinGecko
+   const priceFetchPromise = useCoinGecko && !useApiPriceOverride
     ? GeckoIDPrices([ADDRESS[CHAINNAME].PRIZETOKEN.GECKO, "ethereum"])
-    : GetPricesForToken(ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
+  : fetch("https://poolexplorer.xyz/overview")
+//  : GetPricesForToken(ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
 
   // Use Promise.all to wait for all three promises to resolve
   const [claims, prizePoolData, priceData] = await Promise.all([
@@ -82,13 +83,17 @@ async function go() {
   let prizeTokenPrice, ethPrice;
 
   // If useCoinGecko is true, priceData is from GeckoIDPrices, otherwise it's the direct prize token price
-  if (useCoinGecko) {
+  if (useCoinGecko && !useApiPriceOverride) {
     prizeTokenPrice = priceData[0];
     ethPrice = priceData[1];
   } else {
     // If not using CoinGecko, priceData is directly the prizeTokenPrice
-    prizeTokenPrice = priceData;
-    // Assume you have another way to get ethPrice if necessary or it's not needed in this branch
+    // prizeTokenPrice = priceData;
+    const priceResponse = await priceData.json()
+    prizeTokenPrice = priceResponse.prices.geckos["ethereum"]
+ethPrice = prizeTokenPrice   
+console.log("got price from api",prizeTokenPrice)  
+  // Assume you have another way to get ethPrice if necessary or it's not needed in this branch
   }
 
   console.log(section("----- contract data ------"));

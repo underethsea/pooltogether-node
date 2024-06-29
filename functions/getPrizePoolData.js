@@ -96,17 +96,17 @@ console.log("number of tiers",numberOfTiers)
 
 for (let tier = 0; tier < numberOfTiers; tier++) {
   // multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].calculateTierTwabTimestamps(tier, { blockTag: block }));
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierAccrualDurationInDraws(tier))
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeSize(tier));
-  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeCount(tier));
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierAccrualDurationInDraws(tier,{blockTag: block}))
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeSize(tier,{blockTag: block}));
+  multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierPrizeCount(tier,{blockTag: block}));
   //multicallRequests.push(CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee(tier));
-   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierRemainingLiquidity(tier));
+   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierRemainingLiquidity(tier,{blockTag: block}));
 
 } 
 
 // Make the multicall
 const multicallResult = await Multicall(multicallRequests);
-const drawClosesAt = await CONTRACTS.PRIZEPOOL[CHAINNAME].drawClosesAt(lastDrawId);
+const drawClosesAt = await CONTRACTS.PRIZEPOOL[CHAINNAME].drawClosesAt(lastDrawId,{blockTag: block});
 for (let i = 0; i < numberOfTiers; i++) {
   const startIndex = i * 4; 
 

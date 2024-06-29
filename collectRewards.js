@@ -142,5 +142,5 @@ console.log("gas not too high");return
   }
 }
 
-//CollectRewards(3300,3300);
+CollectRewards(3500,3500);
 module.exports = { CollectRewards };

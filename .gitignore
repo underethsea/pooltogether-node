@@ -7,3 +7,6 @@ constants/config.js
 consolidatedWinnersData.json
 winners.json
 playersToCalculate.json
+api/data/
+pooly-bot/.env
+pooly-bot/node_modules

@@ -19,11 +19,11 @@ const { GetPrizes } = require("./functions/getPrizes");
 const { GetClaims } = require("./functions/getClaims");
 const { GetTwabPromotions } = require("./functions/getTwabRewards");
 const { UpdateV5Vaults } = require("./updateVaults");
-const { PublishV5PrizeHistory } = require("./publishPrizeHistory");
+const { PublishPrizeHistory } = require("./publishPrizeHistory");
 const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
 const PrizeLeaderboard = require("./functions/getPrizeLeaderboard");
 
-const { ADDRESS } = require("../constants/address");
+const { ADDRESS, WHITELIST_REWARDS } = require("../constants/address");
 const { ABI } = require("../constants/abi")
 const { PROVIDERS } = require("../constants/providers")
 dotenv.config();
@@ -43,8 +43,8 @@ const pricesToFetch = [
   "gemini-dollar",
   "coinbase-wrapped-staked-eth",
   "aerodrome-finance",
-  "wrapped-steth"
-
+  "wrapped-steth",
+  "angle-usd"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -215,11 +215,11 @@ async function go() {
         const rewardsV5 = await GetTwabPromotions();
         publish(
           JSON.stringify(rewardsV5),
-          "/10-0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55-twabrewards"
+          "/twabrewards"
         );
         console.log(
           "...published ",
-          "/10-0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55-twabrewards"
+          "/twabrewards"
         );
       } catch (e) {
         console.log("update twab rewards failed", e);
@@ -367,7 +367,7 @@ console.log("");console.log("");console.log("");console.log("");console.log("");
       console.log(e);
     }
 console.log("uni asssets",uniAssets)
-    const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, priceResults.geckos);
+    const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, WHITELIST_REWARDS, priceResults.geckos);
 console.log("created chain asset prices",chainsAssetsPrices)
 
     // Merge UNI and Gecko prices
@@ -558,7 +558,7 @@ async function updateChain(chainNumber, prizePool) {
     console.log(e);
   }
 
-  const prizeHistory = await PublishV5PrizeHistory(
+  const prizeHistory = await PublishPrizeHistory(
     chainNumber,
     prizePool,
     v5dbFinal
@@ -569,11 +569,12 @@ async function updateChain(chainNumber, prizePool) {
 
   const pathSuffix = prizePool === "" ? "" : `-${prizePool}`;
   let v5Winners = await GetWinners(chainNumber, prizePool);
-  const v5PrizeResults = await GetPrizeResults(chainNumber, prizePool);
+  /*const v5PrizeResults = await GetPrizeResults(chainNumber, prizePool);
   const prizeResultsPath = "/" + chainNumber + pathSuffix + "-prizeresults";
   await publish(v5PrizeResults, prizeResultsPath);
   console.log("...published", prizeResultsPath);
-  let draws = [];
+  */
+let draws = [];
   let history = [];
   const bigWinners = [];
   let drawCount = 0;
@@ -1120,6 +1121,50 @@ async function PublishV5Claims(chainNumber, prizePool) {
   await publish(history, historyPath);
   console.log("...published", historyPath);
 
+
+// 4. Aggregating total payouts per draw for each vault
+let vaultTotals = {};
+for (let drawNumber in claimsData) {
+  const claimsList = claimsData[drawNumber].claimsList;
+  for (let claim of claimsList) {
+    const vaultAddress = claim.v;
+    if (!vaultTotals[vaultAddress]) {
+      vaultTotals[vaultAddress] = {};
+    }
+    if (!vaultTotals[vaultAddress][drawNumber]) {
+      vaultTotals[vaultAddress][drawNumber] = {
+        value: BigInt(0),
+        prizes: 0
+      };
+    }
+const payout = BigInt(claim.p);
+    if (payout > 0) {
+      vaultTotals[vaultAddress][drawNumber].value += payout;
+      vaultTotals[vaultAddress][drawNumber].prizes += 1; // Increment prize count only for non-zero payouts
+    }
+  }
+}
+
+// Convert BigInt to string for JSON serialization
+for (let vaultAddress in vaultTotals) {
+  for (let drawNumber in vaultTotals[vaultAddress]) {
+    vaultTotals[vaultAddress][drawNumber].value = parseFloat(
+      ethers.utils.formatUnits(vaultTotals[vaultAddress][drawNumber].value, 18)
+    ).toFixed(4); // POOL formatted
+  }
+}
+
+// Publish the aggregated data
+const vaultTotalsPath = `/vault-totals-${chainNumber}${
+  prizePool ? `-${prizePool}` : ""
+}`;
+await publish(vaultTotals, vaultTotalsPath);
+console.log("....published", vaultTotalsPath);
+
+return [draws, uniqueWinners];
+}
+/*
+
   // 4. Aggregating total payouts per draw for each vault
   let vaultTotals = {};
   for (let drawNumber in claimsData) {
@@ -1154,9 +1199,12 @@ async function PublishV5Claims(chainNumber, prizePool) {
 
   return [draws,uniqueWinners];
 }
+*/
 
 
-function createChainsAssetsPrices(addressObj, geckosObj) {
+
+
+/*function createChainsAssetsPrices(addressObj, geckosObj) {
     const result = {};
 
     for (const chain in addressObj) {
@@ -1172,6 +1220,37 @@ function createChainsAssetsPrices(addressObj, geckosObj) {
     }
 console.log("merged",result)
     return result;
+}*/
+function createChainsAssetsPrices(addressObj, rewardsObj, geckosObj) {
+  const result = {};
+
+  for (const chain in addressObj) {
+    const vaults = addressObj[chain].VAULTS;
+    result[chain] = {};
+
+    for (const vault of vaults) {
+      const gecko = vault.GECKO;
+      if (geckosObj.hasOwnProperty(gecko)) {
+        result[chain][vault.ASSET.toLowerCase()] = geckosObj[gecko];
+      }
+    }
+  }
+
+  for (const chain in rewardsObj) {
+    if (!result[chain]) {
+      result[chain] = {};
+    }
+
+    for (const reward of rewardsObj[chain]) {
+      const gecko = reward.GECKO;
+      if (geckosObj.hasOwnProperty(gecko)) {
+        result[chain][reward.TOKEN.toLowerCase()] = geckosObj[gecko];
+      }
+    }
+  }
+
+  console.log("merged", result);
+  return result;
 }
 
 

@@ -66,7 +66,8 @@ async function updateContributedBetween(vaults, prizePoolContract, lastAwardedDr
       const contributedBetween = await getPrizePoolData(prizePoolContract, vault.vault, lastAwardedDrawId);
       const contributed24h = await getContributed24h(prizePoolContract, vault.vault, lastAwardedDrawId);
       const won7d = getVault7dPrize(prizeData, vault.vault, lastAwardedDrawId);
-
+      const prizes7d = getVaultPrizes(prizeData, vault.vault, lastAwardedDrawId, 7);
+      vault.prizes7d = prizes7d
       vault.contributed7d = contributedBetween;
       vault.contributed24h = contributed24h;
       vault.won7d = won7d;
@@ -117,17 +118,45 @@ async function fetch7dPrizeData(chainId, prizePoolAddress) {
   }
 }
 
+// prize value
 function getVault7dPrize(prizeData, vaultAddress, lastAwardedDrawId) {
   const vaultPrizes = prizeData[vaultAddress.toLowerCase()];
   if (!vaultPrizes) return '0';
 
   let totalWon = 0;
   for (let i = lastAwardedDrawId; i > lastAwardedDrawId - 7; i--) {
-    const prize = parseFloat(vaultPrizes[i.toString()] || '0');
+    const drawData = vaultPrizes[i.toString()];
+    const prize = drawData ? parseFloat(drawData.value) : 0;
     totalWon += prize;
   }
 
   return totalWon.toString();
+}
+
+//prize count
+function getVaultPrizes(prizeData, vaultAddress, lastAwardedDrawId, days) {
+  const vaultPrizes = prizeData[vaultAddress.toLowerCase()];
+  if (!vaultPrizes) return 0;
+
+  let totalPrizes = 0;
+  let availableDraws = 0;
+
+  for (let i = lastAwardedDrawId; i > lastAwardedDrawId - days; i--) {
+    if (!vaultPrizes[i.toString()]) {
+      return 0; // If any draw is missing, return 0
+    }
+    availableDraws++;
+    const drawData = vaultPrizes[i.toString()];
+    const prizes = drawData ? drawData.prizes : 0;
+    totalPrizes += prizes;
+  }
+
+  // Ensure we have the exact number of requested draws
+  if (availableDraws < days) {
+    return 0;
+  }
+
+  return totalPrizes;
 }
 
 async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {

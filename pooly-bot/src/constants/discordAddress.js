@@ -1,0 +1,8 @@
+
+const DISCORDADDRESS = {
+    POOLTIME: '1225048554708406282',
+    POOLTOGETHER: '878246045048520704',
+    }
+    
+    module.exports = { DISCORDADDRESS };
+    

@@ -22,14 +22,21 @@ const { TOPICS } = require("./constants/events")
 //const { PrizeWinsToDb } = require("./functions/prizeWinsToDb.js")
 //const LiquidateNow  = require("./liquidator.js")
 const { AddClaim } = require("./functions/dbDonkey.js")
-const { DiscordNotifyClaimPrize } = require("./functions/discordAlert.js")
+const { DiscordNotifyClaimPrize, SendMessageToChannel } = require("./functions/discordAlert.js")
 //const { DailyReport } = require("./functions/dailyReport")
 const chain = CHAINNAME
 const chainId = CHAINID
 const prizepool = ADDRESS[CHAINNAME].PRIZEPOOL
 const {FoundryPrizeWinsToDb} = require("./functions/foundryPrizeWinsToDb.js")
 
-const LISTENPROVIDER = PROVIDERS[chain]
+let LISTENPROVIDER;
+
+if (WS_PROVIDERS[chain]) {
+  LISTENPROVIDER = WS_PROVIDERS[chain];
+  console.log("using websocket");
+} else {
+  LISTENPROVIDER = PROVIDERS[chain];
+}
 
 const FILTERS = {
 // draw awarded
@@ -58,7 +65,13 @@ async function listen() {
      LISTENPROVIDER.on(FILTERS.DRAWAWARDED, (drawCompletedEvent) => {
              console.log("draw completed event", drawCompletedEvent)
 		//try{DailyReport()}catch(e){console.log(e)}
+
+/*
 setTimeout(() => {
+  try{
+// alert to pooltime test channel
+await SendMessageToChannel("1225048554708406282","Draw awarded on "+chain)
+}catch(e){console.log("error sending msg to discord of draw event")}
   try {
     FoundryPrizeWinsToDb(chainId, drawCompletedEvent.blockNumber)
       .then((finished) => {
@@ -68,7 +81,25 @@ setTimeout(() => {
     console.log(error);
   }
 }, 90000);
+*/
+setTimeout(() => {
+            // Use an IIFE to handle async call
+            (async () => {
+                try {
+                    // alert to pooltime test channel
+                    await SendMessageToChannel("1225048554708406282", "Draw awarded on " + chain);
+                } catch (e) {
+                    console.log("error sending msg to discord of draw event", e);
+                }
 
+                try {
+                    await FoundryPrizeWinsToDb(chainId, drawCompletedEvent.blockNumber);
+                    console.log("db updated");
+                } catch (error) {
+                    console.log(error);
+                }
+            })();
+        }, 90000);
 //try{LiquidateNow()}catch(e){console.log(e)}     
           })
 //console.log(WS_PROVIDERS[chain])

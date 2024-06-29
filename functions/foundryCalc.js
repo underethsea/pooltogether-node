@@ -1,6 +1,6 @@
 // Assuming this is in a CommonJS module file
 const fs = require('fs');
-const BATCH_SIZE = 500; // 0 means no batching.  batching can now be done on the calculator
+const BATCH_SIZE = 200; // 0 means no batching.  batching can now be done on the calculator
 
 // Dynamic import of the ES6 module
 async function loadES6Module() {

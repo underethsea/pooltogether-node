@@ -58,7 +58,8 @@ new prize network deployments/chains can be added in constants/address.js
 - runs the bot to complete the RNG auction by sending ETH for a random number
 - also finishes awarding the auction
 
-## `node listener <chain>`
+## `node listening <chain>`
+- note this is setup to use Infura websocket providers if included in providers.js
 - listens for complete draw and claim events to trigger prize calcs and update prize database with draws and claims
 - requires additional setup
 

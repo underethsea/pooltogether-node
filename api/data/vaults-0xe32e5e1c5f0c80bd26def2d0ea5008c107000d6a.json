@@ -1,7 +1,7 @@
 [
   {
     "vault": "0xe3b3a464ee575e8e25d2508918383b89c832f275",
-    "poolers": 241,
+    "poolers": 216,
     "name": "Prize USDC.e - Aave",
     "symbol": "pUSDC.e",
     "decimals": 6,
@@ -11,18 +11,22 @@
     "assetSymbol": "USDC",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
     "price": 0.999406,
-    "contributed7d": "453.334101694516180433",
-    "contributed24h": "59.704761126049534199",
-    "won7d": "165.8904",
+    "contributed7d": "56.8343657536393359",
+    "contributed24h": "0.587515110791887759",
+    "won7d": "26.8258",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x29cb69d4780b53c1e5cd4d2b817142d2e9890715",
-    "poolers": 34,
+    "poolers": 31,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -32,18 +36,22 @@
     "assetSymbol": "WETH",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
     "price": 3436.16,
-    "contributed7d": "0.000027495365074075",
-    "contributed24h": "0.000000014033954023",
+    "contributed7d": "0.000000017672828854",
+    "contributed24h": "0.000000000009020418",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xce8293f586091d48a0ce761bbf85d5bcaa1b8d2b",
-    "poolers": 21,
+    "poolers": 20,
     "name": "Prize DAI - Aave",
     "symbol": "pDAI",
     "decimals": 18,
@@ -56,15 +64,19 @@
       "total": 0
     },
     "price": 0.998246,
-    "contributed7d": "7.941495436983769529",
-    "contributed24h": "0.397585520866608487",
-    "won7d": "0",
+    "contributed7d": "4.021984273303455296",
+    "contributed24h": "0.00205286753679705",
+    "won7d": "0.814",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xbd8fd33e53ab4120638c34cbd454112b39f6b382",
-    "poolers": 5,
+    "poolers": 4,
     "name": "Prize POOL - TokenVault",
     "symbol": "PPOOL",
     "decimals": 18,
@@ -81,7 +93,11 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x2ac482d67f009acfc242283b6d86bc6dd4e2ee4f",
@@ -102,7 +118,11 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xaeed086d841ae6e86fa9003d84a05999a71bc983",
@@ -122,7 +142,11 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xb7211902d759b580a60a8ed91e4022a161f4c084",
@@ -143,7 +167,11 @@
     "won7d": "0",
     "price": 0.993712,
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x2ef789080933cabbeb8ce364ce877fc54a6add06",
@@ -163,11 +191,15 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x77935f2c72b5eb814753a05921ae495aa283906b",
-    "poolers": 14,
+    "poolers": 12,
     "name": "Prize USDC - Aave",
     "symbol": "pUSDC",
     "decimals": 6,
@@ -177,18 +209,22 @@
     "assetSymbol": "USDC",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
     "price": 0.999529,
-    "contributed7d": "0.022055782598243886",
-    "contributed24h": "0.000011257527881231",
+    "contributed7d": "0.000647337394247675",
+    "contributed24h": "0.00000033040853263",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xf0b19f02c63d51b69563a2b675e0160e1c34397c",
-    "poolers": 60,
+    "poolers": 49,
     "name": "Prize WETH - Aave",
     "symbol": "pWETH",
     "decimals": 18,
@@ -198,14 +234,18 @@
     "assetSymbol": "WETH",
     "gnosis": {
       "required": 2,
-      "total": 3
+      "total": 4
     },
-    "contributed7d": "47.780859287243799306",
-    "contributed24h": "7.450691509259461651",
-    "won7d": "12.3839",
+    "contributed7d": "35.374524440027220444",
+    "contributed24h": "0.300286478447503115",
+    "won7d": "8.1425",
     "price": 3436.16,
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0xd32ceefc5fd9e8a67b1a02e4d35c9f460c05ad2c",
@@ -226,7 +266,11 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x87b1a4956b51be39781678677b0dd695a0c70f1e",
@@ -247,7 +291,11 @@
     "won7d": "0",
     "price": 3.55,
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   },
   {
     "vault": "0x457b69984315b53a1d8130b03b618cd98dd482a1",
@@ -268,6 +316,10 @@
     "contributed24h": "0.0",
     "won7d": "0",
     "c": 10,
-    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a"
+    "pp": "0xe32e5e1c5f0c80bd26def2d0ea5008c107000d6a",
+    "prizesPerDraw7d": 0,
+    "prizesPerDraw30": 0,
+    "prizes7d": 0,
+    "prizes30d": 0
   }
 ]
