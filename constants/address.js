@@ -459,6 +459,17 @@ PAIRS: [
         GECKO: "optimism",
         NOVAULT: true,
       },
+      {
+        VAULT: "0x4200000000000000000000000000000000000042",
+        LIQUIDATIONPAIR: "0x4729b5d1A83ec1FcF732e07fE351AB8A3E74Efe9",
+        SYMBOL: "OPGpBoost",
+        NAME: "OP GP Booster",
+        DECIMALS: 18,
+        ASSET: "0x4200000000000000000000000000000000000042",
+        ASSETSYMBOL: "OP",
+        GECKO: "optimism",
+        NOVAULT: true,
+      },
     ],
   },
   BASESEPOLIA: {

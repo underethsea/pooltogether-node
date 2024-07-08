@@ -46,6 +46,7 @@ const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
 const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const WS_PROVIDERS = {
 //    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
+
 ARBITRUM: new ethers.providers.WebSocketProvider(ws_arbEndpoint),
 OPTIMISM: new ethers.providers.WebSocketProvider(ws_opEndpoint)
 }
