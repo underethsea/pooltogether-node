@@ -1,5 +1,5 @@
 
-const { loadChainConfig, getChainConfig } = require('./chains');
+const { loadChainConfig, getChainConfig } = require('../chains');
 
 const chainKey = process.argv[2] || '';
 
