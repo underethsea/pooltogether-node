@@ -1,6 +1,5 @@
+require('../env-setup');
 const pgp = require("pg-promise")(/* initialization options */);
-const dotenv = require("dotenv");
-dotenv.config();
 /*
 const cn = {
     host: "localhost",

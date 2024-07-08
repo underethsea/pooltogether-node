@@ -1,3 +1,4 @@
+require('../env-setup');
 const pgp = require("pg-promise")(/* initialization options */);
 const ethers = require("ethers");
 const fs = require("fs");
@@ -6,14 +7,14 @@ const cors = require("cors");
 var compression = require("compression");
 const http = require("http");
 const https = require("https");
-const dotenv = require("dotenv");
+//const dotenv = require("dotenv");
 const rateLimit = require("express-rate-limit");
 const { FetchHolders } = require("./holders");
 const { GetLidoApy } = require("./functions/getLidoApy");
 const { GetZapperInfo } = require("./zapper");
 const { GeckoPrice } = require("./functions/geckoFetch");
 const { GetWinners } = require("./functions/getWinners");
-const { GetPrizeResults } = require("./functions/getPrizeResults");
+// const { GetPrizeResults } = require("./functions/getPrizeResults");
 const { GetPlayers } = require("./functions/getPlayers");
 const { GetPrizes } = require("./functions/getPrizes");
 const { GetClaims } = require("./functions/getClaims");
@@ -24,9 +25,9 @@ const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
 const PrizeLeaderboard = require("./functions/getPrizeLeaderboard");
 
 const { ADDRESS, WHITELIST_REWARDS } = require("../constants/address");
-const { ABI } = require("../constants/abi")
-const { PROVIDERS } = require("../constants/providers")
-dotenv.config();
+const { ABI } = require("../constants/abi");
+const { PROVIDERS } = require("../constants/providers");
+//dotenv.config();
 // var sanitizer = require('sanitize');
 const waitTime = 120000;
 const pricesToFetch = [
@@ -44,7 +45,7 @@ const pricesToFetch = [
   "coinbase-wrapped-staked-eth",
   "aerodrome-finance",
   "wrapped-steth",
-  "angle-usd"
+  "angle-usd",
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -66,19 +67,19 @@ const chains = [
     subgraph:
       "https://api.studio.thegraph.com/proxy/63100/pt-v5-optimism/version/latest/",
   },
-{
-id: 42161,
-name: "ARBITRUM",
-prizePool: ADDRESS["ARBITRUM"].PRIZEPOOL.toLowerCase(),
-subgraph: ADDRESS["ARBITRUM"].PRIZEPOOLSUBGRAPH,
-},
-/*  {
+  {
+    id: 42161,
+    name: "ARBITRUM",
+    prizePool: ADDRESS["ARBITRUM"].PRIZEPOOL.toLowerCase(),
+    subgraph: ADDRESS["ARBITRUM"].PRIZEPOOLSUBGRAPH,
+  },
+  /*  {
     id: 421614,
     name: "ARBSEPOLIA",
     prizePool: ADDRESS["ARBSEPOLIA"].PRIZEPOOL.toLowerCase(),
     subgraph: ADDRESS["ARBSEPOLIA"].PRIZEPOOLSUBGRAPH,
   },*/
- {
+  {
     id: 8453,
     name: "BASE",
     prizePool: ADDRESS["BASE"].PRIZEPOOL.toLowerCase(),
@@ -103,7 +104,7 @@ const app = express();
 
 // source control - use previous calculations (json files) to rebuild API or choose db source
 const useStaticFiles = true; // toggle using prize api flat file as source
-const dbName = "pooltogether"; // toggle db source
+// const dbName = "pooltogether"; // toggle db source
 const compareApiSources = false;
 
 const allowList = ["::ffff:51.81.32.49"];
@@ -205,22 +206,18 @@ async function go() {
 
   // set to 40 to run on first go and then wait 40 loops before running again
   let lessFrequentCount = 40;
+
   while (true) {
     // looping
     await update();
-    await fetchAndUpdateStats();
+   
+    let isFirstRun = true;
 
-    if (lessFrequentCount % 40 === 0) {
+    if (isFirstRun || lessFrequentCount % 40 === 0) {
       try {
         const rewardsV5 = await GetTwabPromotions();
-        publish(
-          JSON.stringify(rewardsV5),
-          "/twabrewards"
-        );
-        console.log(
-          "...published ",
-          "/twabrewards"
-        );
+        publish(JSON.stringify(rewardsV5), "/twabrewards");
+        console.log("...published ", "/twabrewards");
       } catch (e) {
         console.log("update twab rewards failed", e);
       }
@@ -230,8 +227,13 @@ async function go() {
       } catch (e) {
         console.log("zapper update failed", e);
       }
+      if (isFirstRun) {
+        isFirstRun = false;
+      }
     }
     lessFrequentCount += 1;
+    await delay(60000)
+    await fetchAndUpdateStats();
   }
 }
 
@@ -239,29 +241,29 @@ async function update() {
   console.log("updating ", chains.length, "chains");
   let chainDraws;
 
-const prizepools = chains
-  .filter(chain => !chain.hideFromApp)
-  .map(chain => chain.prizePool);
-    try {
-        const leaders = await PrizeLeaderboard(prizepools);
-      await publish(JSON.stringify(leaders), "/prizeleaderboard");
-    } catch (error) {
-        console.error("Error calling PrizeLeaderboard:", error);
-   }
- let allPoolsUniqueWinners = new Set();
+  const prizepools = chains
+    .filter((chain) => !chain.hideFromApp)
+    .map((chain) => chain.prizePool);
+  try {
+    const leaders = await PrizeLeaderboard(prizepools);
+    await publish(JSON.stringify(leaders), "/prizeleaderboard");
+  } catch (error) {
+    console.error("Error calling PrizeLeaderboard:", error);
+  }
+  let allPoolsUniqueWinners = new Set();
   for (let chain of chains) {
     let allDrawsOverview = [];
     let allDrawsOverviewClaims = [];
 
     chainDraws = await updateChain(chain.id, chain.prizePool);
-console.log("unique winners",chainDraws.uniqueWinners)  
-  // meta unique winners
-if (chainDraws.uniqueWinners instanceof Set) {
-      chainDraws.uniqueWinners.forEach(value => {
+    // console.log("unique winners", chainDraws.uniqueWinners);
+    // meta unique winners
+    if (chainDraws.uniqueWinners instanceof Set) {
+      chainDraws.uniqueWinners.forEach((value) => {
         allPoolsUniqueWinners.add(value);
       });
     } else {
-      console.error('uniqueWinners is not a Set for chain', chain.id);
+      console.error("uniqueWinners is not a Set for chain", chain.id);
     }
     allDrawsOverview.push({ chain: chain.id, draws: chainDraws.wins });
     allDrawsOverviewClaims.push({
@@ -271,13 +273,13 @@ if (chainDraws.uniqueWinners instanceof Set) {
     console.log(
       "chain draws claims for ",
       chain.id,
-      chain.prizePool,
-      chainDraws.claims
+      chain.prizePool,"-->",
+      chainDraws.claims.length
     );
     // Determine the path suffix based on whether prizePool is provided
     const pathSuffix = chain.prizePool ? `-${chain.prizePool}` : "";
-const uniqueOverview = {total:allPoolsUniqueWinners.size}
-await publish(JSON.stringify(uniqueOverview),"/totalunique")
+    const uniqueOverview = { total: allPoolsUniqueWinners.size };
+    await publish(JSON.stringify(uniqueOverview), "/totalunique");
     await publish(
       JSON.stringify(allDrawsOverview),
       `/draws-${chain.id}${pathSuffix}`
@@ -298,7 +300,7 @@ async function fetchAndUpdateStats() {
   let poolPrice = 0;
   let priceResults = {};
   let newPrices = false;
-/*  try {
+  /*  try {
     priceResults.assets = await FindAndPriceUniv2Assets();
   } catch (e) {
     console.log(e);
@@ -333,78 +335,93 @@ async function fetchAndUpdateStats() {
 
 */
 
+  try {
+    // Fetch Gecko prices
+    priceResults.geckos = await GeckoPrice(pricesToFetch);
+    if (
+      priceResults.geckos &&
+      priceResults.geckos.ethereum > 0 &&
+      priceResults.geckos.optimism > 0
+    ) {
+      ethPrice = priceResults.geckos["ethereum"];
+      // Fetch UNI prices and convert to USD using ETH price
+      let uniAssets;
+      try {
+        const uniPrices = await FindAndPriceUniv2Assets();
+        // console.log("UNI PRICES", uniPrices);
+        // console.log("ETH price", ethPrice);
+        console.log("");
+        console.log("");
 
-try {
-  // Fetch Gecko prices
-  priceResults.geckos = await GeckoPrice(pricesToFetch);
- if (priceResults.geckos && priceResults.geckos.ethereum > 0 && priceResults.geckos.optimism > 0) {
+        // Flatten the uniPrices object into an array
+        const flattenedUniPrices = Object.entries(uniPrices).flatMap(
+          ([chain, assets]) =>
+            Object.entries(assets).map(([address, price]) => ({
+              chain,
+              address,
+              price: parseFloat(price), // Ensure price is a number
+            }))
+        );
 
-  ethPrice = priceResults.geckos["ethereum"]
-    // Fetch UNI prices and convert to USD using ETH price
-    let uniAssets;
-    try {
-      const uniPrices = await FindAndPriceUniv2Assets();
-console.log("UNI PRICES",uniPrices)
-console.log("eth price",ethPrice)
-console.log("")
-console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("");console.log("")
-// Flatten the uniPrices object into an array
-  const flattenedUniPrices = Object.entries(uniPrices).flatMap(([chain, assets]) =>
-    Object.entries(assets).map(([address, price]) => ({
-      chain,
-      address,
-      price: parseFloat(price), // Ensure price is a number
-    }))
-  );  
+        // Convert UNI prices to USD using ETH price
+        uniAssets = flattenedUniPrices.map((asset) => ({
+          ...asset,
+          price: asset.price * ethPrice, // Convert UNI prices to USD
+        }));
+      } catch (e) {
+        console.log(e);
+      }
+      console.log("uni asssets", uniAssets);
+      const chainsAssetsPrices = createChainsAssetsPrices(
+        ADDRESS,
+        WHITELIST_REWARDS,
+        priceResults.geckos
+      );
+      console.log("created chain asset prices", chainsAssetsPrices);
 
+      // Merge UNI and Gecko prices
+      priceResults.assets = mergeChainsAssetsPrices(
+        uniAssets,
+        chainsAssetsPrices
+      );
 
-  // Convert UNI prices to USD using ETH price
-  uniAssets = flattenedUniPrices.map(asset => ({
-    ...asset,
-    price: asset.price * ethPrice, // Convert UNI prices to USD
-  }));
-    } catch (e) {
-      console.log(e);
+      // Add current date and time
+      const currentTime = new Date().toISOString();
+      priceResults["timestamp"] = currentTime;
+      newPrices = true;
+      await publish(JSON.stringify(priceResults), "/prices");
+      console.log("...published /prices at", currentTime);
+    } else {
+      console.log("price is missing in Gecko prices. No new prices fetched.");
     }
-console.log("uni asssets",uniAssets)
-    const chainsAssetsPrices = createChainsAssetsPrices(ADDRESS, WHITELIST_REWARDS, priceResults.geckos);
-console.log("created chain asset prices",chainsAssetsPrices)
-
-    // Merge UNI and Gecko prices
-    priceResults.assets = mergeChainsAssetsPrices(uniAssets, chainsAssetsPrices);
-
-    // Add current date and time
-    const currentTime = new Date().toISOString();
-    priceResults["timestamp"] = currentTime;
-    newPrices = true;
-    await publish(JSON.stringify(priceResults), "/prices");
-    console.log("...published /prices at", currentTime);
-
-  } else {
-    console.log("price is missing in Gecko prices. No new prices fetched.");
+  } catch (e) {
+    console.log("price fetch bombed=======================", e);
   }
-} catch (e) {
-  console.log("price fetch bombed=======================", e);
-}
 
-  let pendingPrize = {}
-   // todo meta poolers
+  let pendingPrize = {};
+  // todo meta poolers
   let vaultOverview = [];
   for (let chain of chains) {
-pendingPrize[chain.name] = {}
-try{
-const prizePoolContract = new ethers.Contract(chain.prizePool,ABI.PRIZEPOOL,PROVIDERS[chain.name])
-const wethPrizeBalance = await prizePoolContract.accountedBalance()
-pendingPrize[chain.name].total = wethPrizeBalance.toString()
-console.log("got pending prize",chain.name,wethPrizeBalance.toString())
-} catch(e){console.log("error trying to get prize pool totals",e)}
+    pendingPrize[chain.name] = {};
+    try {
+      const prizePoolContract = new ethers.Contract(
+        chain.prizePool,
+        ABI.PRIZEPOOL,
+        PROVIDERS[chain.name]
+      );
+      const wethPrizeBalance = await prizePoolContract.accountedBalance();
+      pendingPrize[chain.name].total = wethPrizeBalance.toString();
+      console.log("got pending prize", chain.name, wethPrizeBalance.toString());
+    } catch (e) {
+      console.log("error trying to get prize pool totals", e);
+    }
 
     let v5Prizes;
     try {
       // Fetch prizes for each chain and prize pool
       console.log("fetching GetPrizes for ", chain.name, chain.prizePool);
       v5Prizes = await GetPrizes(chain.name, chain.prizePool);
-      pendingPrize[chain.name].prizes = v5Prizes
+      pendingPrize[chain.name].prizes = v5Prizes;
       //console.log(chain.name,"overview info",v5Prizes)
     } catch (e) {
       console.log(e);
@@ -458,7 +475,7 @@ console.log("got pending prize",chain.name,wethPrizeBalance.toString())
         await publish(v5Vaults, vaultsPath);
         console.log("...published", vaultsPath);
         if (!chain.hideFromApp) {
-          vaultOverview = [...vaultOverview,...v5Vaults];
+          vaultOverview = [...vaultOverview, ...v5Vaults];
         }
       } catch (error) {
         console.error(
@@ -485,7 +502,7 @@ console.log("got pending prize",chain.name,wethPrizeBalance.toString())
         );
       }
     }
-   /* try {
+    /* try {
       console.log("querying leaderboard for ", chain.id, chain.prizePool);
       //const leaders = await PrizeLeaderboard(chain.id, chain.prizePool);
       //const leaderboardPath = `/${chain.id}-${chain.prizePool}-prizeleaderboard`;
@@ -496,11 +513,12 @@ console.log("got pending prize",chain.name,wethPrizeBalance.toString())
     }*/
   }
   await publish(vaultOverview, "/vaults");
-metaOverview = {pendingPrize: pendingPrize, prices: priceResults}  
-try{
-await publish(JSON.stringify(metaOverview),"/overview")}catch(e){console.log("error publishing meta overview /overview",e)}
-
-  await delay(60000);
+  metaOverview = { pendingPrize: pendingPrize, prices: priceResults };
+  try {
+    await publish(JSON.stringify(metaOverview), "/overview");
+  } catch (e) {
+    console.log("error publishing meta overview /overview", e);
+  }
 
   try {
     // POOL holders
@@ -518,6 +536,7 @@ await publish(JSON.stringify(metaOverview),"/overview")}catch(e){console.log("er
   } catch (error) {
     console.log("error fetch and update stats", error);
   }
+
 }
 
 async function updateZapper() {
@@ -550,7 +569,7 @@ async function updateHolders(chainNumber) {
 
 async function updateChain(chainNumber, prizePool) {
   let claims;
-  let uniqueWinners
+  let uniqueWinners;
   try {
     [claims, uniqueWinners] = await PublishV5Claims(chainNumber, prizePool);
     console.log(chainNumber, prizePool, "published claims");
@@ -574,7 +593,7 @@ async function updateChain(chainNumber, prizePool) {
   await publish(v5PrizeResults, prizeResultsPath);
   console.log("...published", prizeResultsPath);
   */
-let draws = [];
+  let draws = [];
   let history = [];
   const bigWinners = [];
   let drawCount = 0;
@@ -648,7 +667,11 @@ let draws = [];
   await publish(top100Winners, "/bigwinnersv1-" + chainNumber);
 
   //await publish(history,"/history-"+chainNumber)
-  const returnData = { wins: draws, claims: claims, uniqueWinners: uniqueWinners };
+  const returnData = {
+    wins: draws,
+    claims: claims,
+    uniqueWinners: uniqueWinners,
+  };
   // console.log("----------------------------draws", draws);
   //console.log("returnData claims", claims);
   return returnData;
@@ -867,13 +890,16 @@ async function openPlayerEndpoints() {
     }
   });
 
-app.get("/player-claims", async (req, res, next) => {
-  const address = req.query.address && ethers.utils.isAddress(req.query.address) ? req.query.address.toLowerCase() : null;
+  app.get("/player-claims", async (req, res, next) => {
+    const address =
+      req.query.address && ethers.utils.isAddress(req.query.address)
+        ? req.query.address.toLowerCase()
+        : null;
 
-  console.log("player claims query", address);
+    console.log("player claims query", address);
 
-  if (address) {
-    const claimsQuery = `
+    if (address) {
+      const claimsQuery = `
       SELECT 
         c.network,
         c.draw,
@@ -893,18 +919,18 @@ app.get("/player-claims", async (req, res, next) => {
 AND CAST(c.payout AS numeric) > 0
     `;
 
-    try {
-      let wins = await v5dbFinal.any(claimsQuery, [address]);
-      console.log("player claims query success");
-      res.send(wins);
-    } catch (e) {
-      console.log("player claims query error", e);
-      next(e);
+      try {
+        let wins = await v5dbFinal.any(claimsQuery, [address]);
+        console.log("player claims query success");
+        res.send(wins);
+      } catch (e) {
+        console.log("player claims query error", e);
+        next(e);
+      }
+    } else {
+      res.status(400).send({ error: "Invalid address" });
     }
-  } else {
-    res.status(400).send({ error: "Invalid address" });
-  }
-});
+  });
 }
 async function openV5Pooler() {
   app.get("/poolerVaults", async (req, res, next) => {
@@ -944,9 +970,9 @@ async function openV5Pooler() {
       // console.log('query for address' + address)
       let addressQuery;
 
-// same query sillies
+      // same query sillies
       if (claims === "true") {
-addressQuery = `
+        addressQuery = `
   SELECT 
     c.network,
     c.draw,
@@ -963,9 +989,8 @@ addressQuery = `
   WHERE 
     c.winner = LOWER($1);
 `;
-
       } else if (wins === "true") {
-addressQuery = `
+        addressQuery = `
   SELECT 
     c.network,
     c.draw,
@@ -982,10 +1007,9 @@ addressQuery = `
   WHERE 
     c.winner = LOWER($1);
 `;
-
       }
 
-      let addressPrizes = await v5dbFinal.any(addressQuery,[address]);
+      let addressPrizes = await v5dbFinal.any(addressQuery, [address]);
       res.send(addressPrizes);
     } else {
       next("ERROR - Invalid address");
@@ -1041,7 +1065,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
   console.log("...published", bigWinnersPath);
   // 2.5 Finding the biggest win in a single draw across all draws
   let bigWins = [];
-    let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
+  let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
   for (let drawNumber in claimsData) {
     let drawWinnersPayouts = {};
     for (let claim of claimsData[drawNumber].claimsList) {
@@ -1121,47 +1145,49 @@ async function PublishV5Claims(chainNumber, prizePool) {
   await publish(history, historyPath);
   console.log("...published", historyPath);
 
-
-// 4. Aggregating total payouts per draw for each vault
-let vaultTotals = {};
-for (let drawNumber in claimsData) {
-  const claimsList = claimsData[drawNumber].claimsList;
-  for (let claim of claimsList) {
-    const vaultAddress = claim.v;
-    if (!vaultTotals[vaultAddress]) {
-      vaultTotals[vaultAddress] = {};
-    }
-    if (!vaultTotals[vaultAddress][drawNumber]) {
-      vaultTotals[vaultAddress][drawNumber] = {
-        value: BigInt(0),
-        prizes: 0
-      };
-    }
-const payout = BigInt(claim.p);
-    if (payout > 0) {
-      vaultTotals[vaultAddress][drawNumber].value += payout;
-      vaultTotals[vaultAddress][drawNumber].prizes += 1; // Increment prize count only for non-zero payouts
+  // 4. Aggregating total payouts per draw for each vault
+  let vaultTotals = {};
+  for (let drawNumber in claimsData) {
+    const claimsList = claimsData[drawNumber].claimsList;
+    for (let claim of claimsList) {
+      const vaultAddress = claim.v;
+      if (!vaultTotals[vaultAddress]) {
+        vaultTotals[vaultAddress] = {};
+      }
+      if (!vaultTotals[vaultAddress][drawNumber]) {
+        vaultTotals[vaultAddress][drawNumber] = {
+          value: BigInt(0),
+          prizes: 0,
+        };
+      }
+      const payout = BigInt(claim.p);
+      if (payout > 0) {
+        vaultTotals[vaultAddress][drawNumber].value += payout;
+        vaultTotals[vaultAddress][drawNumber].prizes += 1; // Increment prize count only for non-zero payouts
+      }
     }
   }
-}
 
-// Convert BigInt to string for JSON serialization
-for (let vaultAddress in vaultTotals) {
-  for (let drawNumber in vaultTotals[vaultAddress]) {
-    vaultTotals[vaultAddress][drawNumber].value = parseFloat(
-      ethers.utils.formatUnits(vaultTotals[vaultAddress][drawNumber].value, 18)
-    ).toFixed(4); // POOL formatted
+  // Convert BigInt to string for JSON serialization
+  for (let vaultAddress in vaultTotals) {
+    for (let drawNumber in vaultTotals[vaultAddress]) {
+      vaultTotals[vaultAddress][drawNumber].value = parseFloat(
+        ethers.utils.formatUnits(
+          vaultTotals[vaultAddress][drawNumber].value,
+          18
+        )
+      ).toFixed(4); // POOL formatted
+    }
   }
-}
 
-// Publish the aggregated data
-const vaultTotalsPath = `/vault-totals-${chainNumber}${
-  prizePool ? `-${prizePool}` : ""
-}`;
-await publish(vaultTotals, vaultTotalsPath);
-console.log("....published", vaultTotalsPath);
+  // Publish the aggregated data
+  const vaultTotalsPath = `/vault-totals-${chainNumber}${
+    prizePool ? `-${prizePool}` : ""
+  }`;
+  await publish(vaultTotals, vaultTotalsPath);
+  console.log("....published", vaultTotalsPath);
 
-return [draws, uniqueWinners];
+  return [draws, uniqueWinners];
 }
 /*
 
@@ -1200,9 +1226,6 @@ return [draws, uniqueWinners];
   return [draws,uniqueWinners];
 }
 */
-
-
-
 
 /*function createChainsAssetsPrices(addressObj, geckosObj) {
     const result = {};
@@ -1253,7 +1276,6 @@ function createChainsAssetsPrices(addressObj, rewardsObj, geckosObj) {
   return result;
 }
 
-
 /*
 function mergeChainsAssetsPrices(obj1, obj2) {
 console.log("trying to merge prices of obj1",obj1,"and obj2",obj2) 
@@ -1275,22 +1297,22 @@ console.log("trying to merge prices of obj1",obj1,"and obj2",obj2)
 }*/
 
 function mergeChainsAssetsPrices(obj1, obj2) {
-    //console.log("trying to merge prices of obj1", obj1, "and obj2", obj2);
+  //console.log("trying to merge prices of obj1", obj1, "and obj2", obj2);
 
-    // Start with a copy of obj2
-    const merged = { ...obj2 };
+  // Start with a copy of obj2
+  const merged = { ...obj2 };
 
-    // Iterate over obj1 to merge it into the merged object
-    obj1.forEach(({ chain, address, price }) => {
-        if (!merged[chain]) {
-            merged[chain] = {};
-        }
-        if (!merged[chain].hasOwnProperty(address)) {
-            merged[chain][address] = price;
-        }
-    });
+  // Iterate over obj1 to merge it into the merged object
+  obj1.forEach(({ chain, address, price }) => {
+    if (!merged[chain]) {
+      merged[chain] = {};
+    }
+    if (!merged[chain].hasOwnProperty(address)) {
+      merged[chain][address] = price;
+    }
+  });
 
-    return merged;
+  return merged;
 }
 
 go();

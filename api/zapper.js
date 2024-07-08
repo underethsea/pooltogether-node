@@ -1,10 +1,9 @@
 const fetch = require('cross-fetch');
 const timelockQuery = 'https://api.zapper.fi/v2/apps/uniswap-v3/balances?';
-const dotenv = require("dotenv");
 const fs = require("fs");
 const path = require("path"); // Import the path module for path operations
 
-dotenv.config();
+require('../env-setup');
 
 // Define the directory where the files will be saved
 const dataDirectory = "./data";

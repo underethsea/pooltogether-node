@@ -1,7 +1,6 @@
 const fetch = require('cross-fetch')
-const dotenv = require("dotenv");
 
-
+require('../env-setup');
 async function fetchHolders(chainId) {
 try{
 let ticket = ""

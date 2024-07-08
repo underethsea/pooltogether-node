@@ -1,8 +1,6 @@
 
-const dotenv = require("dotenv");
 const ethers = require("ethers");
-dotenv.config();
-
+require('../../env-setup');
 
 // const ethereumEndpoint = "https://mainnet.infura.io/v3/" + process.env.ETHEREUM_KEY;
 
