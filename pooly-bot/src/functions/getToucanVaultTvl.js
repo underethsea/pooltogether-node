@@ -59,4 +59,4 @@ console.log(prices)
 module.exports = { GetToucanVaultTvl };
 
 // Call the function for testing
-GetToucanVaultTvl("OPTIMISM").then((results) => console.log(results)).catch((error) => console.error(error));
+//GetToucanVaultTvl("OPTIMISM").then((results) => console.log(results)).catch((error) => console.error(error));
