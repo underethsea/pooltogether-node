@@ -152,6 +152,20 @@ async function FoundryPrizeWinsToDb(chainId, block = "latest") {
     {}
   );
 
+let totalPrizeValueInEther
+try{
+// Calculate total prize value
+const totalPrizeValueInWei = Object.values(consolidatedWinnersData).reduce(
+  (acc, { tier, indices }) => {
+    // Assume tierPrizeValues is an object containing prize values for each tier
+    const prizeValue = tierPrizeValues[tier] * indices.length;
+    return acc + prizeValue;
+  },
+  0
+);
+totalPrizeValueInEther = totalPrizeValueInWei / 1e18;
+}catch(e){console.log(e)}
+
   // Convert the consolidated object back to an array format
   const consolidatedArray = Object.values(consolidatedWinnersData);
 
@@ -168,12 +182,14 @@ async function FoundryPrizeWinsToDb(chainId, block = "latest") {
   );
 
   let totalAdds = 0;
+  let canaryWins = 0
   // Assuming consolidatedArray contains the data prepared for processing
   const addWinPromises = consolidatedArray.map(
     ({ user, vault, tier, indices }) => {
       console.log(
         `Adding: User: ${user}, Vault: ${vault}, Tier: ${tier}, Indices: ${indices}`
       );
+      if(tier > numberOfTiers -3){canaryWins += indices.length}
       totalAdds += indices.length;
       return AddWin(
         chainId,
@@ -213,7 +229,7 @@ async function FoundryPrizeWinsToDb(chainId, block = "latest") {
     */
   const endTime = new Date();
   console.log("End Time ", endTime);
-
+  const nonCanaryWins = totalAdds - canaryWins
   const timeDifference = endTime - startTime;
   console.log("Time elapsed (seconds)", timeDifference / 1000);
   await SendMessageToChannel(
@@ -222,8 +238,10 @@ async function FoundryPrizeWinsToDb(chainId, block = "latest") {
       " Draw " + lastDrawId + " - " + 
       numberOfTiers +
       " tiers with " +
-      totalAdds +
-      " wins calculated"
+      nonCanaryWins +
+      " wins with " + 
+      canaryWins + " canary " +
+      totalPrizeValueInEther.toFixed(4) + " total ETH"
   );
 }
 
@@ -245,7 +263,7 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
   );
 }
 //FoundryPrizeWinsToDb(42161, "latest");
-//FoundryPrizeWinsToDb(8453,15204879)
-//FoundryPrizeWinsToDb(10,121750922)
+//FoundryPrizeWinsToDb(8453,"latest")
+FoundryPrizeWinsToDb(10,"latest")
 //FoundryPrizeWinsToDb(42161,221234069)
 module.exports = { FoundryPrizeWinsToDb };

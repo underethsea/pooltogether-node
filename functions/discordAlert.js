@@ -1,16 +1,15 @@
-// cron to alert winners
 require('../env-setup');
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
 const Discord = require("discord.js");
 // const { DISCORDID } = require("./constants/discordId.js")
 
-const pgp = require("pg-promise")(/* initialization options */);
+const pgp = require("pg-promise")();
 const ethers = require("ethers");
 //const fs = require("fs");
 const fetch = require("cross-fetch");
 const { ADDRESS } = require("../constants/address");
 const { CONFIG } = require("../constants/config");
-const { MessageEmbed } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 
 const { getChainConfig } = require('../chains');
 
@@ -28,9 +27,9 @@ const tempBlacklist = [];
 // user to receive notification that alerts have completed
 const userReportsId = "662117180158246926";
 
-const client = new Discord.Client({
-  partials: ["CHANNEL"],
-  intents: ["GUILDS", "GUILD_MESSAGES", "DIRECT_MESSAGES"],
+const client = new Client({
+  partials: [Partials.Channel],
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.DirectMessages],
 });
 
 const fourteenUsdc = (amount) => {
