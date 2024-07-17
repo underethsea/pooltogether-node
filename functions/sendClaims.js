@@ -1,11 +1,13 @@
 const fs = require("fs");
+
 const { CONTRACTS } = require("../constants/contracts");
 const { CONFIG } = require("../constants/config");
 const { ADDRESS } = require("../constants/address.js");
 const { ABI } = require("../constants/abi");
-
+const { PROVIDERS, SIGNER } = require("../constants/providers")
+//console.log(ABI.VAULT)
 const chalk = require("chalk");
-const ethers = require("ethers");
+//const ethers = require("ethers");
 // const { BuildTxForSwap } = require("../utilities/1inchSwap.js");
 const { GetLogs } = require("../utilities/getLogs");
 const { AlchemyTransactionReceipt } = require("../utilities/alchemy");
@@ -14,6 +16,12 @@ const { GetRecentClaims } = require("./getRecentClaims");
 const { GasEstimate } = require("../utilities/gas.js");
 
 const { getChainConfig } = require("../chains");
+
+const NodeCache = require('node-cache');
+const { ethers } = require('ethers');
+
+// Initialize the cache with a suitable TTL (e.g., 30 minutes)
+const myCache = new NodeCache({ stdTTL: 1800 }); // Cache expires in 30 minutes
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
@@ -42,7 +50,6 @@ const chalkLoss = (message) => {
 
 // todo batch claims to CONFIG.BATCHSIZE
 const SendClaims = async (
-  contract,
   drawId,
   vaultWins,
   //maxFee,
@@ -67,7 +74,7 @@ const SendClaims = async (
   for (const key in groupedData) {
     const group = groupedData[key];
     let { vault, tier, winners, prizeIndices } = group;
-
+    const claimerContract = await getClaimerContract(vault)
     // Separate the last-in-line winners
     let lastInLineWinners = [];
     let regularWinners = [];
@@ -176,9 +183,7 @@ const SendClaims = async (
     // console.log(winners)
     // console.log(prizeIndices)
 
-    let minFeePerPrizeToClaim = await CONTRACTS.CLAIMER[
-      CHAINNAME
-    ].computeFeePerClaim(tier, prizeIndices.flat().length);
+    let minFeePerPrizeToClaim = await claimerContract.computeFeePerClaim(tier, prizeIndices.flat().length);
     //minFeeToClaim = minFeeToClaim.div(prizeIndices.flat().length)
     //minFeeToClaim = ethers.BigNumber.from(minFeeToClaim); // ensure it's a BigNumber
 
@@ -217,7 +222,7 @@ const SendClaims = async (
 
     console.log(section("     ---- profitability -----"));
 
-    let feeEstimate = await CONTRACTS.CLAIMER[CHAINNAME].callStatic.claimPrizes(
+    let feeEstimate = await claimerContract.callStatic.claimPrizes(
       vault,
       tier,
       winners,
@@ -271,7 +276,7 @@ const SendClaims = async (
     ];
 
     // Encode the function call
-    const data = contract.interface.encodeFunctionData(functionName, args);
+    const data = claimerContract.interface.encodeFunctionData(functionName, args);
 
     // calculate total gas cost in wei
     /*console.log("gas estimate",CONTRACTS.CLAIMER[CHAINNAME].address,
@@ -281,7 +286,7 @@ const SendClaims = async (
       500000 + (50000*prizeIndices.flat()-1))
 */
     const web3TotalGasCost = await GasEstimate(
-      CONTRACTS.CLAIMER[CHAINNAME],
+      claimerContract,
       "claimPrizes",
       args,
       CONFIG.PRIORITYFEE
@@ -406,7 +411,7 @@ const SendClaims = async (
           "prizes"
         );
         try {
-          tx = await contract.claimPrizes(
+          tx = await claimerContract.claimPrizes(
             vault,
             tier,
             finalWinners,
@@ -433,7 +438,7 @@ const SendClaims = async (
           "......not above profit threshold of $",
           MINPROFIT.toFixed(2),
           " & ",
-          (MINPROFITPERCENTAGE * 100).toFixed(2),
+          (MINPROFITPERCENTAGE * 100).toFixed(2)+
           "%"
         );
         console.log(
@@ -453,7 +458,7 @@ const SendClaims = async (
         estimateNetFromClaims.toFixed(2),
         " | MINPROFIT",
         MINPROFIT,
-        " %",
+        " %"+
         MINPROFITPERCENTAGE
       );
     }
@@ -648,6 +653,43 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
   } catch (e) {
     console.log(e);
   }
+}
+
+
+async function getClaimerContract(vaultAddress) {
+    try {
+        // Check the cache for the claimer address
+        const cacheKey = `claimer_${vaultAddress}`;
+        let claimerAddress = myCache.get(cacheKey);
+
+        if (claimerAddress) {
+            console.log('Using cached claimer address ' + claimerAddress);
+        } else {
+            // If not cached, fetch the claimer address from the vault contract
+            const vaultContract = new ethers.Contract(vaultAddress, ABI.VAULT, PROVIDERS[CHAINNAME]);
+            claimerAddress = await vaultContract.claimer();
+
+            // Convert claimer address to lowercase
+            claimerAddress = claimerAddress.toLowerCase();
+
+            // Verify the claimer address is in the array ADDRESS[CHAINNAME].CLAIMERS
+            const validClaimers = ADDRESS[CHAINNAME].CLAIMERS.map(addr => addr.toLowerCase());
+            if (!validClaimers.includes(claimerAddress)) {
+                console.warn(`Claimer address ${claimerAddress} is not in the valid claimers list. Using default claimer address.`);
+                claimerAddress = validClaimers[0]; // Use the first address from the valid claimers list
+            }
+
+            // Store the claimer address in the cache
+            myCache.set(cacheKey, claimerAddress);
+            console.log('Updated cache for claimer ' + claimerAddress);
+        }
+
+        // Create and return the claimer contract object
+        return new ethers.Contract(claimerAddress, ABI.CLAIMER, SIGNER);
+    } catch (error) {
+        console.error('Error fetching claimer address:', error);
+        throw error; // Re-throw the error after logging it
+    }
 }
 
 module.exports = { groupDataByVaultAndTier };

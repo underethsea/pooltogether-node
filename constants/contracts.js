@@ -6,7 +6,7 @@ const { CHAINS } = require("../chains");
 const { getChainConfig } = require("../chains");
 
 const CHAINNAME = getChainConfig().CHAINNAME;
-console.log("contracts chain",CHAINNAME)
+//console.log("contracts chain",CHAINNAME)
 
 const isTestnet = CHAINS[CHAINNAME]?.testnet;
 const isOpchain = CHAINS[CHAINNAME]?.opchain
@@ -85,14 +85,14 @@ UNIFLASHLIQUIDATORSIGNER: {
 }: {} ),
   CLAIMERSIGNER: {
     [CHAINNAME]: new ethers.Contract(
-      ADDRESS[CHAINNAME].CLAIMER,
+      ADDRESS[CHAINNAME].CLAIMERS[0],
       ABI.CLAIMER,
       SIGNER
     ),
   },
   CLAIMER: {
     [CHAINNAME]: new ethers.Contract(
-      ADDRESS[CHAINNAME].CLAIMER,
+      ADDRESS[CHAINNAME].CLAIMERS[0],
       ABI.CLAIMER,
       PROVIDERS[CHAINNAME]
     ),

@@ -14,7 +14,6 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
 
 const ethers = require("ethers");
-// const { CONTRACTS, PROVIDERS, SIGNER, ABI } = require("./constants/index")
 const { CONTRACTS } = require("./constants/contracts.js")
 const { SIGNER } = require("./constants/providers.js");
 const { ADDRESS } = require("./constants/address.js");
@@ -38,13 +37,6 @@ const useApiPriceOverride = true
 
 const section = chalk.hex("#47FDFB");
 
-const claimerContract = CONTRACTS.CLAIMERSIGNER[CHAINNAME]
-
-new ethers.Contract(
-  ADDRESS[CHAINNAME].CLAIMER,
-  ABI.CLAIMER,
-  SIGNER
-);
 
 async function go() {
   console.log(section("----- starting claim bot ------"));
@@ -145,7 +137,6 @@ console.log("won vs claimed",winVsClaimStats)
     //  console.log(section("---- checking profitability -----"));
     // console.log("time logged | ",Date.now())
     await SendClaims(
-      claimerContract,
       lastDrawId,
       newWinners,
       //maxFee,
