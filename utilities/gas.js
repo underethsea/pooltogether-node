@@ -1,14 +1,14 @@
 require("../env-setup");
 const ethers = require("ethers");
-//const { CONTRACTS } = require("../constants/contracts");
+const { CONTRACTS } = require("../constants/contracts");
 const { PROVIDERS } = require("../constants/providers");
 const { CONFIG } = require("../constants/config");
 //require('dotenv').config(); // Adjust the path as needed
 
 const { getChainConfig } = require("../chains");
 
-//const CHAINNAME = getChainConfig().CHAINNAME;
-const CHAINNAME = "ARBITRUM"
+const CHAINNAME = getChainConfig().CHAINNAME;
+//const CHAINNAME = "ARBITRUM"
 const parseGweiToWei = (num) => ethers.utils.parseUnits(num.toString(), "gwei");
 const parseGwei = (num) => ethers.utils.parseUnits(num.toString(), "gwei");
 
@@ -56,10 +56,10 @@ async function GasEstimate(
     const serialized = ethers.utils.serializeTransaction(tx);
     let l1Fee = ethers.BigNumber.from(0);  // Default to 0 if GASORACLE is not available
 if (typeof CONTRACTS !== 'undefined' && CONTRACTS?.GASORACLE?.[CHAINNAME]) {
-
       l1Fee = await CONTRACTS.GASORACLE[CHAINNAME].getL1Fee(serialized);
-    }
-    else {l1Fee = ethers.BigNumber.from(0)}
+   }
+    else {
+l1Fee = ethers.BigNumber.from(0)}
     //        console.log("l1 fee", ethers.utils.formatEther(l1Fee), "ETH");
 
     let l2executionFee
