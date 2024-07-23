@@ -49,7 +49,7 @@ async function GasEstimate(
 
     // Calculations using BigNumber for accuracy
     const baseFeeWei = feeData.lastBaseFeePerGas;
-    console.log("base feee",baseFeeWei/1e9)
+    //console.log("base feee",baseFeeWei/1e9)
     const priorityFeeWei = parseGweiToWei(priorityFee || '0');
     const maxFeeWei = baseFeeWei.add(priorityFeeWei);
 

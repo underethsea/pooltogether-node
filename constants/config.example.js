@@ -9,7 +9,6 @@ const CONFIG = {
   // Prize Calculator Configuration
   BATCHSIZE: 100, // Number of wins to calculate per multicall
   useCoinGecko: true, // Use CoinGecko for pricing (false uses 1inch)
-
   // Timing Configuration for looping claimer and liquidator apps
   // retries will be a random time between min and max
   minTimeInMilliseconds: 08 * 60 * 1000, // Minimum polling interval (5 * 60 = 5 minutes)
@@ -34,7 +33,7 @@ const CONFIG = {
 //  ONLYLIQUIDATE: ['0x7d72e1043FBaCF54aDc0610EA8649b23055462f0','0x006e714accBFEecD561a9B590e919402e871a91D'], // array of pairs to liquidate
   ONLYLIQUIDATE: [],
   DONTLIQUIDATE: [], // array of pairs to exclude
-  USESWAPPER: false, // use contract for swapping prize asset back to prize token
+  SWAPPERS: {}, // {CHAINNAME: "contract address",etc}
 
   // WinBooster Configuration
   FEE: 4, // claimer fee (ex 5 = 5%)   

@@ -4,13 +4,14 @@ const { ADDRESS, ADDRESS_AUCTION } = require("./address.js");
 const { PROVIDERS, MAINNETSIGNER, SIGNER } = require("./providers.js");
 const { CHAINS } = require("../chains");
 const { getChainConfig } = require("../chains");
+const { CONFIG } = require("./config")
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 //console.log("contracts chain",CHAINNAME)
 
 const isTestnet = CHAINS[CHAINNAME]?.testnet;
 const isOpchain = CHAINS[CHAINNAME]?.opchain
-const hasSwapper = ADDRESS?.[CHAINNAME]?.SWAPPER ?? false;
+const hasSwapper = CONFIG?.SWAPPERS?.[CHAINNAME] ?? false;
 const hasUniFlashLiquidator = ADDRESS[CHAINNAME]?.UNIFLASHLIQUIDATOR ?? false
 const hasGasOracle = ADDRESS[CHAINNAME]?.GASORACLE ?? false
 const CONTRACTS = {
@@ -56,7 +57,7 @@ UNIFLASHLIQUIDATORSIGNER: {
 ...(hasSwapper ? {
     SWAPPERSIGNER: {
       [CHAINNAME]: new ethers.Contract(
-        ADDRESS[CHAINNAME].SWAPPER,
+        CONFIG.SWAPPERS[CHAINNAME],
         ABI.SWAPPER,
         SIGNER
       ),

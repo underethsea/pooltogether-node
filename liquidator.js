@@ -11,7 +11,7 @@ try {
 }
 
 const CHAINNAME = getChainConfig().CHAINNAME;
-
+const CHAINID = getChainConfig().CHAINID
 const { CONTRACTS } = require("./constants/contracts.js");
 const { ADDRESS } = require("./constants/address.js");
 const { PROVIDERS, SIGNER } = require("./constants/providers.js");
@@ -24,12 +24,12 @@ const { GeckoIDPrices } = require("./utilities/geckoFetch.js");
 const { AlchemyTransactionReceipt } = require("./utilities/alchemy");
 const { GetPricesForToken } = require("./utilities/1inch");
 const { GasEstimate } = require("./utilities/gas.js");
-const { LapThePool, OutAndBack } = require("./functions/swapper.js");
+const { PrizeSwim, LapThePoolBestOption, OutAndBackBestOption, LapThePool, LapThePoolParaswap, OutAndBack, OutAndBackParaswap } = require("./functions/swapper.js");
 const { UniFlashSwap} = require("./functions/uniFlashSwap.js")
 // const { Get1inchQuote } = require("./utilities/1inchQuote");
 // const { BuildTxForSwap } = require("./utilities/1inchSwap.js");
 const { uniV2LPPriceInWeth } = require("./utilities/uniV2Price.js")
-
+const ParaswapQuote = require("./functions/paraswapQuote.js")
 const ethers = require("ethers");
 const chalk = require("chalk");
 
@@ -63,16 +63,6 @@ async function go() {
     let bestOptionIn;
     let bestOptionOut;
     let bestOutValue;
-
-    let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
-      CHAINNAME
-    ].balanceOf(CONFIG.WALLET);
-
-    const myBalanceFormatted = ethers.utils.formatUnits(
-      walletPrizeTokenBalance,
-      ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
-    );
-    console.log("my prize token balance ", myBalanceFormatted);
 
     // --------- use factory to find vaults to liquidate ------------------
     //     let vaults = [];
@@ -164,7 +154,7 @@ pairs = pairs.filter(pair => pair.GECKO && pair.GECKO !== '');
       prizeTokenPrice = await GetPricesForToken(
         ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS
       );
-      await delay(1100); // Delays for 1.1 seconds
+      //await delay(1100); // Delays for 1.1 seconds
     }
 
     if (
@@ -187,6 +177,8 @@ for (const pair of uniV2Pairs) {
 }
 
 
+
+
 pairs.map((pair, index) => pair.PRICE = geckoPrices[index])
 pairs =  pairs.concat(uniV2Pairs)
      console.log("total pairs ", pairs.length);
@@ -195,8 +187,8 @@ pairs =  pairs.concat(uniV2Pairs)
 
     // Construct an array of call data for each pair
     for (const pair of pairs) {
-      if (CONFIG.USESWAPPER) {
-        await delay(1100);
+if (CONFIG.SWAPPERS?.[CHAINNAME]?.length > 0) {
+        //await delay(1100);
       }
       const contract = new ethers.Contract(
         pair.LIQUIDATIONPAIR,
@@ -206,6 +198,10 @@ pairs =  pairs.concat(uniV2Pairs)
       multiCallMaxOutArray.push(contract.callStatic.maxAmountOut());
     }
 
+multiCallMaxOutArray.push(CONTRACTS.PRIZETOKEN[
+      CHAINNAME
+    ].balanceOf(CONFIG.WALLET))
+
     let maxOutResults = [];
 
     try {
@@ -213,6 +209,15 @@ pairs =  pairs.concat(uniV2Pairs)
     } catch (error) {
       console.error("Multicall error:", error.message);
     }
+
+    let walletPrizeTokenBalance = maxOutResults[maxOutResults.length-1]
+
+    const myBalanceFormatted = ethers.utils.formatUnits(
+      walletPrizeTokenBalance,
+      ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
+    );
+    console.log("my prize token balance ", myBalanceFormatted);
+
 
     if (maxOutResults.length === 0) {
       // Handle the case where maxOutResults is empty
@@ -329,6 +334,19 @@ pairs =  pairs.concat(uniV2Pairs)
 
             const prizeTokenValue = poolOutFormatted * prizeTokenPrice;
             const outValue = maxOutFormatted * pairOutPrice;
+             
+/*
+console.log("paraswap params",
+CHAINID,CONFIG.WALLET,
+            pairOutAsset,pairDecimals,bestOptionOut.toString(),ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS
+)
+            const paraswap = await ParaswapQuote(CHAINID,CONFIG.WALLET,
+pairOutAsset,pairDecimals,bestOptionOut.toString(),ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS)
+console.log("paraswap amt returned",paraswap.priceRoute.destAmount)            
+console.log("paraswap data",paraswap.txParams.data)
+console.log("paraswap router",paraswap.txParams.to)
+*/
+
 
             console.log(
               "out value $" +
@@ -339,7 +357,8 @@ pairs =  pairs.concat(uniV2Pairs)
                 (outValue - prizeTokenValue).toFixed(2)
             );
 
-            if(!CONFIG.USESWAPPER){
+if (!CONFIG.SWAPPERS?.[CHAINNAME] || CONFIG.SWAPPERS[CHAINNAME].length === 0) {
+
             if (maxToSendWithSlippage.gt(walletPrizeTokenBalance)) {
               console.log(
                 "not enough prize token to estimate and send liquidation"
@@ -347,14 +366,21 @@ pairs =  pairs.concat(uniV2Pairs)
               continue;
             }}
 
-            if (outValue - profitThreshold < prizeTokenValue) {
-              console.log("not profitable...");
+            //if (outValue - profitThreshold < prizeTokenValue) {
+
+// todo 1% hardcoded loss impact to check actual pricing instead of coingecko
+            if((outValue*1.11)- profitThreshold < prizeTokenValue) { 
+             console.log("not profitable...");
             } else {
               const gasBudgetUSD = outValue - prizeTokenValue - profitThreshold;
               // console.log("gas budget USD", gasBudgetUSD);
               const gasBudgetETH = ethers.BigNumber.from(
-                parseInt((gasBudgetUSD / 3600) * 1e18).toString()
+                parseInt((gasBudgetUSD / ethPrice) * 1e18).toString()
               );
+              const profitThresholdETH = ethers.BigNumber.from(
+                parseInt((profitThreshold / ethPrice) * 1e18).toString()
+              );
+              console.log("profit thrshold ETH",profitThresholdETH.toString())
               console.log("gas budget in ETH", gasBudgetETH.toString());
               //console.log(" no vault?", noVault);
 if(pairIsUniV2){console.log("UNIV2 flash strategy")
@@ -363,7 +389,7 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
 
 }else{
               if (
-                CONFIG.USESWAPPER &&
+                CONFIG.SWAPPERS?.[CHAINNAME]?.length > 0 &&
                 vaultDepositToken.toLowerCase() !==
                   ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()
               ) {
@@ -382,14 +408,40 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
 
                 //async function Swapper(pairAddress,vaultAddress,depositTokenAddress,amtOut,amtIn,gasBudget){
                 if (noVault) {
+// best option
+
+const swapGo = await OutAndBackBestOption(
+                    pairAddress,
+                    pairOutAsset,
+                    pairDecimals,
+                    bestOptionOut,
+                    maxToSendWithSlippage,
+                    profitThresholdETH
+                  )
+// paraswap
+/*
+const swapGo = await OutAndBackParaswap(
+                    pairAddress,
+                    pairOutAsset,
+                    pairDecimals,
+                    bestOptionOut,
+                    maxToSendWithSlippage,
+		    profitThresholdETH
+                  )
+*/
+// 1 inch
+/*
                   const swapGo = await OutAndBack(
                     pairAddress,
                     pairOutAsset,
                     bestOptionOut,
                     maxToSendWithSlippage,
                     gasBudgetETH
-                  );
+                  );*/
                 } else {
+
+// 1 inch
+/*
                   const swapGo = await LapThePool(
                     pairAddress,
                     vaultAddress,
@@ -398,8 +450,51 @@ await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
                     maxToSendWithSlippage,
                     gasBudgetETH
                   );
+
+*/
+// paraswap
+
+/*const paraswapGo = await LapThePoolParaswap(
+pairAddress,
+                    vaultAddress,
+                    pairOutAsset,
+                    pairDecimals,
+                    bestOptionOut,
+                    maxToSendWithSlippage,
+                    profitThresholdETH
+)
+*/
+const  bestOptionGo = await LapThePoolBestOption(
+pairAddress,
+                    vaultAddress,
+                    pairOutAsset,
+                    pairDecimals,
+                    bestOptionOut,
+                    maxToSendWithSlippage,
+                    profitThresholdETH
+)
+// 1 inch
+/*
+                  const swapGo = await LapThePool(
+                    pairAddress,
+                    vaultAddress,
+                    pairOutAsset,
+                    bestOptionOut,
+                    maxToSendWithSlippage,
+                    gasBudgetETH
+                  );*/
                 }
-              } else {
+              } 
+else if (vaultDepositToken.toLowerCase() ===
+                  ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()){
+console.log("prize token exchange")
+await PrizeSwim(pairAddress,
+  vaultAddress,
+  bestOptionOut,
+  maxToSendWithSlippage,
+  profitThresholdETH)
+}
+else {
                 // calculate total gas cost in wei
                 /*web3TotalGasCost = await web3GasEstimate(
               data,
