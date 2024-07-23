@@ -63,13 +63,14 @@ new prize network deployments/chains can be added in constants/address.js
 - listens for complete draw and claim events to trigger prize calcs and update prize database with draws and claims
 - requires additional setup
 
-## winBooster
-- the win booster contract is gated to the service provider, to use this you will need to deploy your own booster contract and app
+## swapper
+Use your own contract to make no loss liquidations that redeem the liquidated asset back to the prize token
 
-## this is an evolving set of scripts. some improvements to make...
+- deploy a swapper contract ex: https://optimistic.etherscan.io/address/0xfd9ec0d04062356e086f5df9ea681a77a8a6f725
+- call the approve function on the swapper to approve the routers to spend the various prize assets
+- send prize tokens to the swapper contract to be used for swapping
+- update your contract addresses for `SWAPPERS` in config.js
 
-- RNG should check that the recent relay actually worked
-- General cleanup
-- Improved Docs
+## this is an evolving set of scripts. your feedback is appreciated!
 
 # pooltogether-node
