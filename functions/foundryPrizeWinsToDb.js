@@ -17,17 +17,19 @@ const { ADDRESS } = require("../constants/address.js");
 // const { CONFIG } = require("../constants/config.js");
 const { GetChainName } = require("../constants/address.js");
 const GetTwabPlayers = require("../functions/playersSubgraph.js");
-const { AddWin, AddDraw, AddPoolers } = require("../functions/dbDonkey.js");
+const { AddWin, AddDraw, AddPoolers, UpdateDrawCalculated } = require("../functions/dbDonkey.js");
 // const { GetWinnersByTier } = require("../functions/getWinnersByTier.js");
 const { GetPrizePoolData } = require("../functions/getPrizePoolData.js");
 const chalk = require("chalk");
 const GetFoundryWinnersByVault = require("./foundryCalc");
 const section = chalk.hex("#47FDFB");
 const { SendMessageToChannel } = require("./discordAlert");
-const CHAINNAME = getChainConfig().CHAINNAME;
-
+//const CHAINNAME = getChainConfig().CHAINNAME;
+const CONFIG_CHAINNAME = getChainConfig().CHAINNAME;
 async function FoundryPrizeWinsToDb(chainId, block = "latest") {
-  if (block === "latest") {
+const CHAINNAME = GetChainName(chainId) 
+if(CHAINNAME !== CONFIG_CHAINNAME) {console.log("CONFIG CHAIN MISMATCH");return}
+ if (block === "latest") {
     block = await PROVIDERS[CHAINNAME].getBlock();
     block = block.number;
   }
@@ -37,7 +39,7 @@ async function FoundryPrizeWinsToDb(chainId, block = "latest") {
     "chain id ",
     chainId,
     " name ",
-    GetChainName(chainId)
+    CHAINNAME
   );
   console.log(section("----- calling contract data ------"));
 
@@ -205,9 +207,10 @@ totalPrizeValueInEther = totalPrizeValueInWei / 1e18;
 
   // Execute all AddWin operations in parallel
   Promise.all(addWinPromises)
-    .then(() => {
-      console.log("All winners processed successfully.");
-    })
+ .then(async () => {
+    console.log("All winners processed successfully.");
+    await UpdateDrawCalculated(chainId, lastDrawId.toString(), ADDRESS[CHAINNAME].PRIZEPOOL);
+  })
     .catch((error) => {
       console.error("An error occurred while processing winners:", error);
     });
@@ -262,8 +265,8 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
     }, {})
   );
 }
-//FoundryPrizeWinsToDb(42161, "latest");
-//FoundryPrizeWinsToDb(8453,"latest")
-FoundryPrizeWinsToDb(10,"latest")
+//FoundryPrizeWinsToDb(42161, "latest"); // arbitrum
+//FoundryPrizeWinsToDb(8453,"latest") // base
+//FoundryPrizeWinsToDb(10,122915333) // optimism
 //FoundryPrizeWinsToDb(42161,221234069)
 module.exports = { FoundryPrizeWinsToDb };

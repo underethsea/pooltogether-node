@@ -1,4 +1,8 @@
 const { loadChainConfig, getChainConfig } = require('./chains');
+const { ethers } = require('ethers');
+
+const EXPECTED_PONG_BACK = 60000; // 1 minute
+const KEEP_ALIVE_CHECK_INTERVAL = 30 * 60 * 1000; // 30 minutes
 
 // Assuming the chain name/id is the first argument, default to 'OPTIMISM' if not provided
 const chainKey = process.argv[2] || '';
@@ -36,9 +40,10 @@ let LISTENPROVIDER;
 
 if (WS_PROVIDERS[chain]) {
   LISTENPROVIDER = WS_PROVIDERS[chain];
-  console.log("using websocket");
+  console.log("Using WebSocket provider");
 } else {
   LISTENPROVIDER = PROVIDERS[chain];
+  console.log("Using HTTP provider");
 }
 
 const FILTERS = {
@@ -52,11 +57,48 @@ const FILTERS = {
   },
 };
 
+let pingTimeout = null;
+let keepAliveInterval = null;
+
+function startConnection() {
+  if (LISTENPROVIDER instanceof ethers.providers.WebSocketProvider) {
+console.log("opening web socket")
+    LISTENPROVIDER._websocket.on('open', () => {
+      console.log('WebSocket connection established');
+
+      keepAliveInterval = setInterval(() => {
+        console.log('Checking if the connection is alive, sending a ping');
+        LISTENPROVIDER._websocket.ping();
+
+        pingTimeout = setTimeout(() => {
+          LISTENPROVIDER._websocket.terminate();
+        }, EXPECTED_PONG_BACK);
+      }, KEEP_ALIVE_CHECK_INTERVAL);
+
+      listen();
+    });
+
+    LISTENPROVIDER._websocket.on('close', () => {
+      console.error('The WebSocket connection was closed');
+      clearInterval(keepAliveInterval);
+      clearTimeout(pingTimeout);
+      startConnection();
+    });
+
+    LISTENPROVIDER._websocket.on('pong', () => {
+      console.log('Received pong, so connection is alive, clearing the timeout');
+      clearTimeout(pingTimeout);
+    });
+  } else {
+    listen();
+  }
+}
+
 async function listen() {
-  console.log("listening for complete award and claim events");
+  console.log("Listening for complete award and claim events");
 
   LISTENPROVIDER.on(FILTERS.DRAWAWARDED, async (drawCompletedEvent) => {
-    console.log("draw completed event", drawCompletedEvent);
+    console.log("Draw completed event", drawCompletedEvent);
 
     try {
       await SendMessageToChannel("1225048554708406282", "Draw awarded on " + chain);
@@ -136,4 +178,4 @@ async function startCalculation(chainId, drawCompletedEvent) {
   console.log('Max retries reached. Calculation did not start.');
 }
 
-listen();
+startConnection();

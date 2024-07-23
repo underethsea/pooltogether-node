@@ -36,9 +36,9 @@ const mainnetEndpoint = "https://eth-mainnet.g.alchemy.com/v2/" + process.env.AL
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opSepoliaWebsocketEndpoint = "wss://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 const ws_arbEndpoint = "wss://arbitrum-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
 const ws_opEndpoint = "wss://optimism-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
-//const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 // const baseSepoliaEndpoint = "https://sepolia.base.org" 
 const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const mainnetEndpoint = "https://eth.llamarpc.com"
@@ -47,8 +47,8 @@ const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCH
 const WS_PROVIDERS = {
 //    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
 
-ARBITRUM: new ethers.providers.WebSocketProvider(ws_arbEndpoint),
-OPTIMISM: new ethers.providers.WebSocketProvider(ws_opEndpoint)
+//ARBITRUM: new ethers.providers.WebSocketProvider(ws_arbEndpoint),
+//OPTIMISM: new ethers.providers.WebSocketProvider(ws_opEndpoint)
 }
 
 const PROVIDERS = {

@@ -218,68 +218,69 @@ prizepool = prizepool.toLowerCase()
       
         
   
-  async function AddDraw(
-    network,
-    draw,
-    //startedAt,
-    //periodSeconds,
-    tiers,
-    //grandPrizePeriod,
-    tierValues,
-    prizesForTier,
-    block,
-prizePool
-  ) {
-prizePool = prizePool.toLowerCase()
+async function AddDraw(
+  network,
+  draw,
+  //startedAt,
+  //periodSeconds,
+  tiers,
+  //grandPrizePeriod,
+  tierValues,
+  prizesForTier,
+  block,
+  prizePool
+) {
+  prizePool = prizePool.toLowerCase();
+  try {
+    const checkForDrawQuery =
+      "SELECT * FROM draws WHERE network = $1 and draw = $2 and prizepool = $3";
+    let checkingForDraw = [];
     try {
-
-      const checkForDrawQuery =
-        "SELECT * FROM draws WHERE network = $1 and draw = $2 and prizepool = $3";
-      let checkingForDraw = [];
-      try {
-        checkingForDraw = await DB.any(checkForDrawQuery, [network.toString(), draw,prizePool]);
-        if (checkingForDraw.length > 0) {
-          console.log("duplicate draw='" + draw + "'  and network='" + network + " and prize pool=" +prizePool);
-          return "Draw already in db";
-        }
-      } catch (error) {
-        checkingForDraw = [];
+      checkingForDraw = await DB.any(checkForDrawQuery, [network.toString(), draw, prizePool]);
+      if (checkingForDraw.length > 0) {
+        console.log("duplicate draw='" + draw + "'  and network='" + network + " and prize pool=" + prizePool);
+        return "Draw already in db";
       }
-
-      //const startedAtTimestamp = new Date(startedAt * 1000);
-
-      const addDrawQuery =
-        "INSERT INTO draws (network,draw,tiers, tierValues, prizeIndices, block, prizePool) VALUES ($1, $2, $3, $4, $5, $6, $7)";
-      console.log("add draw query ", addDrawQuery);
-  console.log( network,
-        draw,
-       // startedAtTimestamp,
-       // periodSeconds,
-        tiers,
-        //grandPrizePeriod,
-        tierValues,
-        prizesForTier,
-        parseInt(block))
-
-      await DB.any(addDrawQuery, [
-        network,
-        draw,
-       // startedAtTimestamp,
-       // periodSeconds,
-        tiers,
-        //grandPrizePeriod,
-        tierValues,
-        prizesForTier,
-        parseInt(block),
-        prizePool
-      ]);
-
-      return "Win added";
     } catch (error) {
-      console.log(error);
-      return "Could not add draw";
+      checkingForDraw = [];
     }
+
+    const addDrawQuery =
+      "INSERT INTO draws (network, draw, tiers, tierValues, prizeIndices, block, prizePool, calculated) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+    console.log("add draw query ", addDrawQuery);
+    console.log(network, draw, tiers, tierValues, prizesForTier, parseInt(block));
+
+    await DB.any(addDrawQuery, [
+      network,
+      draw,
+      tiers,
+      tierValues,
+      prizesForTier,
+      parseInt(block),
+      prizePool,
+      false // Set calculated to false
+    ]);
+
+    return "Draw added";
+  } catch (error) {
+    console.log(error);
+    return "Could not add draw";
   }
+}
+
+async function UpdateDrawCalculated(network, draw, prizePool) {
+  prizePool = prizePool.toLowerCase();
+  try {
+    const updateQuery = "UPDATE draws SET calculated = $1 WHERE network = $2 AND draw = $3 AND prizepool = $4";
+    await DB.any(updateQuery, [true, network, draw, prizePool]);
+    console.log(`Draw ${draw} on network ${network} for prize pool ${prizePool} marked as calculations done.`);
+    return "Draw calculations updated";
+  } catch (error) {
+    console.log(error);
+    return "Could not update draw calculations";
+  }
+}
+
   async function AddWin(network, draw, vault, pooler, tier, indices, prizePool) {
 prizePool = prizePool.toLowerCase()
 pooler=pooler.toLowerCase()
@@ -328,8 +329,8 @@ pooler=pooler.toLowerCase()
       return "Could not add win";
     }
   }
+module.exports = { AddWin, AddDraw, AddPoolers, AddClaim, UpdateDrawCalculated };
 
-  module.exports = { AddWin, AddDraw , AddPoolers, AddClaim};
 
   /*
     CREATE TABLE draws (
