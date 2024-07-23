@@ -24,13 +24,14 @@ const { PublishPrizeHistory } = require("./publishPrizeHistory");
 const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
 const PrizeLeaderboard = require("./functions/getPrizeLeaderboard");
 
-const { ADDRESS, WHITELIST_REWARDS } = require("../constants/address");
+const { ADDRESS, WHITELIST_REWARDS, ADDITIONAL_GECKO_MAPPING } = require("../constants/address");
 const { ABI } = require("../constants/abi");
 const { PROVIDERS } = require("../constants/providers");
 //dotenv.config();
 // var sanitizer = require('sanitize');
 const waitTime = 120000;
 const pricesToFetch = [
+  "higher",
   "arbitrum",
   "tether",
   "pooltogether",
@@ -46,6 +47,8 @@ const pricesToFetch = [
   "aerodrome-finance",
   "wrapped-steth",
   "angle-usd",
+  "degen-base",
+  "crash"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -375,6 +378,7 @@ async function fetchAndUpdateStats() {
       const chainsAssetsPrices = createChainsAssetsPrices(
         ADDRESS,
         WHITELIST_REWARDS,
+        ADDITIONAL_GECKO_MAPPING,
         priceResults.geckos
       );
       console.log("created chain asset prices", chainsAssetsPrices);
@@ -1227,24 +1231,17 @@ async function PublishV5Claims(chainNumber, prizePool) {
 }
 */
 
-/*function createChainsAssetsPrices(addressObj, geckosObj) {
-    const result = {};
+function createChainsAssetsPrices(addressObj, rewardsObj, additionalGeckosObj, geckosObj) {
+  // Merge additionalGeckosObj into rewardsObj
+  const mergedRewards = { ...rewardsObj };
 
-    for (const chain in addressObj) {
-        const vaults = addressObj[chain].VAULTS;
-        result[chain] = {};
-
-        for (const vault of vaults) {
-            const gecko = vault.GECKO;
-            if (geckosObj.hasOwnProperty(gecko)) {
-                result[chain][vault.ASSET.toLowerCase()] = geckosObj[gecko];
-            }
-        }
+  for (const chain in additionalGeckosObj) {
+    if (!mergedRewards[chain]) {
+      mergedRewards[chain] = [];
     }
-console.log("merged",result)
-    return result;
-}*/
-function createChainsAssetsPrices(addressObj, rewardsObj, geckosObj) {
+    mergedRewards[chain] = [...mergedRewards[chain], ...additionalGeckosObj[chain]];
+  }
+
   const result = {};
 
   for (const chain in addressObj) {
@@ -1259,12 +1256,12 @@ function createChainsAssetsPrices(addressObj, rewardsObj, geckosObj) {
     }
   }
 
-  for (const chain in rewardsObj) {
+  for (const chain in mergedRewards) {
     if (!result[chain]) {
       result[chain] = {};
     }
 
-    for (const reward of rewardsObj[chain]) {
+    for (const reward of mergedRewards[chain]) {
       const gecko = reward.GECKO;
       if (geckosObj.hasOwnProperty(gecko)) {
         result[chain][reward.TOKEN.toLowerCase()] = geckosObj[gecko];
@@ -1275,7 +1272,6 @@ function createChainsAssetsPrices(addressObj, rewardsObj, geckosObj) {
   console.log("merged", result);
   return result;
 }
-
 /*
 function mergeChainsAssetsPrices(obj1, obj2) {
 console.log("trying to merge prices of obj1",obj1,"and obj2",obj2) 

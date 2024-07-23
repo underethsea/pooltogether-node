@@ -245,10 +245,12 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
     }
   }
 
+// pricing removed for now
+/*
   if (contractAddresses.length > 0) {
     existingData = await fetchTokenPricesAndUpdateVaults(existingData, 'optimistic-ethereum');
   }
-
+*/
   let lastAwardedDrawId;
   const prizePoolContract = new ethers.Contract(prizePool, ABI.PRIZEPOOL, PROVIDERS[chainName]);
   try {
