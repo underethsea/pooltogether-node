@@ -3,6 +3,7 @@ const { ethers } = require('ethers');
 
 const EXPECTED_PONG_BACK = 60000; // 1 minute
 const KEEP_ALIVE_CHECK_INTERVAL = 30 * 60 * 1000; // 30 minutes
+const MAX_TIERS_CALCULATE = 7
 
 // Assuming the chain name/id is the first argument, default to 'OPTIMISM' if not provided
 const chainKey = process.argv[2] || '';
@@ -24,8 +25,8 @@ const { CONTRACTS } = require("./constants/contracts");
 const { TOPICS } = require("./constants/events");
 const { AddClaim } = require("./functions/dbDonkey.js");
 const { DiscordNotifyClaimPrize, SendMessageToChannel } = require("./functions/discordAlert.js");
-const { FoundryPrizeWinsToDb } = require("./functions/foundryPrizeWinsToDb.js");
-
+//const { FoundryPrizeWinsToDb } = require("./functions/foundryPrizeWinsToDb.js");
+const { PrizeCalcToDb } = require("./functions/prizeCalcToDb.js")
 const chain = CHAINNAME;
 const chainId = CHAINID;
 const prizepool = ADDRESS[CHAINNAME].PRIZEPOOL;
@@ -163,8 +164,8 @@ async function startCalculation(chainId, drawCompletedEvent) {
     fs.writeFileSync(lockFilePath, Date.now().toString());
 
     try {
-      console.log('Starting FoundryPrizeWinsToDb calculation...');
-      await FoundryPrizeWinsToDb(chainId, drawCompletedEvent.blockNumber);
+      //console.log('Starting FoundryPrizeWinsToDb calculation...');
+      await PrizeCalcToDb(chainId, drawCompletedEvent.blockNumber, maxTiersToCalculate=MAX_TIERS_CALCULATE, debug=true);
       console.log("DB updated.");
       fs.unlinkSync(lockFilePath);
       return;

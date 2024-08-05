@@ -10,7 +10,7 @@ const fetchPoolExplorerPrices = async () => {
     const timestamp = new Date(data.timestamp).getTime();
     const timeDifference = (currentTime - timestamp) / 1000;
 
-    if (timeDifference > 20) {
+    if (timeDifference > 60) {
       console.log("Poolexplorer price data is too stale, using Coingecko");
       return null;
     }

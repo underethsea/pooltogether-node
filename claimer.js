@@ -14,7 +14,7 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
 
 const ethers = require("ethers");
-const { CONTRACTS } = require("./constants/contracts.js")
+const { CONTRACTS } = require("./constants/contracts.js");
 const { SIGNER } = require("./constants/providers.js");
 const { ADDRESS } = require("./constants/address.js");
 const { ABI } = require("./constants/abi.js");
@@ -29,27 +29,23 @@ const { GetPrizePoolData } = require("./functions/getPrizePoolData.js");
 const { GeckoIDPrices } = require("./utilities/geckoFetch.js");
 const { GetPricesForToken } = require("./utilities/1inch.js");
 const { CollectRewards } = require("./collectRewards.js");
-//const settings = require('./constants/liquidator-config');
+
 const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko } = CONFIG;
-const useApiPriceOverride = true 
-// covalent, not accurate to get twab players
-// const FetchPlayers = require("./utilities/players.js");
+const useApiPriceOverride = true;
 
 const section = chalk.hex("#47FDFB");
 
-
 async function go() {
   console.log(section("----- starting claim bot ------"));
-  console.log("time logged | ", Date.now());
+  console.log("time logged | ", new Date().toLocaleTimeString());
 
   const claimsPromise = GetRecentClaims(CHAINID);
   const prizePoolDataPromise = GetPrizePoolData();
 
   // Set up the third promise based on the useCoinGecko flag
-   const priceFetchPromise = useCoinGecko && !useApiPriceOverride
+  const priceFetchPromise = useCoinGecko && !useApiPriceOverride
     ? GeckoIDPrices([ADDRESS[CHAINNAME].PRIZETOKEN.GECKO, "ethereum"])
-  : fetch("https://poolexplorer.xyz/overview")
-//  : GetPricesForToken(ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
+    : fetch("https://poolexplorer.xyz/overview");
 
   // Use Promise.all to wait for all three promises to resolve
   const [claims, prizePoolData, priceData] = await Promise.all([
@@ -66,7 +62,6 @@ async function go() {
     numberOfTiers,
     tierTimestamps,
     prizesForTier,
-    //maxFee,
     tierPrizeValues,
     tierRemainingLiquidites,
     reserve,
@@ -79,30 +74,19 @@ async function go() {
     prizeTokenPrice = priceData[0];
     ethPrice = priceData[1];
   } else {
-    // If not using CoinGecko, priceData is directly the prizeTokenPrice
-    // prizeTokenPrice = priceData;
-    const priceResponse = await priceData.json()
-    prizeTokenPrice = priceResponse.prices.geckos["ethereum"]
-ethPrice = prizeTokenPrice   
-console.log("got price from api",prizeTokenPrice)  
-  // Assume you have another way to get ethPrice if necessary or it's not needed in this branch
+    const priceResponse = await priceData.json();
+    prizeTokenPrice = priceResponse.prices.geckos["ethereum"];
+    ethPrice = prizeTokenPrice;
+    console.log("got price from api", prizeTokenPrice);
   }
 
   console.log(section("----- contract data ------"));
 
-  /*maxFee.forEach((fee, index) => {
-    console.log("max fee for tier ", index, " -> ", parseInt(fee) / 1e18);
-  });*/
-  // console.log("prizes for Tier ",prizesForTier)
-
   let newWinners;
   console.log(section("----- getting winners -----"));
 
-  if (CONFIG.USEAPI==="none") {
-    // await SendClaims(claimerContract, lastDrawId, []);
-// console.log("winners calculation not hooked up.  need to connect to getWinnersByTier")
-newWinners=[] 
-  newWinners = await GetWinnersByTier(
+  if (CONFIG.USEAPI === "none") {
+    newWinners = await GetWinnersByTier(
       CHAINNAME,
       numberOfTiers,
       lastDrawId,
@@ -111,53 +95,32 @@ newWinners=[]
       prizesForTier,
       "latest"
     );
-  } else if(CONFIG.USEAPI==="g9"){
-newWinners = await FetchG9ApiPrizes(CHAINID,ADDRESS[CHAINNAME].PRIZEPOOL,lastDrawId,CONFIG.TIERSTOCLAIM,claims)}
-else {
+  } else if (CONFIG.USEAPI === "g9") {
+    newWinners = await FetchG9ApiPrizes(CHAINID, ADDRESS[CHAINNAME].PRIZEPOOL, lastDrawId, CONFIG.TIERSTOCLAIM, claims);
+  } else {
     console.log("using pooltime api for winner calculations");
-  
-
-  newWinners = await FetchApiPrizes(
-      CHAINID,
-      lastDrawId,
-      CONFIG.TIERSTOCLAIM,
-      claims
-    );
+    newWinners = await FetchApiPrizes(CHAINID, lastDrawId, CONFIG.TIERSTOCLAIM, claims);
   }
+
   if (newWinners === null) {
     console.log("ERROR fetching API");
   } else {
-
-let winVsClaimStats
-    ({ updatedWinners: newWinners, stats:winVsClaimStats } = removeAlreadyClaimed(newWinners, claims, lastDrawId))
-console.log("won vs claimed",winVsClaimStats)
+    let winVsClaimStats;
+    ({ updatedWinners: newWinners, stats: winVsClaimStats } = removeAlreadyClaimed(newWinners, claims, lastDrawId));
+    console.log("won vs claimed", winVsClaimStats);
     console.log("winners before removing claims", newWinners.length);
     console.log("winners after removing claims", newWinners.length);
 
-    //  console.log(section("---- checking profitability -----"));
-    // console.log("time logged | ",Date.now())
-    await SendClaims(
-      lastDrawId,
-      newWinners,
-      //maxFee,
-      prizeTokenPrice,
-      ethPrice
-    );
+    await SendClaims(lastDrawId, newWinners, prizeTokenPrice, ethPrice);
     console.log("");
     console.log(section("----- rewards check and claim ------"));
 
     await CollectRewards(prizeTokenPrice, ethPrice);
   }
 
-  console.log(
-    "-------------------------------------------bot will run again in " +
-      parseInt(minTimeInMilliseconds / 60000) +
-      "min - " +
-      parseInt(maxTimeInMilliseconds / 60000) +
-      "min------------ "
-  );
+  console.log("Execution completed at", new Date().toLocaleTimeString());
+  scheduleNextRun(); // Schedule the next execution
 }
-
 
 function removeAlreadyClaimed(winners, claims, drawId) {
   // Initialize statistics objects
@@ -198,30 +161,42 @@ function removeAlreadyClaimed(winners, claims, drawId) {
     return [vault, person, tier, unclaimedPrizeIndices];
   }).filter(winner => winner[3].length > 0);
 
-
   return {
     updatedWinners,
     stats: tierStats,
   };
 }
 
-async function executeAfterRandomTime(minTime, maxTime) {
+function scheduleNextRun() {
   // Calculate a random time between minTime and maxTime
-  const randomTime = minTime + Math.random() * (maxTime - minTime);
+  const randomTime = minTimeInMilliseconds + Math.random() * (maxTimeInMilliseconds - minTimeInMilliseconds);
 
-  setTimeout(async () => {
-    try {
-      await go();
-    } catch (error) {
-      console.error("Error occurred:", error);
-    }
-    // Recursively call the function to continue the cycle
-    executeAfterRandomTime(minTime, maxTime);
+  // Determine the time in minutes or seconds
+  const timeInMinutes = randomTime / 60000;
+  const timeInSeconds = randomTime / 1000;
+
+  // Format the time until the next execution
+  let formattedTime;
+  if (timeInMinutes >= 1) {
+    formattedTime = `${Math.round(timeInMinutes)} min`;
+  } else {
+    formattedTime = `${Math.round(timeInSeconds)} sec`;
+  }
+
+  // Calculate the next execution time
+  const nextExecutionTime = new Date(Date.now() + randomTime);
+  const formattedNextExecutionTime = nextExecutionTime.toLocaleTimeString();
+
+  console.log(
+    "-------------------------------------------bot will run again in " +
+      formattedTime +
+      " (" + formattedNextExecutionTime + ") ------------ "
+  );
+
+  setTimeout(() => {
+    go(); // Run the main function again
   }, randomTime);
 }
 
-// go once
+// Start the first execution immediately
 go();
-
-// go randomly after init
-executeAfterRandomTime(minTimeInMilliseconds, maxTimeInMilliseconds);

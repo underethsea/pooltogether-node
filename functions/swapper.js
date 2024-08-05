@@ -37,9 +37,9 @@ async function PrizeSwim(pairAddress,
       vaultAddress,
     ];
 
-    console.log('Prize token exchange args:', swimArgs);
+   // console.log('Prize token exchange args:', swimArgs);
 
-const gasEstimate = await GasEstimate(
+ const gasEstimate = await GasEstimate(
           CONTRACTS.SWAPPERSIGNER[CHAINNAME],
           'prizeSwim',
           swimArgs,
@@ -112,9 +112,9 @@ async function LapThePoolBestOption(pairAddress,
       odosData.transaction.data,
     ] : null;
 
-    console.log('Paraswap Args:', swapperArgs);
+   // console.log('Paraswap Args:', swapperArgs);
 //console.log("odos data",odosData)    
-console.log('Odos Args:', odosArgs);
+//console.log('Odos Args:', odosArgs);
 
     let paraswapGasEstimate, odosGasEstimate;
     const gasEstimatePromises = [];
@@ -163,12 +163,12 @@ console.log('Odos Args:', odosArgs);
     let grossLog = ''
     if (odos && odosGasEstimate) {
       grossOdos = odosOutput.sub(odosGasEstimate);
-      grossLog = 'gross odos: '+ grossOdos.toString();
+      grossLog = 'odos after gas: '+ grossOdos.toString();
     }
 
     if (paraswap && paraswapGasEstimate) {
       grossParaswap = paraswapOutput.sub(paraswapGasEstimate);
-      grossLog += ' gross paraswap: '+ grossParaswap.toString();
+      grossLog += ' paraswap after gas: '+ grossParaswap.toString();
     }
     console.log(grossLog)
     let bestOption, bestGrossOutput, bestArgs, bestFunctionName;
@@ -445,8 +445,8 @@ async function OutAndBackBestOption(
       odosData.transaction.data,
     ] : null;
 
-    console.log('Paraswap Args:', swapperArgsParaswap);
-    console.log('Odos Args:', swapperArgsOdos);
+    //console.log('Paraswap Args:', swapperArgsParaswap);
+    //console.log('Odos Args:', swapperArgsOdos);
 
     let paraswapGasEstimate, odosGasEstimate;
     const gasEstimatePromises = [];
@@ -491,18 +491,18 @@ async function OutAndBackBestOption(
       }
     });
 
-    let grossOdos, grossParaswap;
+    let grossOdos, grossParaswap, grossLog
 
     if (odos && odosGasEstimate) {
       grossOdos = odosOutput.sub(odosGasEstimate);
-      console.log('gross odos:', grossOdos.toString());
+      grossLog = 'odos after gas: '+ grossOdos.toString();
     }
 
     if (paraswap && paraswapGasEstimate) {
       grossParaswap = paraswapOutput.sub(paraswapGasEstimate);
-      console.log('gross paraswap:', grossParaswap.toString());
+     grossLog += '  paraswap after gas:' + grossParaswap.toString();
     }
-
+if(grossLog.length>0){console.log(grossLog)}
     let bestOption, bestGrossOutput, bestArgs, bestFunctionName;
 
     if (grossOdos && grossParaswap) {

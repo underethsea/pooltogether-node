@@ -11,7 +11,7 @@ const fetch = require('cross-fetch');
  * @param {number} slippage - Slippage limit percentage (1 = 1%)
  * @returns {Promise<Object>} - API response containing quote object
  */
-async function OdosQuote(chainId, userAddress, srcToken, amount, destToken, slippage=0.3) {
+async function OdosQuote(chainId, userAddress, srcToken, amount, destToken, slippage=0.5) {
     const quoteUrl = 'https://api.odos.xyz/sor/quote/v2';
 
     const quoteRequestBody = {

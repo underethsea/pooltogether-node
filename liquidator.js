@@ -17,7 +17,8 @@ const { ADDRESS } = require("./constants/address.js");
 const { PROVIDERS, SIGNER } = require("./constants/providers.js");
 const { ABI } = require("./constants/abi.js");
 const { CONFIG } = require("./constants/config.js");
-
+const NodeCache = require("node-cache");
+const cache = new NodeCache({ stdTTL: 90 }); // Cache TTL set to 2 minutes
 const { GetLogs } = require("./utilities/getLogs.js");
 const { Multicall } = require("./utilities/multicall.js");
 const { GeckoIDPrices } = require("./utilities/geckoFetch.js");
@@ -49,13 +50,18 @@ const {
   DONTLIQUIDATE,
 } = CONFIG;
 const fs = require("fs");
+const path = require('path');
 
 const section = chalk.hex("#47FDFB").bgBlack;
+//const generateCacheKey = (ids) => ids.sort().join(',');
 
 async function go() {
   //const isAwarding = await CONTRACTS.PRIZEPOOL[CHAINNAME].hasOpenDrawFinished()
   const isAwarding = false;
+  let firstRun = true
   if (!isAwarding) {
+  let lowestWaitTime = Infinity;
+
     let totalGasSpent = 0;
     let totalPoolSpent = 0;
     let assetsReceived = [];
@@ -63,7 +69,7 @@ async function go() {
     let bestOptionIn;
     let bestOptionOut;
     let bestOutValue;
-
+    let notInProfitRange = []
     // --------- use factory to find vaults to liquidate ------------------
     //     let vaults = [];
     // const vaultFactoryContract = new ethers.Contract(ADDRESS["SEPOLIA"].VAULTFACTORY,ABI.VAULTFACTORY,PROVIDERS["SEPOLIA"])
@@ -92,17 +98,95 @@ async function go() {
     //   pairs.push(pairAddress);
     // }
 
-     pairs = [
-        ...ADDRESS[CHAINNAME].VAULTS,
-        ...(ADDRESS[CHAINNAME].BOOSTS ?? []),
-        ...(ADDRESS[CHAINNAME].PAIRS ?? []),
-      ];
 
-    pairs = pairs.filter(
-      (pair) =>
-        pair.LIQUIDATIONPAIR.toLowerCase() !==
-        "0x0000000000000000000000000000000000000000"
+
+// todo account for batching yield sources
+// penny pairs.  if the gas cost is significant portion of max out?
+
+// Constants and configuration 
+const FILE_PATH = path.join(__dirname, `data/${CHAINNAME}-liquidationtimes.json`);
+const LIQUIDATION_PREDICTION_INTERVAL = 4; // Replace with actual interval value (in seconds)
+const MIN_RETRY = maxTimeInMilliseconds/1000*2 // convert to seconds and multiply by 2 to start checking wtihin 2 script retries
+const MAX_RETRY = 65 * 60 // always try all pairs within 65 minutes
+
+// Initialize pairs from ADDRESS and filter out invalid ones
+ pairs = [
+  ...ADDRESS[CHAINNAME].VAULTS,
+  ...(ADDRESS[CHAINNAME].BOOSTS ?? []),
+  ...(ADDRESS[CHAINNAME].PAIRS ?? [])
+].filter(pair =>
+  pair.LIQUIDATIONPAIR.toLowerCase() !== '0x0000000000000000000000000000000000000000'
+);
+
+// Function to read JSON data file
+const readDataFile = (filePath) => {
+  try {
+    const data = fs.readFileSync(filePath, 'utf8');
+    return JSON.parse(data);
+  } catch (error) {
+    console.error('Error reading or parsing file:', error);
+    return [];
+  }
+};
+
+// Main logic to filter pairs based on liquidation readiness
+const liquidationTimeData = readDataFile(FILE_PATH);
+
+if (liquidationTimeData.length === 0) {
+  console.log('No data available or data is corrupt.');
+} else {
+  // Get current time
+  const now = Math.floor(Date.now() / 1000); // Current time in seconds since Unix epoch
+
+  // Filter out pairs that are not ready for liquidation
+  pairs = pairs.filter(pair => {
+    const pairAddress = pair.LIQUIDATIONPAIR.toLowerCase();
+
+    // Find corresponding data in liquidationTimeData
+    const data = liquidationTimeData.find(
+      item => item.pair.toLowerCase() === pairAddress
     );
+ 
+    if (data) {
+if (data.hardWaitUntil && now < data.hardWaitUntil) {
+  const minutesTilCheck = Math.ceil((data.hardWaitUntil - now) / 60);
+
+  console.log(`Hard wait ${data.pair} (${minutesTilCheck} min) ${pair.NAME}`);
+if (data.hardWaitUntil - now > 0) {
+        lowestWaitTime = Math.min(lowestWaitTime, data.hardWaitUntil - now);
+      }
+  return false;
+}
+
+      const predictedTime = parseInt(data.predictedTime, 10);
+      const currentTime = parseInt(data.currentTime, 10);
+      let conservativeWaitTime = parseInt((predictedTime - currentTime) / LIQUIDATION_PREDICTION_INTERVAL)
+
+if(conservativeWaitTime > MAX_RETRY) {conservativeWaitTime = MAX_RETRY }
+      let retryTimeFromNow = currentTime + conservativeWaitTime;
+
+//console.log(pair.LIQUIDATIONPAIR,"predicted time",predictedTime,"current time",currentTime,"time diff with interval",
+//retryTimeFromNow,"time now",now)
+      // Check if the pair is not ready for liquidation
+      if (retryTimeFromNow > now && retryTimeFromNow - now > MIN_RETRY) {
+        console.log(`Not ready ${data.pair} (${parseInt((retryTimeFromNow-MIN_RETRY-now)/60)} min) ${pair.NAME}`);
+const waitTime = retryTimeFromNow - now;
+      if (waitTime > 0) {
+        lowestWaitTime = Math.min(lowestWaitTime, waitTime);
+      }        
+return false; // Remove from pairs array
+      }
+    } else {
+      console.log(`No data found for pair ${pair.LIQUIDATIONPAIR}`);
+    }
+console.log("going to check pair ",pair.LIQUIDATIONPAIR)
+    return true; // Keep in pairs array
+  });
+
+  // Log the updated pairs array
+  //console.log('Filtered pairs:', pairs);
+}
+
 
     if (ONLYLIQUIDATE.length > 0) {
       pairs = pairs.filter((pair) =>
@@ -121,9 +205,87 @@ async function go() {
 uniV2Pairs = pairs.filter(pair => pair.UNIV2 === true)
 
 pairs = pairs.filter(pair => pair.GECKO && pair.GECKO !== '');
-
+if(uniV2Pairs.length === 0 && pairs.length === 0){console.log("no pairs to liquidate right now");
+if (lowestWaitTime < Infinity) {
+if(!firstRun){
+const weWait = (lowestWaitTime*1000) - minTimeInMilliseconds
+   
+ console.log(`waiting for ${(weWait/1000).toFixed(0)} seconds.`);
+    await delay(weWait);
+}else{firstRun=false}
+  } else {
+    console.log("No wait times available. Proceeding.");
+noAction();return
+  }}
     //console.log(pairs)
-    geckos = pairs.map((pair) => pair.GECKO);
+    
+
+  // Prepare the Gecko IDs for price fetching
+  const geckos = pairs.map((pair) => pair.GECKO);
+  let allUndefined;
+  geckos.length === 0
+    ? console.log("NO GECKO ID PRICES in constants/address.js to fetch")
+    : (allUndefined = geckos.every((element) => element === undefined));
+
+  if (allUndefined) {
+    console.log("NO GECKO IDS in constants/address.js");
+  }
+
+  const ids = [...geckos, "pooltogether", "ethereum"];
+  //const cacheKey = generateCacheKey(ids);
+ // let combinedPrices = cache.get(cacheKey);
+let combinedPrices
+    try {
+      // Fetch all prices for the provided Gecko IDs
+      combinedPrices = await GeckoIDPrices(ids);
+
+      // Store fetched prices in the cache with the generated cache key
+     // cache.set(cacheKey, combinedPrices);
+    } catch (error) {
+      console.error("Error fetching combined prices:", error);
+      return;
+    }
+
+  const ethPrice = combinedPrices[combinedPrices.length - 1];
+  const geckoPrices = combinedPrices.slice(0, -2); // This extracts all but the last two elements
+
+  let prizeTokenPrice;
+  if (useCoinGecko) {
+    prizeTokenPrice = combinedPrices[combinedPrices.length - 1];
+  } else {
+    prizeTokenPrice = await GetPricesForToken(
+      ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS
+    );
+  }
+
+  if (
+    prizeTokenPrice === null ||
+    prizeTokenPrice === undefined ||
+    prizeTokenPrice === 0
+  ) {
+    console.log("Cannot get prize token price");
+    return;
+  }
+  console.log("prize token $", prizeTokenPrice, " eth $", ethPrice);
+
+  for (const pair of uniV2Pairs) {
+    try {
+      const LPprizeTokenPrice = await uniV2LPPriceInWeth(pair.ASSET, ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
+      pair.PRICE = LPprizeTokenPrice / 1e18 * prizeTokenPrice;
+    } catch (error) {
+      console.error(`Error setting price for pair ${pair.ASSET}: ${error}`);
+    }
+  }
+
+  pairs.map((pair, index) => pair.PRICE = geckoPrices[index]);
+  pairs = pairs.concat(uniV2Pairs);
+
+  console.log("total pairs ", pairs.length);
+
+
+
+/*
+geckos = pairs.map((pair) => pair.GECKO);
     let allUndefined;
     geckos.length === 0
       ? console.log("NO GECKO ID PRICES in constants/address.js to fetch")
@@ -134,15 +296,24 @@ pairs = pairs.filter(pair => pair.GECKO && pair.GECKO !== '');
     }
     // console.log(geckos);
 
-    let combinedPrices;
+      const ids = [...geckos, "pooltogether", "ethereum"];
+let combinedPrices = cache.get("geckoPrices");
+//console.log("cacheed prices",combinedPrices)
+  if (!combinedPrices || combinedPrices.length !== ids.length) {
+
     try {
       // Combine 'pooltogether', 'ethereum' with the geckos array and fetch all prices at once
-      const ids = [...geckos, "pooltogether", "ethereum"];
       combinedPrices = await GeckoIDPrices(ids);
+
+      // Store fetched prices in cache
+      cache.set("geckoPrices", combinedPrices);
     } catch (error) {
       console.error("Error fetching combined prices:", error);
       return;
     }
+  } else {
+    console.log("Using cached Gecko prices.");
+  }
 
     const ethPrice = combinedPrices[combinedPrices.length - 1];
     const geckoPrices = combinedPrices.slice(0, -2); // This extracts all but the last two elements
@@ -177,12 +348,10 @@ for (const pair of uniV2Pairs) {
 }
 
 
-
-
 pairs.map((pair, index) => pair.PRICE = geckoPrices[index])
 pairs =  pairs.concat(uniV2Pairs)
      console.log("total pairs ", pairs.length);
-
+*/
     const multiCallMaxOutArray = [];
 
     // Construct an array of call data for each pair
@@ -263,10 +432,49 @@ multiCallMaxOutArray.push(CONTRACTS.PRIZETOKEN[
         // console.log("max out", maxOut);
 
         let tx;
+           const maxOutFormatted = maxOut / Math.pow(10, pairDecimals);
 
+           const outValue = maxOutFormatted * pairOutPrice;
         if (parseFloat(maxOut) === 0) {
           console.log("Pair ", pairAddress, " maxout = 0");
-        } else {
+
+const nowTime = new Date();
+            const thirtyMinuteWait = new Date(nowTime.getTime() + 1800000); // 1.8m = 30 minutes
+            const unixTime = Math.floor(thirtyMinuteWait.getTime() / 1000);
+notInProfitRange.push({pair: pairAddress,hardWaitUntil: unixTime})
+        } 
+	else if (outValue <= profitThreshold){console.log("amount out value ",outValue.toFixed(5)," less than profit threshold",profitThreshold)
+
+const nowTime = new Date();
+            const thirtyMinuteWait = new Date(nowTime.getTime() + 1800000); // 1.8m = 30 minutes
+            const unixTime = Math.floor(thirtyMinuteWait.getTime() / 1000);
+notInProfitRange.push({pair: pairAddress,hardWaitUntil: unixTime})
+/*
+const outValueInETH = outValue / prizeTokenPrice
+const profitThresholdInETH = profitThreshold / prizeTokenPrice
+const predictedProfitableAmtIn = ethers.utils.parseUnits(outValueInETH - profitThresholdInETH,18)
+
+            notInProfitRange.push(
+                {pair: pairAddress,
+                predictedProfitableAmtIn: ethers.utils.parseUnits(outValueInETH - profitThresholdInETH,18),
+})
+*/
+// todo wait times
+          /*  notInProfitRange.push(
+                {pair: pairAddress,
+        currentAmtIn: "0",
+        currentAmtOut: maxOut.toString(),        
+        valueOutProfitabilityPercentage: 0,
+                predictedProfitableAmtIn: 0,
+                waitSeconds: 5 * maxTimeInMilliseconds / 1000, 
+})*/
+}
+	else {
+// Reset hardWaitUntil if the pair is processed
+  const index = notInProfitRange.findIndex(item => item.pair === pairAddress);
+  if (index !== -1) {
+    notInProfitRange[index].hardWaitUntil = null;
+  }
           try {
             const inForOut =
               await contractWSigner.callStatic.computeExactAmountIn(maxOut);
@@ -330,10 +538,10 @@ multiCallMaxOutArray.push(CONTRACTS.PRIZETOKEN[
             ].interface.encodeFunctionData(functionName, args);
 
             const poolOutFormatted = maxToSendWithSlippage / 1e18;
-            const maxOutFormatted = bestOptionOut / Math.pow(10, pairDecimals);
+            //const maxOutFormatted = bestOptionOut / Math.pow(10, pairDecimals);
 
             const prizeTokenValue = poolOutFormatted * prizeTokenPrice;
-            const outValue = maxOutFormatted * pairOutPrice;
+            //const outValue = maxOutFormatted * pairOutPrice;
              
 /*
 console.log("paraswap params",
@@ -368,9 +576,25 @@ if (!CONFIG.SWAPPERS?.[CHAINNAME] || CONFIG.SWAPPERS[CHAINNAME].length === 0) {
 
             //if (outValue - profitThreshold < prizeTokenValue) {
 
-// todo 1% hardcoded loss impact to check actual pricing instead of coingecko
-            if((outValue*1.11)- profitThreshold < prizeTokenValue) { 
+// todo 8% hardcoded loss impact to check actual pricing instead of coingecko
+            if((outValue*1.03)- profitThreshold < prizeTokenValue) { 
              console.log("not profitable...");
+
+
+const currentRatio = (outValue - profitThreshold) / prizeTokenValue;
+const scaledRatio = Math.round(currentRatio * 1000); // This will be an integer
+const scaledAmtIn = maxToSendWithSlippage.mul(scaledRatio); // BigNumber multiplication
+const predictedProfitableAmtIn = scaledAmtIn.div(1000); // BigNumber division
+
+
+            notInProfitRange.push(
+		{pair: pairAddress,
+	currentAmtIn: maxToSendWithSlippage.toString(),
+	currentAmtOut: bestOptionOut.toString(),	
+	valueOutProfitabilityPercentage: Math.max(Math.round(currentRatio*100,2),0),
+		predictedProfitableAmtIn: currentRatio <= 0 ? null : predictedProfitableAmtIn.toString()
+
+})
             } else {
               const gasBudgetUSD = outValue - prizeTokenValue - profitThreshold;
               // console.log("gas budget USD", gasBudgetUSD);
@@ -384,8 +608,8 @@ if (!CONFIG.SWAPPERS?.[CHAINNAME] || CONFIG.SWAPPERS[CHAINNAME].length === 0) {
               console.log("gas budget in ETH", gasBudgetETH.toString());
               //console.log(" no vault?", noVault);
 if(pairIsUniV2){console.log("UNIV2 flash strategy")
-
-await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)
+if(gasBudgetETH.lt(0)){console.log("gas budget less than zero")}else{
+await UniFlashSwap(pairAddress,bestOptionOut,gasBudgetETH)}
 
 }else{
               if (
@@ -571,6 +795,7 @@ else {
                   console.log("not enough prize token to send liquidation");
                   continue;
                 }
+                
                 let swapCheck;
                 try {
                   // check that swap conditions are as expected before sending
@@ -709,9 +934,10 @@ else {
                     JSON.stringify(fileData, null, 2),
                     "utf-8"
                   );
+/*
                   console.log(
                     `Data successfully written to file at ${dataFilePath}.`
-                  );
+                  );*/
                 } catch (error) {
                   console.error("Error writing data to file:", error);
                 }
@@ -733,6 +959,119 @@ else {
       }
     }
 
+
+// Step 1: Get the current Unix time
+const currentTime = Math.floor(Date.now() / 1000); // Unix time in seconds
+
+// Step 2: Separate pairs with and without hardWaitUntil
+const pairsWithHardWait = notInProfitRange.filter(pair => pair.hardWaitUntil && currentTime < pair.hardWaitUntil);
+let pairsWithoutHardWait = notInProfitRange.filter(pair => !pair.hardWaitUntil || currentTime >= pair.hardWaitUntil);
+
+// Log pairs with hard wait for debugging
+//console.log("Pairs with hard wait:", pairsWithHardWait);
+
+// Filter out items with null predictedProfitableAmtIn
+pairsWithoutHardWait = pairsWithoutHardWait.filter(pair => {
+  if (pair.predictedProfitableAmtIn !== null && pair.predictedProfitableAmtIn !== 0) {
+    return true;
+  } else {
+    console.log(`Skipping pair ${pair.pair} as it has no predictedProfitableAmtIn.`);
+    return false;
+  }
+});
+
+// Step 3: Prepare the multicall for pairs without hard wait
+let multiCallPricePredictionArray = [];
+
+for (const pair of pairsWithoutHardWait) {
+  if (pair.predictedProfitableAmtIn !== null && pair.predictedProfitableAmtIn !== 0) {
+    pair.predictedProfitableAmtIn = pair.predictedProfitableAmtIn.toString();
+
+    const contract = new ethers.Contract(
+      pair.pair,
+      ABI.LIQUIDATIONPAIR,
+      PROVIDERS[CHAINNAME]
+    );
+
+    console.log("pair", pair.pair, "predicted amt in", pair.predictedProfitableAmtIn);
+    multiCallPricePredictionArray.push(contract.computeTimeForPrice(pair.predictedProfitableAmtIn));
+  }
+}
+
+// Step 4: Execute multicall and handle results
+let pricePredictionResults = [];
+
+try {
+  pricePredictionResults = await Multicall(multiCallPricePredictionArray);
+} catch (error) {
+  console.error("Multicall error:", error.message);
+}
+
+// Assign current time and predicted time to each pair without hard wait
+pairsWithoutHardWait.forEach((pair, index) => {
+  if (pricePredictionResults[index] !== undefined) {
+    pair.currentTime = currentTime.toString();
+    pair.predictedTime = pricePredictionResults[index].toString(); // Convert to string
+    pair.minutesTilEstimate = (Number(pricePredictionResults[index]) - currentTime) / 60;
+  } else {
+    console.warn(`No price prediction result for pair ${pair.pair}. Skipping.`);
+  }
+});
+
+// Log the updated arrays
+if(notInProfitRange.length>0){
+console.log("Adding pairs not in profit range:", notInProfitRange);
+}
+// Write to file including pairs with hard wait
+const filePath = path.join(__dirname, `data/${CHAINNAME}-liquidationtimes.json`);
+
+fs.readFile(filePath, 'utf8', (err, data) => {
+  let existingData = [];
+
+  if (err) {
+    if (err.code === 'ENOENT') {
+      console.log('File does not exist, creating a new one.');
+    } else {
+      console.error('Error reading file:', err);
+      return;
+    }
+  } else {
+    try {
+      existingData = JSON.parse(data);
+    } catch (parseError) {
+      console.error('Error parsing existing file data:', parseError);
+      return;
+    }
+  }
+
+  // Merge existing data with new data
+  const existingDataMap = new Map(existingData.map(item => [item.pair.toLowerCase(), item]));
+
+  // Add/update pairs without hard wait
+  pairsWithoutHardWait.forEach(item => {
+    existingDataMap.set(item.pair.toLowerCase(), item);
+  });
+
+  // Add/update pairs with hard wait
+  pairsWithHardWait.forEach(item => {
+    existingDataMap.set(item.pair.toLowerCase(), item);
+  });
+
+  // Convert the map back to an array
+  const mergedData = Array.from(existingDataMap.values());
+
+  // Write the merged data back to the file
+  fs.writeFile(filePath, JSON.stringify(mergedData, null, 2), (writeErr) => {
+    if (writeErr) {
+      console.error('Error writing to file:', writeErr);
+    } else {
+      /*console.log(`Data successfully updated in ${filePath}`);*/
+    }
+  });
+});
+
+
+
     console.log("");
     if (totalPoolSpent > 0) {
       console.log(section("------ liquidation summary -------"));
@@ -741,37 +1080,41 @@ else {
       // receivedString = ""
       // assetsReceived.forEach(asset=>receivedString+=asset.symbol + asset.amount + " , ")
       console.log(assetsReceived);
+
+/*
       console.log(
         "-------------------------------------------bot will run again in " +
           parseInt(minTimeInMilliseconds / 60000) +
           "min - " +
           parseInt(maxTimeInMilliseconds / 60000) +
           "min------------ "
-      );
+      );*/
     } else {
       console.log(section("No liquidations completed"));
-      console.log(
-        "-------------------------------------------bot will run again in " +
-          parseInt(minTimeInMilliseconds / 60000) +
-          "min - " +
-          parseInt(maxTimeInMilliseconds / 60000) +
-          "min------------ "
-      );
+
+noAction()
     }
   } else {
     console.log("liquidations are off while draw is being awarded");
   }
 }
 
+function noAction() {/*
+console.log(
+        "-------------------------------------------bot will run again in " +
+          parseInt(minTimeInMilliseconds / 60000) +
+          "min - " +
+          parseInt(maxTimeInMilliseconds / 60000) +
+          "min------------ "
+      );*/
+}
 function executeAfterRandomTime(minTime, maxTime) {
-  // Calculate a random time between minTime and maxTime
   const randomTime = minTime + Math.random() * (maxTime - minTime);
+  console.log(`Scheduling next run in ${(randomTime / 1000).toFixed(0)} seconds.`);
 
-  setTimeout(() => {
-    go(); // Execute your function
-
-    // Recursively call the function to continue the cycle
-    executeAfterRandomTime(minTime, maxTime);
+  setTimeout(async () => {
+    await go(); // Ensure go() completes including delay before scheduling next run
+    executeAfterRandomTime(minTime, maxTime); // Recursively call to continue cycle
   }, randomTime);
 }
 

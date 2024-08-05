@@ -44,6 +44,7 @@ const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.e
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
 const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const baseEndpoint =  "https://base-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 const WS_PROVIDERS = {
 //    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
 

@@ -20,7 +20,7 @@ async function UniFlashSwap(
     pairAddress,
     CONFIG.WALLET,
     amtOut.toString(),
-    gasBudget.toString()
+    "1"
   ];
   console.log("swapper args", swapperArgs);
   const gasEstimate = await GasEstimate(
@@ -33,6 +33,12 @@ async function UniFlashSwap(
     console.log("not profitable including gas costs");
   } else {
 
+const swapArgs = [
+    pairAddress,
+    CONFIG.WALLET,
+    amtOut.toString(),
+    gasEstimate
+  ];
 //console.log("passes gas test return for now");return
     const tryIt = await CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CHAINNAME].flashSwapExactAmountOut(
       ...swapperArgs,
