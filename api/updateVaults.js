@@ -7,7 +7,7 @@ const { OwnerInfo } = require("./functions/getVaultOwner.js");
 const updateTimeFile = './data/lastUpdateV5Vaults.json';
 
 const BLACKLIST = ['0x019ff7c88119bffce03cfa163148bc2e051f5905'].map(address => address.toLowerCase());
-const DEPRECATED_NO_DEPOSIT = ['0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de'].map(address => address.toLowerCase());
+const DEPRECATED_NO_DEPOSIT = ['0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de','0x8c2f27b7819eb1bb7e3b5c407c5e1839186d5aba'].map(address => address.toLowerCase());
 const DEPRECATED_NO_ACCESS = [].map(address => address.toLowerCase());
 
 async function getLastUpdateTime(vault) {

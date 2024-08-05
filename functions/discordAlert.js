@@ -50,7 +50,8 @@ const cn = {
 };
 const db = pgp(cn);
 
-async function DiscordNotifyClaimPrize(claim, prizepool) {
+async function DiscordNotifyClaimPrize(claim, prizepool, chainName) {
+const chain = chainName ? chainName : CHAINNAME
   try {
     const subscribers = await db.any(`
       SELECT wallet, discord, label FROM addresses 
@@ -67,30 +68,50 @@ async function DiscordNotifyClaimPrize(claim, prizepool) {
     const existingClaim = await db.oneOrNone(`
       SELECT 1 FROM v5claims 
       WHERE network = $1 AND block = $2 AND hash = $3 AND draw = $4 AND vault = $5 
-      AND winner = $6 AND payout = $7 AND miner = $8 AND fee = $9 AND tier = $10 AND index = $11 and prizepool = $12
+      AND winner = $6 AND payout = $7 AND miner = $8 AND fee = $9 AND tier = $10 AND index = $11 AND LOWER(prizepool) = LOWER($12)
+
     `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool]);
 
-    if (!existingClaim) {
-      await db.none(`
-        INSERT INTO v5claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool]);
 
-      for (const subscriber of subscribers) {
-        if (subscriber.discord) {
-          const labelMessage = subscriber.label ? `${subscriber.label}` : "";
-          const message = " 🏆 WINNER " + claim.chainName + " `" + 
-            subscriber.wallet.substring(0, 6) + "` WON " + payAmount.toFixed(6) + " " + 
-            ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL + " " + labelMessage;
-          await tellUser(subscriber.discord, message);
-        } else {
-          console.log(`Subscriber with wallet ${subscriber.wallet} does not have a Discord ID.`);
-        }
+
+if (!existingClaim) {
+  try {
+    for (const subscriber of subscribers) {
+      if (subscriber.discord) {
+        const labelMessage = subscriber.label ? `${subscriber.label}` : "";
+        const message = " 🏆 WINNER " + claim.chainName + " `" +
+          subscriber.wallet.substring(0, 6) + "` WON " + payAmount.toFixed(6) + " " +
+          ADDRESS[chain].PRIZETOKEN.SYMBOL + " " + labelMessage;
+
+        /*
+        console.log("-----------------")
+        console.log(claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool)
+        console.log("telllllling them")
+        console.log("----------------")
+        */
+        await tellUser(subscriber.discord, message);
+      } else {
+        console.log(`Subscriber with wallet ${subscriber.wallet} does not have a Discord ID.`);
       }
-    } else {
-      console.log("Claim previously alerted for ", claim.winner, " draw ", claim.drawId, " vault ", claim.vault, " tier ", claim.tier);
     }
+
+    // After successfully notifying users, insert the claim into the database
+    await db.none(`
+      INSERT INTO v5claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool.toLowerCase()]);
+
+    console.log(network, "claim added to db, tx ", claim.hash, " winner ", claim.winner, " tier/index ", claim.tier, "/", claim.index, "amt", claim.payout.toString());
   } catch (error) {
+    console.error("Failed to alert user or update database:", error);
+  }
+} else {
+  console.log("Claim previously alerted for ", claim.winner, " draw ", claim.drawId, " vault ", claim.vault, " tier ", claim.tier);
+}
+
+ 
+
+ } catch (error) {
     console.log(error);
   }
 }

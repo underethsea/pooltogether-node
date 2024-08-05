@@ -18,7 +18,7 @@ prizepool = prizepool.toLowerCase()
                 AND fee = $9 
                 AND tier = $10
                 AND index = $11 
-                AND prizepool = $12
+                AND LOWER(prizepool) = LOWER($12)
         `;
         const existingClaim = await DB.oneOrNone(checkClaimExistsQuery, [
             network,
@@ -37,7 +37,7 @@ prizepool = prizepool.toLowerCase()
 
         if (existingClaim) {
             console.log("Duplicate claim found in db, skipping adding it again: tx ", claim.hash," winner ",claim.winner);
-            return;
+            return "existing";
         }
 
         // Add claim to the table if it doesn't exist
@@ -45,7 +45,6 @@ prizepool = prizepool.toLowerCase()
             INSERT INTO claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
         `;
-
         await DB.any(addClaimQuery, [
             network,
             claim.block,
@@ -61,112 +60,18 @@ prizepool = prizepool.toLowerCase()
           prizepool
         ]);
      console.log(network,"claim added to db, tx ",claim.hash," winner ",claim.winner," tier/index ",claim.tier,"/",claim.index,"amt",claim.payout.toString())
-    } catch (error) {
+return "added";  
+  } catch (error) {
         // Handle error
         console.error("Failed to process claim:", error);
-    }
+return "error";    
+}
 }
 
 
-/*
-  async function AddClaim(network, claim) {
 
 
-    const isTargetDraw = claim.drawId === 134;
 
-    try {
-        // Add claim to claim table
-        const addClaimQuery = "INSERT INTO claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
-        await DB.any(addClaimQuery, [
-            network,
-            claim.block,
-            claim.hash,
-            claim.drawId,
-            claim.vault,
-            claim.winner,
-            claim.payout.toString(),
-            claim.miner,
-            claim.fee.toString(),
-            claim.tier,
-            claim.index
-        ]);
-
-        // Fetch matching row from win table
-        const selectQuery = `
-            SELECT *
-            FROM wins
-            WHERE network = $1
-              AND pooler = $2
-              AND draw = $3
-              AND tier = $4
-              AND vault = $5;
-        `;
-        const selectParams = [claim.network, claim.winner.toLowerCase(), claim.drawId, claim.tier, claim.vault];
-        const rows = await DB.any(selectQuery, selectParams);
-
-        if (rows.length === 1) {
-            const { prizeindices, claimedindices } = rows[0];
-
-            // Initialize claimedIndices if not present
-            let updatedClaimedIndices = claimedindices || new Array(prizeindices.length).fill("-1");
-
-            for (let i = 0; i < prizeindices.length; i++) {
-                if (prizeindices[i] == claim.index) {
-                    updatedClaimedIndices[i] = String(claim.payout);
-                }
-            }
-
-            const updateQuery = `
-                UPDATE wins
-                SET claimedindices = $1
-                WHERE network = $2
-                  AND pooler = $3
-                  AND draw = $4
-                  AND tier = $5
-                  AND vault = $6;
-            `;
-            const updateParams = [updatedClaimedIndices, claim.network, claim.winner.toLowerCase(), claim.drawId, claim.tier, claim.vault];
-
-            if (isTargetDraw) {
-                console.log("Claim index:", claim.index);
-                console.log("DB Indices:", claimedindices);
-                console.log("Updated Indices:", updatedClaimedIndices);
-                console.log("Executing update query with params:", updateParams);
-            }
-
-            await DB.any(updateQuery, updateParams);
-        } else if (rows.length === 0) {
-            // Create a new win row if no matching row found
-            const insertWinQuery = `
-                INSERT INTO wins (network, draw, vault, pooler, tier, prizeindices, claimedindices)
-                VALUES ($1, $2, $3, $4, $5, $6, $7);
-            `;
-            // Placeholder for prizeindices, adjust as necessary
-            const defaultPrizeIndices = [claim.index];
-            // Placeholder for claimedindices, marking the current claim index as claimed
-            const defaultClaimedIndices = [String(claim.payout)];
-            
-            const insertWinParams = [claim.network, claim.drawId, claim.vault, claim.winner.toLowerCase(), claim.tier, defaultPrizeIndices, defaultClaimedIndices];
-            await DB.any(insertWinQuery, insertWinParams);
-
-            if (isTargetDraw) {
-                console.log("No matching row found, inserting new win entry for claim:", claim);
-            }
-        } else {
-            if (isTargetDraw) {
-                console.error("Multiple matching rows found for claim:", claim);
-            }
-        }
-    } catch (error) {
-        if (isTargetDraw) {
-            console.error('Error in AddClaim for draw 134:', error);
-        } else {
-            console.error('Error in AddClaim:', error);
-        }
-    }
-}
-
-*/
 
   async function AddPoolers(network,draw, poolers) {
     const poolersData = poolers.map(({ address, ...rest }) => ({

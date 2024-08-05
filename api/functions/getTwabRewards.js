@@ -8,7 +8,7 @@ const whiteLists = {
     OPTIMISM: [1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20],
     BASESEPOLIA: [], // Add BASE whitelist here
     ARBITRUM: [1,2],    // Add more chain-specific whitelists as needed
-    BASE: [2],
+    BASE: [2,3],
 };
 console.log("chains",chains)
 async function GetTwabPromotions() {

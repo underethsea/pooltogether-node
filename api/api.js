@@ -340,6 +340,7 @@ async function fetchAndUpdateStats() {
 
   try {
     // Fetch Gecko prices
+await delay(60000)
     priceResults.geckos = await GeckoPrice(pricesToFetch);
     if (
       priceResults.geckos &&

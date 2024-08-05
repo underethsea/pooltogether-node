@@ -115,7 +115,7 @@ if(CHAINNAME !== CONFIG_CHAINNAME) {console.log("CONFIG CHAIN MISMATCH");return}
   try {
     winnersData = await GetFoundryWinnersByVault(
       groupedResult,
-      numberOfTiers,
+      numberOfTiers-1,
       PROVIDERS[CHAINNAME].connection.url
     );
     // Add this code block right after getting the winnersData
@@ -267,6 +267,6 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
 }
 //FoundryPrizeWinsToDb(42161, "latest"); // arbitrum
 //FoundryPrizeWinsToDb(8453,"latest") // base
-//FoundryPrizeWinsToDb(10,122915333) // optimism
+FoundryPrizeWinsToDb(10,"latest") // optimism
 //FoundryPrizeWinsToDb(42161,221234069)
 module.exports = { FoundryPrizeWinsToDb };
