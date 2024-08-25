@@ -5,10 +5,33 @@ const { ABI } = require('./constants/abi.js');
 const { PROVIDERS } = require('../constants/providers.js');
 const { OwnerInfo } = require("./functions/getVaultOwner.js");
 const updateTimeFile = './data/lastUpdateV5Vaults.json';
-
+const { Multicall } = require("../utilities/multicall.js")
 const BLACKLIST = ['0x019ff7c88119bffce03cfa163148bc2e051f5905'].map(address => address.toLowerCase());
 const DEPRECATED_NO_DEPOSIT = ['0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de','0x8c2f27b7819eb1bb7e3b5c407c5e1839186d5aba'].map(address => address.toLowerCase());
 const DEPRECATED_NO_ACCESS = [].map(address => address.toLowerCase());
+
+const INVALID_VAULTS = './data/invalidVaults.json'; // File to store invalid vaults
+
+async function isInvalidVault(vaultAddress) {
+  try {
+    const data = JSON.parse(fs.readFileSync(INVALID_VAULTS, 'utf8'));
+    return data[vaultAddress] || false;
+  } catch (error) {
+    return false;
+  }
+}
+
+async function flagInvalidVault(vaultAddress) {
+  let data = {};
+  try {
+    data = JSON.parse(fs.readFileSync(INVALID_VAULTS, 'utf8'));
+  } catch (error) {
+    // File not found or invalid JSON, continue with empty object
+  }
+  data[vaultAddress] = true;
+  fs.writeFileSync(INVALID_VAULTS, JSON.stringify(data, null, 2), 'utf8');
+  console.log(vaultAddress,"marked as invalid vault")
+}
 
 async function getLastUpdateTime(vault) {
   try {
@@ -174,6 +197,95 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
   const chain = 'optimistic-ethereum';
   const contractAddresses = existingData.map(vault => vault.asset);
 
+
+// Inside your existing `UpdateV5Vaults` function:
+for (const newVault of vaults) {
+  const existingVault = existingData.find(v => v.vault.toLowerCase() === newVault.vault.toLowerCase());
+
+  // Skip invalid vaults
+  if (await isInvalidVault(newVault.vault)) {
+    console.log(`Skipping invalid vault ${newVault.vault}`);
+    continue;
+  }
+
+  if (existingVault) {
+    // Update existing vault as before
+  } else {
+    let gnosis;
+    try {
+      gnosis = await OwnerInfo(newVault.vault, PROVIDERS[chainName]);
+    } catch (e) {
+      console.log("error getting vault owner info", e);
+    }
+
+    const contract = new ethers.Contract(newVault.vault, ABI.VAULT, PROVIDERS[chainName]);
+    try {
+      console.log("FETCHING VAULT DATA------------")
+      console.log(newVault.vault, chainName)
+      console.log("")
+
+      // Check if it is a valid vault
+      const asset = await contract.asset();
+      const name = await contract.name();
+      const symbol = await contract.symbol();
+      const decimals = await contract.decimals();
+      const owner = await contract.owner();
+      const liquidationPair = await contract.liquidationPair();
+      const assetContract = new ethers.Contract(asset, ABI.ERC20, PROVIDERS[chainName]);
+      const assetSymbol = await assetContract.symbol();
+      console.log("made it past all fetching")
+      console.log("")
+
+      let status;
+      if (DEPRECATED_NO_DEPOSIT.includes(newVault.vault)) {
+        status = 1;
+      } else if (DEPRECATED_NO_ACCESS.includes(newVault.vault)) {
+        status = 0;
+      }
+
+      let newData = {
+        ...newVault,
+        c: chainId,
+        pp: prizePool,
+        name,
+        symbol,
+        decimals,
+        asset,
+        owner,
+        liquidationPair,
+        assetSymbol,
+        gnosis
+      };
+
+      if (status !== undefined) {
+        newData.status = status;
+      }
+
+      existingData.push(newData);
+      contractAddresses.push(asset);
+    } catch (error) {
+      console.error(`Error fetching data for vault ${newVault.vault}:`, error.message);
+
+      // Flag this vault as invalid to skip in future runs
+      await flagInvalidVault(newVault.vault);
+
+      // Skip this vault in further processing
+      continue;
+    }
+  }
+}
+
+
+
+
+
+
+
+
+/*
+
+
+
   for (const newVault of vaults) {
     const existingVault = existingData.find(v => v.vault.toLowerCase() === newVault.vault.toLowerCase());
 
@@ -203,6 +315,12 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
 
       const contract = new ethers.Contract(newVault.vault, ABI.VAULT, PROVIDERS[chainName]);
       try {
+console.log("FETCHING VAULT DATA------------")
+console.log(newVault.vault,chainName)
+console.log("")
+console.log("")
+console.log("")
+
         const asset = await contract.asset();
         const name = await contract.name();
         const symbol = await contract.symbol();
@@ -211,7 +329,9 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
         const liquidationPair = await contract.liquidationPair();
         const assetContract = new ethers.Contract(asset, ABI.ERC20, PROVIDERS[chainName]);
         const assetSymbol = await assetContract.symbol();
-
+console.log("made it past all fetching")
+console.log("")
+console.log("")
         let status;
         if (DEPRECATED_NO_DEPOSIT.includes(newVault.vault)) {
           status = 1;
@@ -244,6 +364,8 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
       }
     }
   }
+*/
+
 
 // pricing removed for now
 /*

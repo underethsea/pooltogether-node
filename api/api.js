@@ -48,7 +48,8 @@ const pricesToFetch = [
   "wrapped-steth",
   "angle-usd",
   "degen-base",
-  "crash"
+  "crash",
+  "based-2"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -208,7 +209,7 @@ async function go() {
   }
 
   // set to 40 to run on first go and then wait 40 loops before running again
-  let lessFrequentCount = 40;
+  let lessFrequentCount = 80;
 
   while (true) {
     // looping
@@ -216,7 +217,7 @@ async function go() {
    
     let isFirstRun = true;
 
-    if (isFirstRun || lessFrequentCount % 40 === 0) {
+    if (isFirstRun || lessFrequentCount % 80 === 0) {
       try {
         const rewardsV5 = await GetTwabPromotions();
         publish(JSON.stringify(rewardsV5), "/twabrewards");
@@ -235,7 +236,7 @@ async function go() {
       }
     }
     lessFrequentCount += 1;
-    await delay(60000)
+    await delay(45000)
     await fetchAndUpdateStats();
   }
 }
@@ -340,7 +341,7 @@ async function fetchAndUpdateStats() {
 
   try {
     // Fetch Gecko prices
-await delay(60000)
+//await delay(60000)
     priceResults.geckos = await GeckoPrice(pricesToFetch);
     if (
       priceResults.geckos &&
