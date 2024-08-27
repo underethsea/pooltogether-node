@@ -55,6 +55,7 @@ async function GasEstimate(
 
     const serialized = ethers.utils.serializeTransaction(tx);
     let l1Fee = ethers.BigNumber.from(0);  // Default to 0 if GASORACLE is not available
+console.log("priority fee wei",priorityFeeWei,"max fee wei",maxFeeWei)
 if (typeof CONTRACTS !== 'undefined' && CONTRACTS?.GASORACLE?.[CHAINNAME]) {
       l1Fee = await CONTRACTS.GASORACLE[CHAINNAME].getL1Fee(serialized);
    }
