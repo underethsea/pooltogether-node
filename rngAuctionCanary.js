@@ -68,13 +68,15 @@ async function checkAndCompleteRng() {
   }
 }
 
+
 async function handleExpiredDraw(openDrawClosesAt) {
-  const waitTime = parseInt(openDrawClosesAt) * 1000 - Date.now() + 7200;
+  const waitTime = parseInt(openDrawClosesAt) * 1000 - Date.now();
   if (waitTime > 0) {
-    console.log(
-      `Waiting ${waitTime / 1000} seconds until the next draw closes.`
-    );
-    setTimeout(checkAndCompleteRng, waitTime);
+    console.log(`Waiting ${waitTime / 1000} seconds until the next draw closes.`);
+    setTimeout(checkAndCompleteRng, waitTime + 1000); // Adding a buffer to ensure it's slightly after the draw closes
+  } else {
+    console.log("Next draw is already open, checking RNG again...");
+    setTimeout(checkAndCompleteRng, 1000); // Retry immediately if the wait time is already past
   }
 }
 
@@ -108,30 +110,38 @@ async function handleOpenDraw(openDrawId) {
         " fee, lets check gas cost"
       );
       try {
-        
+
+// todo fee too high again?
          const args = [
-          CHAINNAME === "BASESEPOLIA" ? estimateFee.div(10).toString() : estimateFee.toString(),
+          CHAINNAME === "BASESEPOLIA" ? estimateFee.div(10).toString() : estimateFee.div(10).toString(),
           ADDRESS.DRAWMANAGER,
           CONFIG.WALLET,
         ]
         let web3TotalGasCost;
          let feeData
          let maxFeeWithBuffer
+let maxFeeGas
         try {
           feeData = await PROVIDERS[CHAINNAME].getFeeData()
 
-          maxFeeWithBuffer = feeData.lastBaseFeePerGas.mul(105).div(100);
-
+          maxFeeWithBuffer = feeData.maxFeePerGas.mul(200).div(100);
+console.log(CONFIG.PRIORITYFEE)
+maxFeeGas = maxFeeWithBuffer
+let priorityFeeBN = ethers.BigNumber.from(CONFIG.PRIORITYFEE*1e18)
+    //    if(priorityFeeBN.gt(maxFeeWithBuffer)){maxFeeGas = priorityFeeBN.mul(125).div(100)}
+console.log("fee data prioirty fee",feeData.maxPriorityFeePerGas.toString(),"fee data max fee",feeData.maxFeePerGas.toString())
+console.log("max fee gas",maxFeeGas.toString(),"priorityFeeBN",priorityFeeBN.toString())
 //console.log(temp.lastBaseFeePerGas.toString())
           web3TotalGasCost = await GasEstimate(
             CONTRACTS.RNGWITHSIGNER,
             "startDraw",
             args,
-           CONFIG.PRIORITYFEE,
+CONFIG.PRIORITYFEE,
+           //parseInt(feeData.maxPriorityFeePerGas/1e18).toString(),
             
             { value: estimateFee.toString(), 
              // maxFeePerGas:  CHAINNAME === "ARBSEPOLIA" ? 17537000000 : 90000000  // pass the fee value to send
-              maxFeePerGas: maxFeeWithBuffer
+             // maxFeePerGas: maxFeeGas.toString()
         });
         } catch (e) {
           console.log("error sending RNG, we will retry");
@@ -146,13 +156,15 @@ async function handleOpenDraw(openDrawId) {
             return;
           } else {
             //console.log("est gas", web3TotalGasCost / 1e18, "ETH");
+console.log("is it here")
             const rngTx = await CONTRACTS.RNGWITHSIGNER.startDraw(
               estimateFee.toString(),
               ADDRESS.DRAWMANAGER,
               CONFIG.WALLET,
               {
-                maxPriorityFeePerGas: "1000001",
-                maxFeePerGas: maxFeeWithBuffer,  
+ maxPriorityFeePerGas: "1000001",
+                //maxPriorityFeePerGas: (CONFIG.PRIORITYFEE*1e18).toString(),
+                //maxFeePerGas: maxFeeGas.toString(),  
                 //maxFeePerGas: CHAINNAME === "ARBSEPOLIA" ? 17537000000 : 68000000,
                 //nonce: '157',
                 //gasLimit: 560000,
