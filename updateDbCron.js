@@ -81,8 +81,8 @@ async function checkDrawEntry(network, drawId, prizepool) {
 async function checkClaimedPrizeEvents(currentBlock) {
     const provider = PROVIDERS[CHAINNAME];
     const contract = new ethers.Contract(ADDRESS[CHAINNAME].PRIZEPOOL, ABI.PRIZEPOOL, provider);
-    const eightHoursOfBlocks = 15500; // Assuming ~2 secs per block + buffer 
-
+    let eightHoursOfBlocks = 15500; // Assuming ~2 secs per block + buffer 
+    if (CHAINNAME==="ARBITRUM"){eightHoursOfBlocks *= 10}
     const events = await contract.queryFilter({
         address: ADDRESS[CHAINNAME].PRIZEPOOL,
         topics: [TOPICS.CLAIMEDPRIZE]
