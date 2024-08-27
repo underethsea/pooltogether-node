@@ -1,27 +1,41 @@
+const fs = require("fs");
+const { loadChainConfig, getChainConfig } = require("../chains");
+
+const chainKey = process.argv[2] || "";
+
+try {
+  // Load the configuration with the provided chainKey or default
+  loadChainConfig(chainKey);
+} catch (error) {
+  console.error(`Error loading chain configuration: ${error.message}`);
+  process.exit(1);
+}
+
+const { ethers } = require("ethers");
 const { CONFIG } = require("../constants/config");
 const { ADDRESS } = require("../constants/address.js");
 const { CONTRACTS } = require("../constants/contracts");
-const { BuildTxForSwap } = require("../utilities/1inchSwap.js");
 const { GasEstimate } = require("../utilities/gas.js");
-const { ethers } = require("ethers");
-
-
-const {getChainConfig } = require('../chains');
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 
-async function UniFlashSwap(
-  pairAddress,
-  amtOut,
-  gasBudget
-) {
+// Function to create swap path and its encoded version
+function createSwapPath(tokenIn, tokenOut, fee = 3000) {
+  // Create the swap path array
+  const swapPath = [tokenIn, fee, tokenOut];
+
+  // Encode the swap path
+  const swapPathEncoded = ethers.utils.solidityPack(
+    ["address", "uint24", "address"],
+    swapPath
+  );
+
+  return { swapPath, swapPathEncoded };
+}
+
+async function UniFlashSwap(pairAddress, amtOut, gasBudget) {
   const swapperFunctionName = "flashSwapExactAmountOut";
-  const swapperArgs = [
-    pairAddress,
-    CONFIG.WALLET,
-    amtOut.toString(),
-    "1"
-  ];
+  const swapperArgs = [pairAddress, CONFIG.WALLET, amtOut.toString(), "1"];
   console.log("swapper args", swapperArgs);
   const gasEstimate = await GasEstimate(
     CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CHAINNAME],
@@ -32,147 +46,120 @@ async function UniFlashSwap(
   if (gasEstimate.gt(gasBudget)) {
     console.log("not profitable including gas costs");
   } else {
-
-const swapArgs = [
-    pairAddress,
-    CONFIG.WALLET,
-    amtOut.toString(),
-    gasEstimate
-  ];
-//console.log("passes gas test return for now");return
-    const tryIt = await CONTRACTS.UNIFLASHLIQUIDATORSIGNER[CHAINNAME].flashSwapExactAmountOut(
-      ...swapperArgs,
-      { maxPriorityFeePerGas: "1000011", gasLimit: "1700000" }
-    );
+    const tryIt = await CONTRACTS.UNIFLASHLIQUIDATORSIGNER[
+      CHAINNAME
+    ].flashSwapExactAmountOut(...swapperArgs, {
+      maxPriorityFeePerGas: "1000011",
+      gasLimit: "1000000",
+    });
     const tryReceipt = await tryIt.wait();
     console.log(tryReceipt.transactionHash);
   }
 }
 
-async function OutAndBack(
+async function FlashLiquidate(
   pairAddress,
-  depositTokenAddress,
-  amtOut,
-  amtIn,
-  gasBudget
+  tokenIn,
+  tokenOut,
+  profitThresholdETH,
+  fee = 3000
 ) {
-  console.log("swapper chain", CHAINNAME);
-  const swapBackParam = {
-    src: depositTokenAddress,
-    dst: ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,
-    amount: amtOut.toString(),
-    from: ADDRESS[CHAINNAME].SWAPPER,
-    slippage: 1,
-    disableEstimate: true, // Set to true to disable estimation of swap details
-    allowPartialFill: false, // Set to true to allow partial filling of the swap order
-  };
-  console.log("swap params for 1inch swap back to pool", swapBackParam);
-
-  const swapBack = await BuildTxForSwap(swapBackParam);
-
-  console.log("1 inch swap data", swapBack);
-
-  const swapData = swapBack.data;
-  //const swapData = replaceAddressInCalldata(swapBack.data,"0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",ADDRESS[CHAINNAME].SWAPPER)
-  // console.log("1 inch SWAPBACK INFO", swapBack);
-  const swapperFunctionName = "outAndBack";
-  const swapperArgs = [
-    pairAddress,
-    amtOut.toString(),
-    amtIn.toString(),
-    swapData,
-  ];
-  console.log("swapper args", swapperArgs);
-  const gasEstimate = await GasEstimate(
-    CONTRACTS.SWAPPERSIGNER[CHAINNAME],
-    swapperFunctionName,
-    swapperArgs,
-    CONFIG.PRIORITYFEE
-  );
-  if (gasEstimate.gt(gasBudget)) {
-    console.log("not profitable including gas costs");
-  } else {
-console.log(CONTRACTS.SWAPPERSIGNER[CHAINNAME].address,"address for contract")
-    //console.log("returning for debuuuug");return
-    const tryIt = await CONTRACTS.SWAPPERSIGNER[CHAINNAME].outAndBack(
-      ...swapperArgs,
-      { maxPriorityFeePerGas: "1000011", gasLimit: "1700000" }
-    );
-    const tryReceipt = await tryIt.wait();
-    console.log(tryReceipt.transactionHash);
-const [gasSpent,totalTransactionCost ] = await getAlchemyReceipt(tryReceipt.transactionHash) 
- }
-}
-
-async function getAlchemyReceipt(hash){
   try {
-    alchemyReceipt = await AlchemyTransactionReceipt(
-      hash
+    // Create swap path and encode it
+    const { swapPath, swapPathEncoded } = createSwapPath(
+      tokenIn,
+      tokenOut,
+      fee
     );
-    // console.log("alchemy receipt", alchemyReceipt);
-    L1transactionCost =
-      Number(alchemyReceipt.result.l1Fee) / 1e18;
-    console.log(
-      "L2 Gas fees (in ETH) " +
-        L2transactionCost +
-        " L1 Gas fees (in ETH) " +
-        L1transactionCost
-    );
-
-    totalTransactionCost = L2transactionCost + L1transactionCost;
-    totalTransasactionCostDollar =
-      totalTransactionCost * ethPrice;
-    console.log(
-      "Total Gas fees (in ETH) " +
-        totalTransactionCost +
-        "  $" +
-        totalTransasactionCostDollar
-    );
-
-    gasSpent = parseFloat(
-      ethers.utils.formatUnits(
-        txReceipt.gasUsed.mul(txReceipt.effectiveGasPrice),
-        18
-      )
-    );
-
-    // todo this gas junk is no bueno
-    console.log(
-      "gas used",
-      txReceipt.gasUsed.toString(),
-      " effective gas price",
-      ethers.utils.formatUnits(txReceipt.effectiveGasPrice, 18),
-      " gas cost ",
-      gasSpent
-    );
-
-    // totalGasSpent += gasSpent;
-    return [gasSpent,totalTransactionCost]
-    // console.log("tx receipt",txReceipt.getTransactionReceipt)
-    // console.log("get tx",txReceipt.getTransaction)
-
-    // txReceipt.logs.map((log,index)=>{console.log("log ",index," ",log,interface.parseLog(log))}
+    //console.log("swap path?",swapPathEncoded)
+    // Get the best quote
+    //console.log("pairAddress",pairAddress)
+    console.log(CHAINNAME);
+    const bestQuote = await CONTRACTS.FLASHLIQUIDATORSIGNER[
+      CHAINNAME
+    ].callStatic.findBestQuoteStatic(pairAddress, swapPathEncoded);
+    //console.log("got quote?")
+    // Define flash liquidation parameters
+    const flashLiquidateParams = {
+      liquidationPairAddress: pairAddress,
+      receiver: CONFIG.WALLET,
+      amountOut: bestQuote.amountOut,
+      amountInMax: bestQuote.amountIn.mul(101).div(100), // +1% slippage
+      profitMin: bestQuote.profit.mul(98).div(100), // -2% slippage
+      deadline: Math.floor(Date.now() / 1000) + 60, // +1 min
+      swapPath: swapPathEncoded,
+    };
+    //console.log("best quote profit",bestQuote.profit.toString())
+    //console.log("profit threshold ETH",profitThresholdETH.toString())
+    //console.log("gas estaimte",gasEstimate.toString())
+    //   console.log("flash liquidate params", flashLiquidateParams);
+    //console.log("amount in max",flashLiquidateParams.amountInMax.toString())
+    //console.log("profit min",flashLiquidateParams.profitMin.toString())
+    // Estimate gas cost
+    if (bestQuote.profit.gt(0)) {
+      const gasEstimate = await GasEstimate(
+        CONTRACTS.FLASHLIQUIDATORSIGNER[CHAINNAME],
+        "flashLiquidate",
+        [
+          flashLiquidateParams.liquidationPairAddress,
+          flashLiquidateParams.receiver,
+          flashLiquidateParams.amountOut.toString(),
+          flashLiquidateParams.amountInMax.toString(),
+          flashLiquidateParams.profitMin.toString(),
+          flashLiquidateParams.deadline.toString(),
+          flashLiquidateParams.swapPath,
+        ],
+        CONFIG.PRIORITYFEE,
+        {}, // options
+        690000 // gaslimit
+      );
+      console.log("gas estimate", gasEstimate.toString());
+      const gasAndProfit = gasEstimate.add(profitThresholdETH);
+      if (bestQuote.profit.lt(gasAndProfit)) {
+        console.log("not profitable including gas costs");
+      } else {
+        //return // return for testing
+        const tryIt = await CONTRACTS.FLASHLIQUIDATORSIGNER[
+          CHAINNAME
+        ].flashLiquidate(
+          flashLiquidateParams.liquidationPairAddress,
+          flashLiquidateParams.receiver,
+          flashLiquidateParams.amountOut.toString(),
+          flashLiquidateParams.amountInMax.toString(),
+          flashLiquidateParams.profitMin.toString(),
+          flashLiquidateParams.deadline.toString(),
+          flashLiquidateParams.swapPath,
+          { maxPriorityFeePerGas: "1000011", gasLimit: "1700000" }
+        );
+        const tryReceipt = await tryIt.wait();
+        console.log(tryReceipt.transactionHash);
+      }
+    } else {
+      console.log("not profitable");
+    }
   } catch (e) {
-    console.log("error on alchemy receipt", e);
+    console.log("Error in FlashLiquidate", e);
   }
 }
 
-// example
+// Example usage
 const go = async () => {
-  console.log(
-    await BuildTxForSwap({
-      src: "0x4200000000000000000000000000000000000006",
-      dst: "0x395Ae52bB17aef68C2888d941736A71dC6d4e125",
-      amount: "2693295755114884",
-      //from: ADDRESS[CHAINNAME].SWAPPER,
-      // hard coding while we try to get estimate
-      from: "0xE5860FF1c57DDCEF024Cb43B37b8A20bfE4c9822",
-      slippage: 1,
-      disableEstimate: false, // Set to true to disable estimation of swap details
-      allowPartialFill: false, // Set to true to allow partial filling of the swap order
-    })
+  // Example usage of createSwapPath function
+  const liquidationPair = "0xeebdd08a67130e3a56e30ef950d56033b7d1d9f1";
+  const tokenIn = "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"; // OP address
+  const tokenOut = "0x4200000000000000000000000000000000000006"; // WETH address
+  const fee = 100; // 0.01% fee
+  const profitThreshold = ethers.utils.parseUnits(".00001", 18);
+  //async function FlashLiquidate(pairAddress, tokenIn, tokenOut, profitThresholdETH, fee = 3000) {
+  const tx = await FlashLiquidate(
+    liquidationPair,
+    tokenIn,
+    tokenOut,
+    profitThreshold,
+    fee
   );
 };
-//go()
 
-module.exports = { UniFlashSwap};
+//go();
+
+module.exports = { UniFlashSwap, FlashLiquidate };
