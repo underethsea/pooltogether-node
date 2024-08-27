@@ -333,7 +333,7 @@ const SendClaims = async (
     //  let txToEstimate = contract.populateTransaction.claimPrizes(vault, tier, winners, prizeIndices, feeRecipient, minFeeToClaim);
     //let estimate = await estimateGas(txToEstimate)
 
-    console.log(estimateNetFromClaims,">",MINPROFIT)
+    //console.log(estimateNetFromClaims,">",MINPROFIT)
     if (
       estimateNetFromClaims > MINPROFIT &&
       estimateNetPercentage > MINPROFITPERCENTAGE
