@@ -1,19 +1,23 @@
-const fetch = require('cross-fetch');
+const fetch = require("cross-fetch");
 
 const fetchWinnersJsonFile = async (owner, repo, chain, prizePool, draw) => {
   const path = `winners/vaultAccounts/${chain}/${prizePool}/draw/${draw}/winners.json`;
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+  const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/main/${path}`;
 
-    if (data.content) {
-      const decodedContent = JSON.parse(Buffer.from(data.content, 'base64').toString('utf-8'));
-      return decodedContent;
-    } else {
-      console.error("Expected content but received:", data);
+  try {
+    const response = await fetch(rawUrl);
+
+    if (!response.ok) {
+      console.error(
+        "Error fetching file from raw.githubusercontent.com:",
+        response.status,
+        response.statusText
+      );
       return null;
     }
+
+    const decodedContent = await response.json();
+    return decodedContent;
   } catch (error) {
     console.error("Error fetching JSON file:", error);
     return null;
@@ -24,7 +28,7 @@ const fetchAndAggregatePrizes = async (data) => {
   const allWins = {};
 
   for (const [vaultAddress, winners] of Object.entries(data)) {
-    winners.forEach(winner => {
+    winners.forEach((winner) => {
       const { user, prizes } = winner;
 
       for (const [tier, prizeIndices] of Object.entries(prizes)) {
@@ -38,7 +42,7 @@ const fetchAndAggregatePrizes = async (data) => {
   }
 
   const winsToClaim = Object.entries(allWins).map(([key, prizeIndices]) => {
-    const [vaultAddress, user, tier] = key.split('-');
+    const [vaultAddress, user, tier] = key.split("-");
     return [vaultAddress, user, tier, prizeIndices];
   });
 
@@ -47,7 +51,13 @@ const fetchAndAggregatePrizes = async (data) => {
 
 const FetchG9ApiPrizes = async (chain, prizePool, draw) => {
   try {
-    const jsonData = await fetchWinnersJsonFile('GenerationSoftware', 'pt-v5-winners', chain, prizePool.toLowerCase(), draw);
+    const jsonData = await fetchWinnersJsonFile(
+      "GenerationSoftware",
+      "pt-v5-winners",
+      chain,
+      prizePool.toLowerCase(),
+      draw
+    );
     if (jsonData) {
       const aggregatedPrizes = await fetchAndAggregatePrizes(jsonData);
       console.log(aggregatedPrizes);
