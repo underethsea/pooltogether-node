@@ -16,7 +16,7 @@ pm2 start rngAuction.js --name "optimism-rng" -- optimism
 pm2 start listening.js --name "arb-listen" -- arbitrum
 pm2 start liquidator.js --name "arb-liq8r" -- arbitrum
 pm2 start claimer.js --name "arb-claim" -- arbitrum
-pm2 start rngAuction.js --name "otpimism-rng" -- optimism
+pm2 start rngAuction.js --name "arb-rng" -- arbitrum
 
 # Save the current process list
 pm2 save
