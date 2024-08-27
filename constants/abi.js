@@ -14,7 +14,7 @@ const DRAWMANAGER = require('./abis/drawmanager')
 const GASORACLE = require('./abis/gasoracle')
 const SWAPPER = require('./abis/swapper')
 const UNIFLASHLIQUIDATOR = require('./abis/uniflashliquidator')
-
+const FLASHLIQUIDATOR = require('./abis/flashliquidator')
 const ABI = {
   SWAPPER: SWAPPER,
   TOKENFAUCET: TOKENFAUCET,
@@ -32,6 +32,7 @@ const ABI = {
   DRAWMANAGER: DRAWMANAGER,
   GASORACLE: GASORACLE,
   UNIFLASHLIQUIDATOR: UNIFLASHLIQUIDATOR,
+  FLASHLIQUIDATOR: FLASHLIQUIDATOR,
 };
 
 module.exports = { ABI };

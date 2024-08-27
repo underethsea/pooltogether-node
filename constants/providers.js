@@ -29,14 +29,16 @@ const mumbaiEndpoint = "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.
 const sepoliaEndpoint = "https://eth-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const sepoliaInfura = "https://sepolia.infura.io/v3/" + process.env.INFURA_KEY
 //const opGoerliEndpoint = "https://opt-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-const opEndpoint =  "https://opt-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const opEndpoint =  "https://opt-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const opEndpoint = "https://optimism-mainnet.infura.io/v3/" + process.env.INFURA_KEY
+//const opEndpoint =  "https://bitter-wider-reel.optimism.quiknode.pro/"+ process.env.QUICKNODE_KEY
 const mainnetEndpoint = "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHEMY_KEY
 //const opSepoliaEndpoint = "https://sepolia.optimism.io"
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const opSepoliaWebsocketEndpoint = "wss://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-//const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
+//const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 const ws_arbEndpoint = "wss://arbitrum-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
 const ws_opEndpoint = "wss://optimism-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
 // const baseSepoliaEndpoint = "https://sepolia.base.org" 
@@ -44,6 +46,8 @@ const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.e
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
 const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const baseEndpoint = "https://bitter-wider-reel.optimism.quiknode.pro/"+ process.env.QUICKNODE_KEY
+//const baseEndpoint = "https://rpc.ankr.com/base/" + process.env.ANKR_KEY
 //const baseEndpoint =  "https://base-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 const WS_PROVIDERS = {
 //    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
@@ -79,4 +83,3 @@ const SIGNER = wally.connect(PROVIDERS[CHAINNAME]);
 const MAINNETSIGNER = wally.connect(PROVIDERS["MAINNET"])
 //console.log("signer",SIGNER)
 module.exports = {PROVIDERS, SIGNER , MAINNETSIGNER, WS_PROVIDERS}
-

@@ -13,6 +13,7 @@ const isTestnet = CHAINS[CHAINNAME]?.testnet;
 const isOpchain = CHAINS[CHAINNAME]?.opchain
 const hasSwapper = CONFIG?.SWAPPERS?.[CHAINNAME] ?? false;
 const hasUniFlashLiquidator = ADDRESS[CHAINNAME]?.UNIFLASHLIQUIDATOR ?? false
+const hasFlashLiquidator = ADDRESS[CHAINNAME]?.FLASHLIQUIDATOR ?? false
 const hasGasOracle = ADDRESS[CHAINNAME]?.GASORACLE ?? false
 const CONTRACTS = {
   /*  WINBOOSTERSIGNER: {
@@ -63,7 +64,15 @@ UNIFLASHLIQUIDATORSIGNER: {
       ),
     }
   } : {}),
-
+...(hasFlashLiquidator ? {
+FLASHLIQUIDATORSIGNER: {
+[CHAINNAME]: new ethers.Contract(
+      ADDRESS[CHAINNAME].FLASHLIQUIDATOR,
+      ABI.FLASHLIQUIDATOR,
+      SIGNER
+    ),
+}
+}: {}),
 
   /*  GAS: {
   [CHAINNAME]: new ethers.Contract(
