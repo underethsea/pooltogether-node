@@ -3,7 +3,7 @@ const { ethers } = require('ethers');
 
 const EXPECTED_PONG_BACK = 60000; // 1 minute
 const KEEP_ALIVE_CHECK_INTERVAL = 30 * 60 * 1000; // 30 minutes
-const MAX_TIERS_CALCULATE = 7
+const MAX_TIERS_CALCULATE = 6
 
 // Assuming the chain name/id is the first argument, default to 'OPTIMISM' if not provided
 const chainKey = process.argv[2] || '';
