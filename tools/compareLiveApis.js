@@ -1,4 +1,5 @@
 const fetch = require('node-fetch');
+const ethers = require('ethers')
 
 const GITHUB_API_BASE_URL = `https://api.github.com/repos/GenerationSoftware/pt-v5-winners/contents/winners/vaultAccounts/`;
 const POOL_EXPLORER_API_URL = 'https://poolexplorer.xyz/';
@@ -160,5 +161,5 @@ const prizePool = '0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55';
 //compareDraws(chain, prizePool, totalDraws);
 
 // Usage for comparing a single draw with detailed discrepancies
-const specificDrawId = '79';
+const specificDrawId = '101';
 compareSingleDraw(chain, prizePool, specificDrawId);
