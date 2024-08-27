@@ -10,7 +10,7 @@ try {
   console.error(`Error loading chain configuration: ${error.message}`);
   process.exit(1);
 }
- const BATCH_SIZE = 420
+ const BATCH_SIZE = 200
 // Import other dependencies after the chain configuration is loaded
 const { PROVIDERS } = require("../constants/providers.js");
 const { ADDRESS, GetChainName } = require("../constants/address.js");
@@ -232,8 +232,8 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
 
 // Uncomment the appropriate line to run for the desired chain and block
 //PrizeCalcToDb(10, "latest", maxTiersToCalculate = 7, debug=true); // optimism 
-PrizeCalcToDb(42161, "latest",maxTiersToCalculate = 7, debug=true); // arbitrum
+//PrizeCalcToDb(42161, "latest",maxTiersToCalculate = 7, debug=true); // arbitrum
 // PrizeCalcToDb(8453, "latest",maxTiersToCalculate = 7, debug=true, debug = true); // base
 // FoundryPrizeWinsToDb(42161, 221234069);
- 
+// PrizeCalcToDb(8453,"latest",maxTiersToCalculate = 6, debug= true)
 module.exports = { PrizeCalcToDb };
