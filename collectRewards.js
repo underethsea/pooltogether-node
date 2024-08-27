@@ -4,6 +4,7 @@ const { CONTRACTS } = require("./constants/contracts");
 const { CONFIG } = require("./constants/config");
 const { ADDRESS } = require("./constants/address");
 const { GasEstimate } = require("./utilities/gas");
+const { ethers } = require("ethers")
 
 const maxGas = 20;
 const minClaim = CONFIG.MINTOCLAIM;
@@ -85,7 +86,7 @@ async function CollectRewards(prizeTokenPrice, ethPrice) {
 
     // Proceed to claim rewards
     const transactionOptions = {
-      maxPriorityFeePerGas: CONFIG.PRIORITYFEE, // Ensure this is set appropriately
+      maxPriorityFeePerGas: ethers.utils.parseUnits(CONFIG.PRIORITYFEE,9),
     };
 
     const submittedTx = await PRIZEPOOL_CONTRACT.withdrawRewards(
@@ -116,6 +117,6 @@ async function CollectRewards(prizeTokenPrice, ethPrice) {
   }
 }
 
-CollectRewards(3500, 3500);
+//CollectRewards(3500, 3500);
 
 module.exports = { CollectRewards };
