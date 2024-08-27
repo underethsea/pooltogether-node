@@ -1,8 +1,7 @@
-//const { EstimateOptimismGasCost } = require('./optimismGas');
+const NodeCache = require("node-cache");
 const { getChainConfig } = require("./chains");
 const { CONTRACTS } = require("./constants/contracts");
 const { CONFIG } = require("./constants/config");
-//const { web3GasEstimate } = require("./utilities/web3");
 const { ADDRESS } = require("./constants/address");
 const { GasEstimate } = require("./utilities/gas");
 
@@ -12,135 +11,111 @@ const CLAIM_COST_AS_PERCENTAGE = CONFIG.CLAIM_COST_AS_PERCENTAGE; // 2 = 2%
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 
+// Retrieve cache time from CONFIG (default to 8 hours if not specified)
+const CACHE_TTL_HOURS = CONFIG.REWARDS_CLAIM_WAIT || 8;
+const cache = new NodeCache({ stdTTL: CACHE_TTL_HOURS * 60 * 60 }); // TTL in seconds
+
 async function CollectRewards(prizeTokenPrice, ethPrice) {
-  PRIZEPOOL_CONTRACT = CONTRACTS.PRIZEPOOLWITHSIGNER[CHAINNAME];
+  const PRIZEPOOL_CONTRACT = CONTRACTS.PRIZEPOOLWITHSIGNER[CHAINNAME];
+
+  // Check cache for the last claim timestamp
+  const lastClaimTime = cache.get("lastClaimTime");
+
+  if (lastClaimTime) {
+    const nextEligibleTime = new Date(lastClaimTime + CACHE_TTL_HOURS * 60 * 60 * 1000);
+    console.log(
+      `Rewards were recently checked. Next eligible check after: ${nextEligibleTime.toLocaleString()}`
+    );
+    return;
+  }
+
   try {
     // Get the balance of claim rewards
     const awardsBalance = await CONTRACTS.PRIZEPOOL[CHAINNAME].rewardBalance(
       process.env.WALLET
     );
+
+    const awardsBalanceFormatted = parseFloat(awardsBalance) / 1e18;
+    const awardsValueUSD = awardsBalanceFormatted * prizeTokenPrice;
+
     console.log(
-      "Awards Balance:",
-      awardsBalance.toString(),
-      " ",
-      (parseInt(awardsBalance) / 1e18).toFixed(4),
-      " " + ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL + " ($",
-      (parseInt(awardsBalance) / 1e18) * prizeTokenPrice,
-      ")"
+      `Awards Balance: ${awardsBalance.toString()} (${awardsBalanceFormatted.toFixed(4)} ${
+        ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL
+      } - $${awardsValueUSD.toFixed(2)})`
     );
-    if (parseInt(awardsBalance) / 1e18 < minClaim) {
-      console.log("not enough rewards accumulated to claim...(", minClaim, ")");
-    } else {
-      //console.log(parseInt(awardsBalance)/1e18)
-      //console.log("min",minClaim)
-      //return
-      /*
-    // Create an Ethereum transaction
-    const transaction = {
-      to: '0x93146d9978d286EE085ba68eE1786a0b6EDA64EC', 
-      value: ethers.utils.parseEther('1.0'), // Adjust the amount as needed
-      
-gasLimit: 21000, // Adjust the gas limit as needed
-      gasPrice: ethers.utils.parseUnits('1', 'gwei'), // Adjust the gas price as needed
+
+    if (awardsBalanceFormatted < minClaim) {
+      console.log(
+        `Not enough rewards accumulated to claim. Minimum required: ${minClaim} ${
+          ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL
+        }`
+      );
+      return;
+    }
+
+    const functionName = "withdrawRewards";
+    const args = [CONFIG.WALLET, awardsBalance];
+
+    // Calculate total gas cost in wei
+    const web3TotalGasCost = await GasEstimate(
+      PRIZEPOOL_CONTRACT,
+      functionName,
+      args,
+      CONFIG.PRIORITYFEE
+    );
+
+    const web3TotalGasCostETH = parseFloat(web3TotalGasCost) / 1e18;
+    const web3TotalGasCostUSD = web3TotalGasCostETH * ethPrice;
+
+    console.log(
+      `Gas Estimate: ${web3TotalGasCostETH.toFixed(6)} ETH ($${web3TotalGasCostUSD.toFixed(2)})`
+    );
+
+    const maxAcceptableGasCost =
+      (awardsValueUSD * CLAIM_COST_AS_PERCENTAGE) / 100;
+
+    if (web3TotalGasCostUSD > maxAcceptableGasCost) {
+      console.log(
+        `Gas cost ($${web3TotalGasCostUSD.toFixed(2)}) exceeds the maximum acceptable cost of $${maxAcceptableGasCost.toFixed(
+          2
+        )} (${CLAIM_COST_AS_PERCENTAGE}%)`
+      );
+      return;
+    }
+
+    // Proceed to claim rewards
+    const transactionOptions = {
+      maxPriorityFeePerGas: CONFIG.PRIORITYFEE, // Ensure this is set appropriately
     };
 
-    // Call the function to estimate gas costs
-    const gasEstimates = await EstimateOptimismGasCost(transaction);
+    const submittedTx = await PRIZEPOOL_CONTRACT.withdrawRewards(
+      CONFIG.WALLET,
+      awardsBalance,
+      transactionOptions
+    );
 
-    // Use the gas estimates as needed
-    const gasCost = ethers.utils.formatUnits(gasEstimates.totalCost, 18);
-    console.log('Total Cost:', gasEstimates.totalCost.toString(), " ", gasCost, " eth @ 1650 = $", (gasCost * 1650).toFixed(4));
-    // console.log('L1 Cost:', gasEstimates.l1Cost.toString());
-    // console.log('L2 Cost:', gasEstimates.l2Cost.toString());
+    console.log(
+      `Transaction submitted. Hash: ${submittedTx.hash}. Waiting for confirmation...`
+    );
 
-*/
+    const receipt = await submittedTx.wait();
 
-      /*
-
-
-    // Estimate gas limit for withdrawClaimRewards
-    const estimatedGasLimit = await PRIZEPOOL_CONTRACT.estimateGas.withdrawRewards(CONFIG.WALLET, awardsBalance);
-    // console.log("estimated gas limit",estimatedGasLimit)
-    // Prepare the transaction
-    let approveTxUnsigned = await PRIZEPOOL_CONTRACT.populateTransaction.withdrawRewards(CONFIG.WALLET, awardsBalance);
-    approveTxUnsigned.chainId = CHAINID;
-    approveTxUnsigned.gasLimit = estimatedGasLimit.mul(110).div(100);
-    approveTxUnsigned.gasPrice = await PROVIDERS[CHAINNAME].getGasPrice();
-    const mainnetGas = await PROVIDERS.MAINNET.getGasPrice();
-   
-if(mainnetGas/1e9 > maxGas) {
-console.log("gas too high (",(mainnetGas/1e9).toFixed(2),"gwei)")
-return}
-console.log("gas not too high");return
-    approveTxUnsigned.nonce = await PROVIDERS[CHAINNAME].getTransactionCount(CONFIG.WALLET);
-    const gasCostEstimate = await EstimateOptimismGasCost(approveTxUnsigned.nonce)
-    const totalCost = ethers.utils.formatUnits(gasCostEstimate.totalCost, 18);
-    console.log('Total Cost:', gasCostEstimate.totalCost.toString(), " ", totalCost, " eth @ ",ethPrice", = $", (totalCost * ethPrice).toFixed(4));
-    console.log(approveTxUnsigned)
-    //console.log("gas limit",approveTxUnsigned.gasLimit)
-    //console.log("gas price",approveTxUnsigned.gasPrice.toString())
-    // console.log("made it")
-*/
-
-      const functionName = "withdrawRewards";
-      const args = [CONFIG.WALLET, awardsBalance];
-
-      // Encode the function call
-      const data = PRIZEPOOL_CONTRACT.interface.encodeFunctionData(
-        functionName,
-        args
+    if (receipt.status === 1) {
+      console.log(
+        `Successfully claimed ${awardsBalanceFormatted.toFixed(4)} ${
+          ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL
+        }. Transaction Hash: ${receipt.transactionHash}`
       );
-
-      // calculate total gas cost in wei
-      const web3TotalGasCost = await GasEstimate(
-        PRIZEPOOL_CONTRACT,
-        functionName,
-        args,
-        CONFIG.PRIORITYFEE
-      );
-
-      const web3TotalGasCostUSD = (Number(web3TotalGasCost) * ethPrice) / 1e18;
-
-      console.log("Gas Estimate: $" + web3TotalGasCostUSD.toFixed(2)) +
-        " |  " +
-        web3TotalGasCost.toString() +
-        " wei";
-
-      if (
-        web3TotalGasCostUSD >
-        ((parseInt(awardsBalance) / 1e18) *
-          prizeTokenPrice *
-          CLAIM_COST_AS_PERCENTAGE) /
-          100
-      ) {
-        console.log("gas cost to claim rewards is too high");
-      } else {
-        //console.log("ready to claim but returning for testing");return
-        // Sign and send the transaction
-        const submittedTx = await PRIZEPOOL_CONTRACT.withdrawRewards(
-          CONFIG.WALLET,
-          awardsBalance,
-          { maxPriorityFeePerGas: "1000011" }
-        );
-        const receipt = await submittedTx.wait();
-
-        if (receipt.status === 0) {
-          throw new Error("Approve transaction failed");
-        }
-
-        // console.log('Transaction Receipt:', receipt);
-        console.log(
-          "claimed",
-          ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,
-          " awards! tx hash ",
-          receipt.transactionHash
-        );
-      }
+      // Update cache with the current timestamp
+      cache.set("lastClaimTime", Date.now());
+    } else {
+      console.error("Transaction failed. Receipt:", receipt);
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error during reward collection:", error);
   }
 }
 
-CollectRewards(3500,3500);
+CollectRewards(3500, 3500);
+
 module.exports = { CollectRewards };
