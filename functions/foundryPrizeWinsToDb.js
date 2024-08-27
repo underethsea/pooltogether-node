@@ -26,8 +26,15 @@ const section = chalk.hex("#47FDFB");
 const { SendMessageToChannel } = require("./discordAlert");
 //const CHAINNAME = getChainConfig().CHAINNAME;
 const CONFIG_CHAINNAME = getChainConfig().CHAINNAME;
+
+const EXCLUDE_VAULTS = ["0x89e25e57e9f24748710b31afd39aa06588c65ab0"]; // Define the array of vault addresse
+const HARDCODE_NUM_TIERS = 6
+
 async function FoundryPrizeWinsToDb(chainId, block = "latest") {
 const CHAINNAME = GetChainName(chainId) 
+
+
+
 if(CHAINNAME !== CONFIG_CHAINNAME) {console.log("CONFIG CHAIN MISMATCH");return}
  if (block === "latest") {
     block = await PROVIDERS[CHAINNAME].getBlock();
@@ -112,10 +119,14 @@ if(CHAINNAME !== CONFIG_CHAINNAME) {console.log("CONFIG CHAIN MISMATCH");return}
   //console.log("file written")
 
   let winnersData;
+
+let numTiers
+if (HARDCODE_NUM_TIERS>0){numTiers = HARDCODE_NUM_TIERS}
+else {numTiers = numberOfTiers - 1}
   try {
     winnersData = await GetFoundryWinnersByVault(
       groupedResult,
-      numberOfTiers-1,
+      numTiers,
       PROVIDERS[CHAINNAME].connection.url
     );
     // Add this code block right after getting the winnersData
@@ -247,7 +258,31 @@ totalPrizeValueInEther = totalPrizeValueInWei / 1e18;
       totalPrizeValueInEther.toFixed(4) + " total ETH"
   );
 }
+function groupPlayersByVaultForFoundry(chain, prizePool, players) {
+  return Object.values(
+    players.reduce((groups, player) => {
+      const { vault, address } = player;
 
+      // Check if the vault is in the EXCLUDE_VAULTS array
+      if (EXCLUDE_VAULTS.includes(vault)) {
+        console.log(`Excluding vault ${vault} from calculations`);
+        return groups;
+      }
+
+      if (!groups[vault]) {
+        groups[vault] = {
+          chainId: chain, // Example value, replace with your actual chainId
+          prizePoolAddress: prizePool, // Example value, replace with your actual prize pool address
+          vaultAddress: vault,
+          userAddresses: [],
+        };
+      }
+      groups[vault].userAddresses.push(address);
+      return groups;
+    }, {})
+  );
+}
+/*
 function groupPlayersByVaultForFoundry(chain, prizePool, players) {
   return Object.values(
     players.reduce((groups, player) => {
@@ -264,9 +299,11 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
       return groups;
     }, {})
   );
-}
+}*/
+
+
 //FoundryPrizeWinsToDb(42161, "latest"); // arbitrum
-//FoundryPrizeWinsToDb(8453,"latest") // base
-FoundryPrizeWinsToDb(10,"latest") // optimism
+FoundryPrizeWinsToDb(8453,"latest") // base
+//FoundryPrizeWinsToDb(10,"latest") // optimism
 //FoundryPrizeWinsToDb(42161,221234069)
 module.exports = { FoundryPrizeWinsToDb };
