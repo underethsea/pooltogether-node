@@ -753,7 +753,8 @@ function tallyPrizeResults(chain, wins) {
 async function updateV5Players(chainNumber, prizePool = "", subgraph) {
   try {
     const allVaults = await GetPlayers(chainNumber, prizePool, subgraph);
-    console.log("all vaults length", allVaults.length);
+    console.log("Total vaults fetched:", allVaults.length);
+
     const uniqueAddresses = new Set();
 
     allVaults.forEach((vault) => {
@@ -763,52 +764,38 @@ async function updateV5Players(chainNumber, prizePool = "", subgraph) {
     });
 
     const countUniquePoolers = uniqueAddresses.size;
+    console.log("Unique poolers count:", countUniquePoolers);
 
     let summaryPoolers = [];
     for (let vaultData of allVaults) {
+      const poolerCount = vaultData.poolers.length;
+      //console.log(`Vault ${vaultData.vault} has ${poolerCount} poolers`);
+
       summaryPoolers.push({
         vault: vaultData.vault,
-        poolers: vaultData.poolers.length,
+        poolers: poolerCount,
       });
 
-      // Conditionally construct the topic based on prizePool presence
-      /*
-if (prizePool) {
-      topic += "-" + prizePool;
-    }*/
       let topic = "/vault-" + vaultData.vault + "-poolers";
-
       await publish(vaultData.poolers, topic);
     }
-    console.log(
-      "chain",
-      chainNumber,
-      "published /vault-<vault address>-poolers for",
-      allVaults.length,
-      "vaults"
-    );
 
-    let summaryTopic = "/" + chainNumber;
+    let summaryTopic = `/${chainNumber}`;
     if (prizePool) {
-      summaryTopic += "-" + prizePool;
+      summaryTopic += `-${prizePool}`;
     }
     summaryTopic += "-poolers";
 
     await publish(summaryPoolers, summaryTopic);
-    console.log(
-      "chain ",
-      chainNumber,
-      "published",
-      summaryPoolers.length,
-      "vaults of poolers",
-      summaryTopic
-    );
-    console.log(summaryPoolers, "summary", countUniquePoolers, "unique");
+    console.log("Published summary for all vaults", summaryTopic);
+
     return [summaryPoolers, countUniquePoolers];
   } catch (e) {
-    console.log(e);
+    console.error("Error in updateV5Players:", e);
   }
 }
+
+
 
 function tallyPrizeResults(chain, wins) {
   const indicesWonPerTier = {};
