@@ -10,7 +10,7 @@ try {
   process.exit(1);
 }
 const CHAINNAME = getChainConfig().CHAINNAME;
-
+console.log(CHAINNAME)
 const { ethers } = require("ethers");
 const { CONTRACTS } = require("../constants/contracts");
 const { ADDRESS } = require("../constants/address.js");

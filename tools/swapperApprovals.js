@@ -128,7 +128,7 @@ async function approveSingleAsset(assetAddress, spender) {
     );
 
     // Send the transaction for approval with maxPriorityFeePerGas included
-    const tx = await swapperContract.approveToken(
+   /* const tx = await swapperContract.approveToken(
       assetAddress,
       spender,
       ethers.constants.MaxUint256,
@@ -139,7 +139,7 @@ async function approveSingleAsset(assetAddress, spender) {
     const result = await tx.wait();
     console.log(
       `Approved ${assetAddress} for spender ${spender} on chain ${CHAINNAME}: Transaction hash: ${tx.hash}`
-    );
+    );*/
   } catch (error) {
     console.error(
       `Failed to approve ${assetAddress} for spender ${spender} on chain ${CHAINNAME}: ${error.message}`

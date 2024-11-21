@@ -128,7 +128,7 @@ async function tellUser(user, message) {
     throw new Error("Failed to send alert to user.");  // Propagate the error to be caught in DiscordNotifyClaimPrize
   }
 }
-
+/*
 async function SendMessageToChannel(channelId, message) {
   try {
     const channel = await client.channels.fetch(channelId);
@@ -142,7 +142,55 @@ async function SendMessageToChannel(channelId, message) {
     console.error(`Failed to send message to channel ${channelId}:`, error);
   }
 }
+*/
+async function SendMessageToChannel(channelId, message) {
+  try {
+    console.log(`Attempting to fetch channel with ID ${channelId}...`);
+//    const channel = await client.channels.fetch(channelId);
+const channel = await client.channels.fetch(channelId, { force: true });
+
+    if (!channel) {
+      console.error(`Channel with ID ${channelId} not found.`);
+      return;
+    }
+
+    console.log(`Channel with ID ${channelId} fetched successfully. Attempting to send message...`);
+    await channel.send(message);
+    console.log(`Message successfully sent to channel ${channelId}: ${message}`);
+  } catch (error) {
+    console.error(`Failed to send message to channel ${channelId}. Error details:`, error);
+
+    // Additional error details for debugging
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    if (error.requestBody) {
+      console.error('Request body:', JSON.stringify(error.requestBody));
+    }
+    if (error.rawError) {
+      console.error('Raw error:', JSON.stringify(error.rawError));
+    }
+    if (error.code) {
+      console.error('Error code:', error.code);
+    }
+    if (error.status) {
+      console.error('HTTP status:', error.status);
+    }
+  }
+}
 
 client.login(process.env.BOT_KEY);
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.on('error', (error) => {
+  console.error("Client encountered an error:", error);
+});
+client.guilds.cache.forEach(guild => {
+  console.log(`Guild: ${guild.name}`);
+  guild.channels.cache.forEach(channel => {
+    console.log(`Channel: ${channel.name} (ID: ${channel.id})`);
+  });
+});
 
 module.exports = { SendMessageToChannel, DiscordNotifyClaimPrize };

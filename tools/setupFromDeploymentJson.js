@@ -8,7 +8,8 @@ const fs = require('fs');
 // const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
 const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/arbitrumSepolia/contracts.json"
 
-const jsonFile = require('./arbDeployment.json')
+
+const jsonFile = require('./gnosisDeployment.json')
 
 // Mapping of types to their corresponding keys (case-insensitive)
 const typeKeyMapping = {
