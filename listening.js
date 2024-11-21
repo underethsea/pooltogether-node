@@ -97,7 +97,7 @@ console.log("opening web socket")
 
 async function listen() {
   console.log("Listening for complete award and claim events");
-
+      await SendMessageToChannel("1225048554708406282", "listening test");
   LISTENPROVIDER.on(FILTERS.DRAWAWARDED, async (drawCompletedEvent) => {
     console.log("Draw completed event", drawCompletedEvent);
 
@@ -162,10 +162,21 @@ async function startCalculation(chainId, drawCompletedEvent) {
     }
 
     fs.writeFileSync(lockFilePath, Date.now().toString());
-
+  let multicallAddress = null;
     try {
+if (chainId===534352 || chainId === 100)
+{      multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11";}
       //console.log('Starting FoundryPrizeWinsToDb calculation...');
-      await PrizeCalcToDb(chainId, drawCompletedEvent.blockNumber, maxTiersToCalculate=MAX_TIERS_CALCULATE, debug=true);
+      
+await PrizeCalcToDb(
+      chainId,
+      drawCompletedEvent.blockNumber, // block number
+      MAX_TIERS_CALCULATE,            // maxTiersToCalculate
+      true,                           // debug
+      undefined,                      // Let multicallBatchSize default to BATCH_SIZE
+      multicallAddress                // multicallAddress, will pass null if not set
+    );
+
       console.log("DB updated.");
       fs.unlinkSync(lockFilePath);
       return;

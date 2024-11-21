@@ -23,7 +23,11 @@ const { SendMessageToChannel } = require("./discordAlert");
 const section = chalk.hex("#47FDFB");
 const CONFIG_CHAINNAME = getChainConfig().CHAINNAME;
 
-async function PrizeCalcToDb(chainId, block = "latest", maxTiersToCalculate, debug = false,  multicallBatchSize = BATCH_SIZE) {
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const DELAY_MS = 1000;  // Delay of 1 second between batches (adjust as necessary)
+
+async function PrizeCalcToDb(chainId, block = "latest", maxTiersToCalculate, debug = false, multicallBatchSize = BATCH_SIZE, multicallAddress = null) {
+console.log("recvd multi",multicallAddress)
   const { computeWinners } = await import("@generationsoftware/js-winner-calc");
 
   const CHAINNAME = GetChainName(chainId);
@@ -64,7 +68,6 @@ async function PrizeCalcToDb(chainId, block = "latest", maxTiersToCalculate, deb
   console.log("Start Time", startTime);
   console.log(section("----- getting winners -----"));
 
-  // Fetch players for Tier 0 only
   const tier = 0;
   const tierTimestamp = tierTimestamps[tier];
   const oneDrawStartTimeStamp = tierTimestamp.startTimestamp.toString();
@@ -76,72 +79,75 @@ async function PrizeCalcToDb(chainId, block = "latest", maxTiersToCalculate, deb
     oneDrawPlayers = await GetTwabPlayers(oneDrawStartTimeStamp, oneDrawEndTimeStamp);
   } catch (e) {
     await SendMessageToChannel("1225048554708406282", "❌ error in fetching players from subgraph for " + CHAINNAME);
-    return;
+    console.log(e) 
+   return;
   }
 
   console.log(`Got ${oneDrawPlayers.length} players, writing to database for Tier ${tier}`);
-if(!oneDrawPlayers || oneDrawPlayers.length === 0){  
-console.log("error fetching players will skip calculation")
-}else{ 
-await AddPoolers(chainId, lastDrawId.toString(), oneDrawPlayers);
+  if (!oneDrawPlayers || oneDrawPlayers.length === 0) {  
+    console.log("error fetching players, will skip calculation");
+    return;
+  }
 
-  //console.log("one draw players", oneDrawPlayers[0]);
+  await AddPoolers(chainId, lastDrawId.toString(), oneDrawPlayers);
 
   const groupedResult = groupPlayersByVaultForFoundry(chainId, ADDRESS[CHAINNAME].PRIZEPOOL, oneDrawPlayers);
- // fs.writeFileSync("playersToCalculate.json", JSON.stringify(groupedResult, null, 2));
 
   let winnersData = [];
+  const tiersToCalculate = Math.min(maxTiersToCalculate, numberOfTiers);
+  const tierArray = Array.from({ length: tiersToCalculate }, (_, index) => index);
 
-    const tiersToCalculate = Math.min(maxTiersToCalculate, numberOfTiers);
-    
-    // Create an array from 0 to actualTiers - 1
-    const tierArray = Array.from({ length: tiersToCalculate }, (_, index) => index);
-console.log("calculating for",tierArray.length,"tiers") 
-  try {
-    const rpcUrl = PROVIDERS[CHAINNAME].connection.url;
-let vaultCount=0
-    for (const vault of groupedResult) {
-vaultCount++
+  const rpcUrl = PROVIDERS[CHAINNAME].connection.url;
+  let vaultCount = 0;
+
+  for (const vault of groupedResult) {
+    vaultCount++;
+
+    // Split the user addresses into batches
+    const userBatches = [];
+    for (let i = 0; i < vault.userAddresses.length; i += BATCH_SIZE) {
+      userBatches.push(vault.userAddresses.slice(i, i + BATCH_SIZE));
+    }
+
+    // Process each batch of users with a delay
+    for (let batch of userBatches) {
+console.log("multi",multicallAddress)
       const computeWinnersOptions = {
         chainId,
         rpcUrl,
         prizePoolAddress: ADDRESS[CHAINNAME].PRIZEPOOL,
         vaultAddress: vault.vaultAddress,
-        userAddresses: vault.userAddresses
+        userAddresses: batch,
+        prizeTiers: tierArray,
+        blockNumber: block ? BigInt(block) : undefined,
+        multicallBatchSize: multicallBatchSize,
+        debug: debug,
+        ...(multicallAddress ? { multicallAddress } : {}) 
       };
 
-      // Add optional parameters if specified
-     
-      if (debug) {
-        computeWinnersOptions.debug = true;
-      }
+      try {
+        const vaultWinners = await computeWinners(computeWinnersOptions);
+        console.log(`Processed batch of ${batch.length} users for vault ${vault.vaultAddress}`);
 
-      computeWinnersOptions.prizeTiers = tierArray
+        vaultWinners.forEach(winner => {
+          winner.vault = vault.vaultAddress;
+        });
 
-      if (block !== null) {
-        computeWinnersOptions.blockNumber = BigInt(block);
-      }
-      if (multicallBatchSize !== null) {
-        computeWinnersOptions.multicallBatchSize = multicallBatchSize;
-      }
+        winnersData = winnersData.concat(vaultWinners);
 
-      const vaultWinners = await computeWinners(computeWinnersOptions);
-      console.log(`vault ${vault.vaultAddress} complete (${vaultCount}/${groupedResult.length})`);
+        let tier0Winners = vaultWinners.filter(winner => winner.prizes["0"]);
+        if (tier0Winners.length > 0) {
+          await SendMessageToChannel("1225048554708406282", `🎉🎉🎉 Jackpot winner on ${CHAINNAME}`);
+        }
 
-      vaultWinners.forEach(winner => {
-        winner.vault = vault.vaultAddress;
-      });
-
-      winnersData = winnersData.concat(vaultWinners);
-
-      let tier0Winners = vaultWinners.filter(winner => winner.prizes["0"]);
-      if (tier0Winners.length > 0) {
-        await SendMessageToChannel("1225048554708406282", `🎉🎉🎉 Jackpot winner on ${CHAINNAME}`);
+        // Introduce a delay between batches
+        await delay(DELAY_MS);
+      } catch (error) {
+        console.error(`Error processing batch for vault ${vault.vaultAddress}:`, error);
       }
     }
-  } catch (e) {
-    await SendMessageToChannel("1225048554708406282", "❌ error in prize calculations for " + CHAINNAME);
-    return;
+
+    console.log(`Vault ${vault.vaultAddress} complete (${vaultCount}/${groupedResult.length})`);
   }
 
   fs.writeFileSync("winners.json", JSON.stringify(winnersData, null, 2));
@@ -207,9 +213,8 @@ vaultCount++
   console.log("Time elapsed (seconds)", timeDifference / 1000);
   await SendMessageToChannel(
     "1225048554708406282",
-    `${CHAINNAME} Draw ${lastDrawId} - ${numberOfTiers} tiers with ${nonCanaryWins} wins with ${canaryWins} canary ${totalPrizeValueInEther.toFixed(4)} total ETH`
+    `${CHAINNAME} Draw ${lastDrawId} - ${numberOfTiers} tiers with ${nonCanaryWins} wins with ${canaryWins} canary ${totalPrizeValueInEther.toFixed(4)} total ${ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL}`
   );
-}
 }
 
 function groupPlayersByVaultForFoundry(chain, prizePool, players) {
@@ -231,9 +236,12 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
 }
 
 // Uncomment the appropriate line to run for the desired chain and block
-//PrizeCalcToDb(10, "latest", maxTiersToCalculate = 7, debug=true); // optimism 
+PrizeCalcToDb(10, 125592259 , maxTiersToCalculate = 7, debug=true); // optimism 
+//PrizeCalcToDb(1, "latest", maxTiersToCalculate = 7, debug=true)
 //PrizeCalcToDb(42161, "latest",maxTiersToCalculate = 7, debug=true); // arbitrum
-// PrizeCalcToDb(8453, "latest",maxTiersToCalculate = 7, debug=true, debug = true); // base
+// PrizeCalcToDb(8453, "latest",maxTiersToCalculate = 6, debug=true); // base
 // FoundryPrizeWinsToDb(42161, 221234069);
 // PrizeCalcToDb(8453,"latest",maxTiersToCalculate = 6, debug= true)
+//PrizeCalcToDb(534352,"latest",maxTiersToCalculate = 7, multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11",debug=true); // scroll
+//PrizeCalcToDb(100,"latest",maxTiersToCalculate = 7, debug=true, 200, multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11")
 module.exports = { PrizeCalcToDb };

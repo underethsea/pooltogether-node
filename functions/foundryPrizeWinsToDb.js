@@ -306,4 +306,5 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
 FoundryPrizeWinsToDb(8453,"latest") // base
 //FoundryPrizeWinsToDb(10,"latest") // optimism
 //FoundryPrizeWinsToDb(42161,221234069)
+FoundryPrizeWinsToDb(534352,"latest")
 module.exports = { FoundryPrizeWinsToDb };

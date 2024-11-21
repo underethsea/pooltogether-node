@@ -82,7 +82,11 @@ async function handleExpiredDraw(openDrawClosesAt) {
 
 async function handleOpenDraw(openDrawId) {
   try {
-    const gasPrice = await PROVIDERS[CHAINNAME].getGasPrice();
+    let gasPrice = await PROVIDERS[CHAINNAME].getGasPrice();
+
+    console.log(gasPrice.toString(),"gas price")
+gasPrice = gasPrice.mul(5)
+    console.log(gasPrice.toString(),"gas price * 5")
     const [startDrawAward, estimateFee] = await Multicall(
       [
         CONTRACTS.DRAWMANAGER.startDrawReward(),
@@ -157,6 +161,7 @@ CONFIG.PRIORITYFEE,
           } else {
             //console.log("est gas", web3TotalGasCost / 1e18, "ETH");
 console.log("is it here")
+//console.log("returning for debug");return;
             const rngTx = await CONTRACTS.RNGWITHSIGNER.startDraw(
               estimateFee.toString(),
               ADDRESS.DRAWMANAGER,

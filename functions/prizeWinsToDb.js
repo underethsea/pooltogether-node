@@ -144,4 +144,4 @@ for (const [vault, winner, _, index] of winners) {
   const timeDifference = endTime - startTime;
   console.log("Time elapsed (seconds)", timeDifference / 1000);
 }
-PrizeWinsToDb(CONFIG.CHAINID)
+PrizeWinsToDb(534352)
