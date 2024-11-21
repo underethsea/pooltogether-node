@@ -122,9 +122,10 @@ module.exports = {
 
         await interaction.reply({ embeds: [tvlEmbed] });
    */
+console.log("v5 tvl fetching")
 tvl = await Tvl();
           titleText = "V5";
-
+console.log("v5 tvl")
           // Calculate the total TVL
           let totalTVL = Object.values(tvl).reduce((acc, value) => acc + value, 0);
 

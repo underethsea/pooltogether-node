@@ -1,6 +1,6 @@
 const ethers = require('ethers');
 const fetch = require('node-fetch');
-const {PROVIDERS} = require('../constants/providers')
+const {PROVIDERS} = require('../../../constants/providers')
 const {ABI} = require('../constants/toucanAbi')
 
 const fetchJSON = async (url) => {
@@ -27,6 +27,9 @@ const getChainName = (chainId) => {
     case 10: return 'OPTIMISM';
     case 42161: return 'ARBITRUM';
     case 8453: return 'BASE';
+    case 1: return 'ETHEREUM';
+    case 534352: return 'SCROLL';
+    case 100: return 'GNOSIS';
     // Add other chain IDs as needed
     default: return 'UNKNOWN';
   }
@@ -48,16 +51,17 @@ const Tvl = async () => {
   try {
     const vaults = await fetchJSON('https://poolexplorer.xyz/vaults');
     const overview = await fetchJSON('https://poolexplorer.xyz/overview');
-
+console.log("got jsons")
     const groupedVaults = groupVaultsByChain(vaults);
     const chainTotals = {};
 
     for (const chainName in groupedVaults) {
-      const chainVaults = groupedVaults[chainName];
+console.log("getting chainname",chainName)   
+   const chainVaults = groupedVaults[chainName];
       
       const multicallArray = chainVaults.map(vault => getVaultTotalAssets(vault, chainName));
       const totalAssets = await Promise.all(multicallArray);
-
+console.log("total assets",totalAssets)
       let chainTotalUSD = 0;
 console.log(totalAssets)      
       totalAssets.forEach((total, index) => {
