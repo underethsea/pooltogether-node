@@ -24,6 +24,30 @@ const { PublishPrizeHistory } = require("./publishPrizeHistory");
 const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
 const PrizeLeaderboard = require("./functions/getPrizeLeaderboard");
 
+const LOGS_ENABLED = true; // Toggle logging on or off
+const LOGS = [];
+const FLUSH_INTERVAL = 10000; // Flush logs every 10 seconds
+
+// Define logit function to capture multiple arguments
+const logit = (...args) => {
+  if (LOGS_ENABLED) {
+    // Join args into a single log entry and push to LOGS array
+    LOGS.push(args.map(arg => (typeof arg === 'object' ? JSON.stringify(arg) : arg)).join(' '));
+  }
+};
+
+// Function to flush logs
+const flushLogs = () => {
+  if (LOGS.length > 0) {
+    logit(LOGS.join('\n')); // Output all batched logs
+    LOGS.length = 0; // Clear the logs array after flushing
+  }
+};
+
+// Set interval to flush logs
+setInterval(flushLogs, FLUSH_INTERVAL);
+
+
 const { ADDRESS, WHITELIST_REWARDS, ADDITIONAL_GECKO_MAPPING } = require("../constants/address");
 const { ABI } = require("../constants/abi");
 const { PROVIDERS } = require("../constants/providers");
@@ -49,13 +73,47 @@ const pricesToFetch = [
   "angle-usd",
   "degen-base",
   "crash",
-  "based-2"
+  "based-2",
+  "xdai",
+  "weth"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
 
-const chains = [
+const chains = [];
+
+for (const chainName in ADDRESS) {
+  const chain = ADDRESS[chainName];
+  
+  // Check if API exists and is true
+  if (chain.API === true) {
+    const chainObject = {
+      id: chain.CHAINID,
+      name: chainName,
+      prizePool: chain.PRIZEPOOL.toLowerCase(),
+      subgraph: chain.PRIZEPOOLSUBGRAPH,
+    };
+
+    // Optionally add 'hideFromApp' if it exists
+    if (chain.HIDEFROMAPP) {
+      chainObject.hideFromApp = chain.HIDEFROMAPP;
+    }
+
+    // Add the object to the chains array
+    chains.push(chainObject);
+  }
+}
+
+//chains.push({id: 10,name: "OPTIMISM",prizePool:"0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A",subgraph:"https://api.studio.thegraph.com/query/41211/pt-v5-optimism-prize-pool/v0.0.1",hideFromApp: true})
+
+/*const chains = [
   // { id: 10, name: "OPTIMISM", prizePool: "" },
+{
+    id: 1,
+    name: "ETHEREUM",
+    prizePool: ADDRESS["ETHEREUM"].PRIZEPOOL.toLowerCase(),
+    subgraph: ADDRESS["ETHEREUM"].PRIZEPOOLSUBGRAPH,
+  },
   {
     id: 10,
     name: "OPTIMISM",
@@ -77,12 +135,18 @@ const chains = [
     prizePool: ADDRESS["ARBITRUM"].PRIZEPOOL.toLowerCase(),
     subgraph: ADDRESS["ARBITRUM"].PRIZEPOOLSUBGRAPH,
   },
-  /*  {
-    id: 421614,
-    name: "ARBSEPOLIA",
-    prizePool: ADDRESS["ARBSEPOLIA"].PRIZEPOOL.toLowerCase(),
-    subgraph: ADDRESS["ARBSEPOLIA"].PRIZEPOOLSUBGRAPH,
-  },*/
+  {
+    id: 534352,
+    name: "SCROLL",
+    prizePool: ADDRESS["SCROLL"].PRIZEPOOL.toLowerCase(),
+    subgraph: ADDRESS["SCROLL"].PRIZEPOOLSUBGRAPH,
+  },
+  //  {
+   // id: 421614,
+   // name: "ARBSEPOLIA",
+   // prizePool: ADDRESS["ARBSEPOLIA"].PRIZEPOOL.toLowerCase(),
+   // subgraph: ADDRESS["ARBSEPOLIA"].PRIZEPOOLSUBGRAPH,
+  //},
   {
     id: 8453,
     name: "BASE",
@@ -90,19 +154,20 @@ const chains = [
     subgraph: ADDRESS["BASE"].PRIZEPOOLSUBGRAPH,
   },
 
-  /*
-{
-   id:11155420,
-   name: "OPSEPOLIA",
-   prizePool: "0x5e1b40e4249644a7d7589d1197ad0f1628e79fb1",
-   subgraph: "https://api.studio.thegraph.com/query/63100/pt-v5-op-sepolia/v0.0.5",
-},*/
-  /*{
-  id:11155420,
-   name: "OPSEPOLIA",
-   prizePool: "0x9f594BA8A838D41E7781BFA2aeA42702E216AF5a".toLowerCase(),
-   subgraph: "https://api.studio.thegraph.com/proxy/63100/pt-v5-op-sepolia/version/latest/"},*/
+  
+//{
+  // id:11155420,
+   //name: "OPSEPOLIA",
+   //prizePool: "0x5e1b40e4249644a7d7589d1197ad0f1628e79fb1",
+   //subgraph: "https://api.studio.thegraph.com/query/63100/pt-v5-op-sepolia/v0.0.5",
+//},
+  //{
+  //id:11155420,
+  // name: "OPSEPOLIA",
+   //prizePool: "0x9f594BA8A838D41E7781BFA2aeA42702E216AF5a".toLowerCase(),
+   //subgraph: "https://api.studio.thegraph.com/proxy/63100/pt-v5-op-sepolia/version/latest/"},
 ];
+*/
 
 const app = express();
 
@@ -119,7 +184,7 @@ const limiter = rateLimit({
   standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   handler: function (req, res /*next*/) {
-    console.log("rate limit: ", req.ip);
+    logit("rate limit: ", req.ip);
     return res.status(429).json({
       error: "You sent too many requests. Please wait a while then try again",
     });
@@ -157,11 +222,11 @@ const httpServer = http.createServer(app);
 const httpsServer = https.createServer(credentials, app);
 
 httpServer.listen(80, () => {
-  console.log("HTTP Server running on port 80");
+  logit("HTTP Server running on port 80");
 });
 
 httpsServer.listen(443, () => {
-  console.log("HTTPS Server running on port 443");
+  logit("HTTPS Server running on port 443");
 });
 
 const v5cnFinal = {
@@ -174,19 +239,19 @@ const v5cnFinal = {
 const v5dbFinal = pgp(v5cnFinal);
 
 function delay(ms) {
-  console.log("waiting", ms / 1000, "seconds");
+  logit("waiting", ms / 1000, "seconds");
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 async function go() {
   app.use(limiter);
   /*
   let newestDrawId = await getCurrentDraw();
-  console.log("current draw ", newestDrawId);
+  logit("current draw ", newestDrawId);
 */
   try {
     await openApi();
   } catch (e) {
-    console.log("express error:", e);
+    logit("express error:", e);
   }
 
   await update();
@@ -195,7 +260,7 @@ async function go() {
     await openV5Pooler();
     await openPlayerEndpoints();
   } catch (e) {
-    console.log(e);
+    logit(e);
   }
 
   // v4 version, todo update for v5
@@ -204,7 +269,7 @@ async function go() {
       let check = await CheckApi();
       publish(check, "/calculations");
     } catch (error) {
-      console.log("calculation check failed -> \n", error);
+      logit("calculation check failed -> \n", error);
     }
   }
 
@@ -221,15 +286,15 @@ async function go() {
       try {
         const rewardsV5 = await GetTwabPromotions();
         publish(JSON.stringify(rewardsV5), "/twabrewards");
-        console.log("...published ", "/twabrewards");
+        logit("...published ", "/twabrewards");
       } catch (e) {
-        console.log("update twab rewards failed", e);
+        logit("update twab rewards failed", e);
       }
 
       try {
         await updateZapper();
       } catch (e) {
-        console.log("zapper update failed", e);
+        logit("zapper update failed", e);
       }
       if (isFirstRun) {
         isFirstRun = false;
@@ -242,7 +307,7 @@ async function go() {
 }
 
 async function update() {
-  console.log("updating ", chains.length, "chains");
+  logit("updating ", chains.length, "chains");
   let chainDraws;
 
   const prizepools = chains
@@ -260,7 +325,7 @@ async function update() {
     let allDrawsOverviewClaims = [];
 
     chainDraws = await updateChain(chain.id, chain.prizePool);
-    // console.log("unique winners", chainDraws.uniqueWinners);
+    // logit("unique winners", chainDraws.uniqueWinners);
     // meta unique winners
     if (chainDraws.uniqueWinners instanceof Set) {
       chainDraws.uniqueWinners.forEach((value) => {
@@ -274,7 +339,7 @@ async function update() {
       chain: chain.id,
       draws: chainDraws.claims.flat(),
     });
-    console.log(
+    logit(
       "chain draws claims for ",
       chain.id,
       chain.prizePool,"-->",
@@ -292,7 +357,7 @@ async function update() {
       JSON.stringify(allDrawsOverviewClaims),
       `/claimeddraws-${chain.id}${pathSuffix}`
     );
-    console.log(
+    logit(
       `published ${chains.length} chains draws- and claimeddraws- for`,
       pathSuffix
     );
@@ -307,7 +372,7 @@ async function fetchAndUpdateStats() {
   /*  try {
     priceResults.assets = await FindAndPriceUniv2Assets();
   } catch (e) {
-    console.log(e);
+    logit(e);
   }
   try {
     priceResults.geckos = await GeckoPrice(pricesToFetch);
@@ -329,12 +394,12 @@ async function fetchAndUpdateStats() {
       priceResults["timestamp"] = currentTime;
       newPrices = true;
       await publish(JSON.stringify(priceResults), "/prices");
-      console.log("...published /prices at", currentTime);
+      logit("...published /prices at", currentTime);
     } else {
-      console.log("No new prices fetched. Keeping old prices.");
+      logit("No new prices fetched. Keeping old prices.");
     }
   } catch (e) {
-    console.log("price fetch bombed", e);
+    logit("price fetch bombed", e);
   }
 
 */
@@ -353,10 +418,10 @@ async function fetchAndUpdateStats() {
       let uniAssets;
       try {
         const uniPrices = await FindAndPriceUniv2Assets();
-        // console.log("UNI PRICES", uniPrices);
-        // console.log("ETH price", ethPrice);
-        console.log("");
-        console.log("");
+        // logit("UNI PRICES", uniPrices);
+        // logit("ETH price", ethPrice);
+        logit("");
+        logit("");
 
         // Flatten the uniPrices object into an array
         const flattenedUniPrices = Object.entries(uniPrices).flatMap(
@@ -374,16 +439,16 @@ async function fetchAndUpdateStats() {
           price: asset.price * ethPrice, // Convert UNI prices to USD
         }));
       } catch (e) {
-        console.log(e);
+        logit(e);
       }
-      console.log("uni asssets", uniAssets);
+      logit("uni asssets", uniAssets);
       const chainsAssetsPrices = createChainsAssetsPrices(
         ADDRESS,
         WHITELIST_REWARDS,
         ADDITIONAL_GECKO_MAPPING,
         priceResults.geckos
       );
-      console.log("created chain asset prices", chainsAssetsPrices);
+      logit("created chain asset prices", chainsAssetsPrices);
 
       // Merge UNI and Gecko prices
       priceResults.assets = mergeChainsAssetsPrices(
@@ -396,20 +461,22 @@ async function fetchAndUpdateStats() {
       priceResults["timestamp"] = currentTime;
       newPrices = true;
       await publish(JSON.stringify(priceResults), "/prices");
-      console.log("...published /prices at", currentTime);
+      logit("...published /prices at", currentTime);
     } else {
-      console.log("price is missing in Gecko prices. No new prices fetched.");
+      logit("price is missing in Gecko prices. No new prices fetched.");
     }
   } catch (e) {
-    console.log("price fetch bombed=======================", e);
+    logit("price fetch bombed=======================", e);
   }
 
   let pendingPrize = {};
   // todo meta poolers
   let vaultOverview = [];
   for (let chain of chains) {
-    pendingPrize[chain.name] = {};
-    try {
+    let v5Prizes;
+   if(chain.hideFromApp !== true){
+    pendingPrize[chain.name] = {};  
+ try {
       const prizePoolContract = new ethers.Contract(
         chain.prizePool,
         ABI.PRIZEPOOL,
@@ -417,27 +484,27 @@ async function fetchAndUpdateStats() {
       );
       const wethPrizeBalance = await prizePoolContract.accountedBalance();
       pendingPrize[chain.name].total = wethPrizeBalance.toString();
-      console.log("got pending prize", chain.name, wethPrizeBalance.toString());
+      logit("got pending prize", chain.name, wethPrizeBalance.toString());
     } catch (e) {
-      console.log("error trying to get prize pool totals", e);
+      logit("error trying to get prize pool totals", e);
     }
 
-    let v5Prizes;
     try {
       // Fetch prizes for each chain and prize pool
-      console.log("fetching GetPrizes for ", chain.name, chain.prizePool);
+      
+      logit("fetching GetPrizes for ", chain.name, chain.prizePool);
       v5Prizes = await GetPrizes(chain.name, chain.prizePool);
       pendingPrize[chain.name].prizes = v5Prizes;
-      //console.log(chain.name,"overview info",v5Prizes)
+      //logit(chain.name,"overview info",v5Prizes)
     } catch (e) {
-      console.log(e);
-    }
+      logit(e);
+    }}
     // Update players for each chain and prize pool
     let v5Players, totalPlayers;
 
     // Attempt to update players
     try {
-      console.log(
+      logit(
         "updating players for ",
         chain.id,
         chain.prizePool,
@@ -451,24 +518,24 @@ async function fetchAndUpdateStats() {
       );
       v5Players = playerResult[0];
       totalPlayers = playerResult[1];
-      //console.log(wtf)
-      //console.log("v5players agin?",v5Players)
-      //console.log("total players",totalPlayers)
-      console.log("Players updated successfully for chain ", chain.id);
+      //logit(wtf)
+      //logit("v5players agin?",v5Players)
+      //logit("total players",totalPlayers)
+      logit("Players updated successfully for chain ", chain.id);
     } catch (error) {
       console.error(
         `Error updating players for chain ${chain.name} with prize pool ${chain.prizePool}:`,
         error.message
       );
     }
-    //console.log(v5Players)
-    //console.log("total players")
-    //console.log(totalPlayers)
+    //logit(v5Players)
+    //logit("total players")
+    //logit(totalPlayers)
     // Only proceed with the following if updating players succeeded
     if (v5Players && totalPlayers !== undefined) {
       try {
         // Update vaults for each set of players and prize pool
-        console.log("Updating vaults for chain ", chain.id);
+        logit("Updating vaults for chain ", chain.id);
         let v5Vaults = await UpdateV5Vaults(
           v5Players,
           chain.prizePool,
@@ -479,7 +546,7 @@ async function fetchAndUpdateStats() {
         // Publish the vaults information
         const vaultsPath = `/${chain.id}-${chain.prizePool}-vaults`;
         await publish(v5Vaults, vaultsPath);
-        console.log("...published", vaultsPath);
+        logit("...published", vaultsPath);
         if (!chain.hideFromApp) {
           vaultOverview = [...vaultOverview, ...v5Vaults];
         }
@@ -489,7 +556,7 @@ async function fetchAndUpdateStats() {
           error
         );
       }
-      console.log("vaults update complete");
+      logit("vaults update complete");
       try {
         // Prepare and publish the summary for each chain and prize pool
         const summary = {
@@ -500,7 +567,7 @@ async function fetchAndUpdateStats() {
         };
         const overviewPath = `/${chain.id}-${chain.prizePool}-overview`;
         await publish(summary, overviewPath);
-        console.log("...published", overviewPath);
+        logit("...published", overviewPath);
       } catch (error) {
         console.error(
           `Error publishing summary for chain ${chain.name} with prize pool ${chain.prizePool}:`,
@@ -509,13 +576,13 @@ async function fetchAndUpdateStats() {
       }
     }
     /* try {
-      console.log("querying leaderboard for ", chain.id, chain.prizePool);
+      logit("querying leaderboard for ", chain.id, chain.prizePool);
       //const leaders = await PrizeLeaderboard(chain.id, chain.prizePool);
       //const leaderboardPath = `/${chain.id}-${chain.prizePool}-prizeleaderboard`;
       await publish(JSON.stringify(leaders), leaderboardPath);
-      console.log("...published", leaderboardPath);
+      logit("...published", leaderboardPath);
     } catch (e) {
-      console.log(e);
+      logit(e);
     }*/
   }
   await publish(vaultOverview, "/vaults");
@@ -523,7 +590,7 @@ async function fetchAndUpdateStats() {
   try {
     await publish(JSON.stringify(metaOverview), "/overview");
   } catch (e) {
-    console.log("error publishing meta overview /overview", e);
+    logit("error publishing meta overview /overview", e);
   }
 
   try {
@@ -540,7 +607,7 @@ async function fetchAndUpdateStats() {
     await updateHolders(8453);
     return;
   } catch (error) {
-    console.log("error fetch and update stats", error);
+    logit("error fetch and update stats", error);
   }
 
 }
@@ -550,7 +617,7 @@ async function updateZapper() {
     let lidoResult = await GetLidoApy();
     publish(JSON.stringify(lidoResult), "/lidoApy");
   } catch (e) {
-    console.log("failed to get lido apy from llama", e);
+    logit("failed to get lido apy from llama", e);
   }
   //let zapResult = await GetZapperInfo()
   let zapResult = await GetZapperInfo(
@@ -570,7 +637,7 @@ async function updateHolders(chainNumber) {
   // todo don't need both
   await publish(holdersList, "/holders" + chainNumber);
   await publish(holdersList, "/holders-" + chainNumber);
-  console.log(chainNumber + " updated holdersList");
+  logit(chainNumber + " updated holdersList");
 }
 
 async function updateChain(chainNumber, prizePool) {
@@ -578,9 +645,9 @@ async function updateChain(chainNumber, prizePool) {
   let uniqueWinners;
   try {
     [claims, uniqueWinners] = await PublishV5Claims(chainNumber, prizePool);
-    console.log(chainNumber, prizePool, "published claims");
+    logit(chainNumber, prizePool, "published claims");
   } catch (e) {
-    console.log(e);
+    logit(e);
   }
 
   const prizeHistory = await PublishPrizeHistory(
@@ -590,14 +657,14 @@ async function updateChain(chainNumber, prizePool) {
   );
   const drawHistoryPath = "/" + chainNumber + "-" + prizePool + "-drawHistory";
   await publish(prizeHistory, drawHistoryPath);
-  console.log("...published", prizeHistory.length, "draws", drawHistoryPath);
+  logit("...published", prizeHistory.length, "draws", drawHistoryPath);
 
   const pathSuffix = prizePool === "" ? "" : `-${prizePool}`;
   let v5Winners = await GetWinners(chainNumber, prizePool);
   /*const v5PrizeResults = await GetPrizeResults(chainNumber, prizePool);
   const prizeResultsPath = "/" + chainNumber + pathSuffix + "-prizeresults";
   await publish(v5PrizeResults, prizeResultsPath);
-  console.log("...published", prizeResultsPath);
+  logit("...published", prizeResultsPath);
   */
   let draws = [];
   let history = [];
@@ -656,10 +723,10 @@ async function updateChain(chainNumber, prizePool) {
         totalValueClaimed: totalValueClaimed, // Added this line
       });
     } catch (e) {
-      console.log(e);
+      logit(e);
     }
   }
-  console.log(
+  logit(
     "...published",
     drawCount,
     " draws @ /" + chainNumber + "-" + prizePool + "-draw#"
@@ -678,8 +745,8 @@ async function updateChain(chainNumber, prizePool) {
     claims: claims,
     uniqueWinners: uniqueWinners,
   };
-  // console.log("----------------------------draws", draws);
-  //console.log("returnData claims", claims);
+  // logit("----------------------------draws", draws);
+  //logit("returnData claims", claims);
   return returnData;
   //  await publish(JSON.stringify(draws),'/testnetdraws')
 }
@@ -706,8 +773,8 @@ async function updateChain(chainNumber, prizePool) {
 
     // Log the results
     return {indicesWonPerTier,totalValue}
-    console.log("Indices won per tier:", indicesWonPerTier);
-    console.log("Total value:", totalValue);
+    logit("Indices won per tier:", indicesWonPerTier);
+    logit("Total value:", totalValue);
   };*/ /*
 function tallyPrizeResults(chain, wins) {
   const indicesWonPerTier = {};
@@ -751,9 +818,10 @@ function tallyPrizeResults(chain, wins) {
 }*/
 
 async function updateV5Players(chainNumber, prizePool = "", subgraph) {
+if(prizePool!=="0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A"){
   try {
     const allVaults = await GetPlayers(chainNumber, prizePool, subgraph);
-    console.log("Total vaults fetched:", allVaults.length);
+    logit("Total vaults fetched:", allVaults.length);
 
     const uniqueAddresses = new Set();
 
@@ -764,12 +832,12 @@ async function updateV5Players(chainNumber, prizePool = "", subgraph) {
     });
 
     const countUniquePoolers = uniqueAddresses.size;
-    console.log("Unique poolers count:", countUniquePoolers);
+    logit("Unique poolers count:", countUniquePoolers);
 
     let summaryPoolers = [];
     for (let vaultData of allVaults) {
       const poolerCount = vaultData.poolers.length;
-      //console.log(`Vault ${vaultData.vault} has ${poolerCount} poolers`);
+      //logit(`Vault ${vaultData.vault} has ${poolerCount} poolers`);
 
       summaryPoolers.push({
         vault: vaultData.vault,
@@ -787,12 +855,12 @@ async function updateV5Players(chainNumber, prizePool = "", subgraph) {
     summaryTopic += "-poolers";
 
     await publish(summaryPoolers, summaryTopic);
-    console.log("Published summary for all vaults", summaryTopic);
+    logit("Published summary for all vaults", summaryTopic);
 
     return [summaryPoolers, countUniquePoolers];
   } catch (e) {
-    console.error("Error in updateV5Players:", e);
-  }
+    console.error("Error in updateV5Players for prizepool "+prizePool+":", e);
+  }}
 }
 
 
@@ -889,7 +957,7 @@ async function openPlayerEndpoints() {
         ? req.query.address.toLowerCase()
         : null;
 
-    console.log("player claims query", address);
+    logit("player claims query", address);
 
     if (address) {
       const claimsQuery = `
@@ -914,10 +982,10 @@ AND CAST(c.payout AS numeric) > 0
 
       try {
         let wins = await v5dbFinal.any(claimsQuery, [address]);
-        console.log("player claims query success");
+        logit("player claims query success");
         res.send(wins);
       } catch (e) {
-        console.log("player claims query error", e);
+        logit("player claims query error", e);
         next(e);
       }
     } else {
@@ -960,7 +1028,7 @@ async function openV5Pooler() {
       address = address.toLowerCase();
       let wins = req.query.wins;
       let claims = req.query.claims;
-      // console.log('query for address' + address)
+      // logit('query for address' + address)
       let addressQuery;
 
       // same query sillies
@@ -1012,7 +1080,7 @@ async function openV5Pooler() {
 
 async function PublishV5Claims(chainNumber, prizePool) {
   const claimsData = await GetClaims(chainNumber, prizePool, v5dbFinal);
-  console.log("publishing v5 claims");
+  logit("publishing v5 claims");
   // 1. Publishing claims per draw
   let draws = [];
   const pathSuffix = prizePool === "" ? "" : `-${prizePool.toLowerCase()}`;
@@ -1023,7 +1091,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     const claimUrl = `/claims-${chainNumber}${pathSuffix}-draw${drawNumber}`;
     await publish(claimsData[drawNumber].claimsList, claimUrl);
   }
-  console.log(
+  logit(
     "...published",
     " draws @ ",
     "/claims-" + chainNumber + pathSuffix
@@ -1055,7 +1123,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     }));
   const bigWinnersPath = `/${chainNumber}${pathSuffix}-bigwinners`;
   await publish(sortedWinners, bigWinnersPath);
-  console.log("...published", bigWinnersPath);
+  logit("...published", bigWinnersPath);
   // 2.5 Finding the biggest win in a single draw across all draws
   let bigWins = [];
   let uniqueWinners = new Set(); // Track unique winners with non-zero payouts
@@ -1099,7 +1167,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     }));
 
   await publish(sortedBigWins, `/${chainNumber}${pathSuffix}-bigwins`);
-  console.log("...published", `/${chainNumber}${pathSuffix}-bigwins`);
+  logit("...published", `/${chainNumber}${pathSuffix}-bigwins`);
   // 3. History of all draws with adjustments for canary prizes
   let history = [];
   for (let drawNumber in claimsData) {
@@ -1136,7 +1204,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
   }
   const historyPath = `/${chainNumber}${pathSuffix}-history`;
   await publish(history, historyPath);
-  console.log("...published", historyPath);
+  logit("...published", historyPath);
 
   // 4. Aggregating total payouts per draw for each vault
   let vaultTotals = {};
@@ -1178,7 +1246,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     prizePool ? `-${prizePool}` : ""
   }`;
   await publish(vaultTotals, vaultTotalsPath);
-  console.log("....published", vaultTotalsPath);
+  logit("....published", vaultTotalsPath);
 
   return [draws, uniqueWinners];
 }
@@ -1214,7 +1282,7 @@ async function PublishV5Claims(chainNumber, prizePool) {
     prizePool ? `-${prizePool}` : ""
   }`;
   await publish(vaultTotals, vaultTotalsPath);
-  console.log("....published", vaultTotalsPath);
+  logit("....published", vaultTotalsPath);
 
   return [draws,uniqueWinners];
 }
@@ -1258,12 +1326,12 @@ function createChainsAssetsPrices(addressObj, rewardsObj, additionalGeckosObj, g
     }
   }
 
-  console.log("merged", result);
+  logit("merged", result);
   return result;
 }
 /*
 function mergeChainsAssetsPrices(obj1, obj2) {
-console.log("trying to merge prices of obj1",obj1,"and obj2",obj2) 
+logit("trying to merge prices of obj1",obj1,"and obj2",obj2) 
    const merged = { ...obj1 };
 
     for (const chain in obj2) {
@@ -1282,7 +1350,7 @@ console.log("trying to merge prices of obj1",obj1,"and obj2",obj2)
 }*/
 
 function mergeChainsAssetsPrices(obj1, obj2) {
-  //console.log("trying to merge prices of obj1", obj1, "and obj2", obj2);
+  //logit("trying to merge prices of obj1", obj1, "and obj2", obj2);
 
   // Start with a copy of obj2
   const merged = { ...obj2 };

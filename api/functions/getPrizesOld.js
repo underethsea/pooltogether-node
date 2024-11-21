@@ -1,23 +1,14 @@
 const ethers = require("ethers");
 const NodeCache = require("node-cache");
-const fetch = require("node-fetch");
 const { ABI } = require("../constants/abi");
 const { PROVIDERS } = require("../../constants/providers");
-const { ADDRESS } = require("../../constants/address");
 
 // Initialize NodeCache
 const cache = new NodeCache();
 
-async function fetchTokenPriceInETH(geckoId) {
-  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${geckoId}&vs_currencies=eth`;
-  const response = await fetch(url);
-  const data = await response.json();
-  return data[geckoId]?.eth || 0;
-}
-
 async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
   const cacheKey = `${chainName}-${prizepoolAddress}`;
-
+  
   // Check if the data is already in the cache
   const cachedData = cache.get(cacheKey);
   if (cachedData) {
@@ -31,17 +22,16 @@ async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
     const [
       drawPeriodSeconds,
       nextDrawId,
-      numberOfTiers
+      numberOfTiers,
+      prizetokenAddress
     ] = await Promise.all([
       prizepoolContract.drawPeriodSeconds(),
       prizepoolContract.getOpenDrawId(),
-      prizepoolContract.numberOfTiers()
+      prizepoolContract.numberOfTiers(),
+      prizepoolContract.prizeToken()
     ]);
 
-    // Get prize token details from ADDRESS[chainName].PRIZETOKEN
-    const { SYMBOL: prizeTokenSymbol, GECKO: geckoId } = ADDRESS[chainName].PRIZETOKEN;
-
-    const prizeTokenContract = new ethers.Contract(ADDRESS[chainName].PRIZETOKEN.ADDRESS, ABI.ERC20, PROVIDERS[chainName]);
+    const prizeTokenContract = new ethers.Contract(prizetokenAddress, ABI.ERC20, PROVIDERS[chainName]);
     const prizePoolPrizeBalance = await prizeTokenContract.balanceOf(prizepoolAddress);
     
     let tierData = [];
@@ -52,7 +42,7 @@ async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
       multicallData.push(prizepoolContract.getTierPrizeSize(q));
       multicallData.push(prizepoolContract.functions['getTierPrizeCount(uint8)'](q));
       multicallData.push(prizepoolContract.getTierRemainingLiquidity(q));
-
+      
       tierData.push({
         tier: q,
         value: 0,
@@ -70,26 +60,11 @@ async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
       tierData[i].liquidity = parseFloat(ethers.utils.formatUnits(results[index + 2], 18));
     }
 
-    let ethPrice = 1; // Default multiplier (for WETH or ETH)
-    if (prizeTokenSymbol.toLowerCase() !== "weth") {
-      ethPrice = await fetchTokenPriceInETH(geckoId);
-    }
-
-    // Convert the prizePoolPrizeBalance to ETH if necessary
-    const convertedPrizePoolPrizeBalance = parseFloat(ethers.utils.formatUnits(prizePoolPrizeBalance, 18)) * ethPrice;
-
-    // Correctly convert the tier values to ETH
-    tierData = tierData.map(tier => ({
-      ...tier,
-      value: tier.value * ethPrice, // Multiply each tier's value by the ETH price
-      liquidity: tier.liquidity * ethPrice // Convert liquidity as well
-    }));
-
     const data = {
       drawPeriodSeconds,
       nextDrawId,
       numberOfTiers,
-      prizePoolPrizeBalance: convertedPrizePoolPrizeBalance.toString(),
+      prizePoolPrizeBalance: prizePoolPrizeBalance.toString(),
       tierData
     };
 

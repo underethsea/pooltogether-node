@@ -25,7 +25,9 @@ function findUniv2Assets(addresses) {
   return Object.entries(addresses).flatMap(([chainName, chainData]) =>
     chainData.VAULTS
       .filter(vault => vault.UNIV2 === true)
-      .map(vault => ({ chainName, asset: vault.ASSET }))
+      .map(vault => ({ chainName, 
+        asset: vault.UNDERLYINGLP ? vault.UNDERLYINGLP : vault.ASSET // Use UNDERLYINGLP if it exists, otherwise ASSET
+}))
   );
 }
 const cacheFilePath = path.join(__dirname, '../data/univ2TokenCache.json');

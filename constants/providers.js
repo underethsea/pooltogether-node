@@ -1,4 +1,3 @@
-
 require('../env-setup');
 const ethers = require("ethers");
 const {  getChainConfig } = require("../chains");
@@ -23,7 +22,9 @@ if (!process.env.PRIVATE_KEY) {
 // const avalancheEndpoint = "https://avalanche-mainnet.infura.io/v3/" + process.env.INFURA_KEY;
 // const optimismEndpoint = "https://opt-mainnet.g.alchemy.com/v2/" + process.env.POLYGON_KEY;
 // const avalancheEndpoint = "https://rpc.ankr.com/avalanche";
-
+const gnosisEndpoint = "https://gnosis-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+//const scrollEndpoint = "https://scroll-mainnet-public.unifra.io" 
+const scrollEndpoint = "https://scroll-mainnet.g.alchemy.com/v2/"  + process.env.ALCHEMY_KEY
 const goerliEndpoint = "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const mumbaiEndpoint = "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const sepoliaEndpoint = "https://eth-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
@@ -33,6 +34,7 @@ const opEndpoint =  "https://opt-mainnet.g.alchemy.com/v2/" + process.env.ALCHEM
 //const opEndpoint = "https://optimism-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 //const opEndpoint =  "https://bitter-wider-reel.optimism.quiknode.pro/"+ process.env.QUICKNODE_KEY
 const mainnetEndpoint = "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const flashbotsEndpoint = "https://rpc.flashbots.net/"
 //const ws_opEndpoint = "wss://opt-mainnet.g.alchemy.com/v2/" +  process.env.ALCHEMY_KEY
 //const opSepoliaEndpoint = "https://sepolia.optimism.io"
 const opSepoliaEndpoint = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
@@ -49,6 +51,7 @@ const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCH
 //const baseEndpoint = "https://bitter-wider-reel.optimism.quiknode.pro/"+ process.env.QUICKNODE_KEY
 //const baseEndpoint = "https://rpc.ankr.com/base/" + process.env.ANKR_KEY
 //const baseEndpoint =  "https://base-mainnet.infura.io/v3/" + process.env.INFURA_KEY
+//const baseEndpoint = "https://base.llamarpc.com"
 const WS_PROVIDERS = {
 //    OPSEPOLIA: new ethers.providers.WebSocketProvider(opSepoliaWebsocketEndpoint)
 
@@ -57,6 +60,10 @@ const WS_PROVIDERS = {
 }
 
 const PROVIDERS = {
+GNOSIS: new ethers.providers.JsonRpcProvider(gnosisEndpoint),
+  SCROLL: new ethers.providers.JsonRpcProvider(scrollEndpoint),
+  FLASHBOTS: new ethers.providers.JsonRpcProvider(flashbotsEndpoint),
+    ETHEREUM:  new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     MAINNET: new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     OPSEPOLIA: new ethers.providers.JsonRpcProvider(opSepoliaEndpoint),
     //  GOERLI: new ethers.providers.JsonRpcProvider(goerliEndpoint),
@@ -80,6 +87,10 @@ const PROVIDERS = {
 
 const wally = new ethers.Wallet(process.env.PRIVATE_KEY,PROVIDERS[CHAINNAME])
 const SIGNER = wally.connect(PROVIDERS[CHAINNAME]);
+
+const flashbots_wally = new ethers.Wallet(process.env.PRIVATE_KEY,PROVIDERS["FLASHBOTS"])
+const SIGNER_FLASHBOTS = flashbots_wally.connect(PROVIDERS["FLASHBOTS"])
+
 const MAINNETSIGNER = wally.connect(PROVIDERS["MAINNET"])
 //console.log("signer",SIGNER)
-module.exports = {PROVIDERS, SIGNER , MAINNETSIGNER, WS_PROVIDERS}
+module.exports = {PROVIDERS, SIGNER , MAINNETSIGNER, WS_PROVIDERS, SIGNER_FLASHBOTS}

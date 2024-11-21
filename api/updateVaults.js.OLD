@@ -14,9 +14,7 @@ const DEPRECATED_NO_DEPOSIT = ['0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de','0x8
 const DEPRECATED_NO_ACCESS = [].map(address => address.toLowerCase());
 
 const INVALID_VAULTS = './data/invalidVaults.json'; // File to store invalid vaults
-const oneDayInSeconds = 24 * 60 * 60;
-const sevenDaysInSeconds = 7 * oneDayInSeconds;
-const twentyEightDaysInSeconds = 28 * oneDayInSeconds;
+
 
 
 async function isInvalidVault(vaultAddress) {
@@ -60,66 +58,27 @@ async function setLastUpdateTime(vault) {
   fs.writeFileSync(updateTimeFile, JSON.stringify(data, null, 2), 'utf8');
 }
 
-async function getContributedPeriod(prizePoolContract, vaultAddress, lastAwardedDrawId, periodSeconds, drawPeriodSeconds) {
-  // Calculate the number of draws that fit into the period
-if (typeof drawPeriodSeconds === 'undefined' || isNaN(drawPeriodSeconds) || drawPeriodSeconds <= 0) {
-    console.warn(`Invalid drawPeriodSeconds on vault ${vaultAddress}: ${drawPeriodSeconds}. Returning 0.`);
-    return 0;
-  }
-  const numberOfDraws = Math.floor(periodSeconds / drawPeriodSeconds); // Use Math.ceil instead of Math.floor
-//console.log("number of draws",numberOfDraws)
-//console.log("query period seconds",periodSeconds)
-//console.log("draw period seconds",drawPeriodSeconds)
-  // Ensure the number of draws is at least 1
-  if (numberOfDraws < 1) {
-    console.warn(`Requested period (${periodSeconds} seconds) is too short for the draw period (${drawPeriodSeconds} seconds). Returning 0.`);
-    return 0;
-  }
-
-  // Calculate the starting draw ID for the period
-  const startDrawId = lastAwardedDrawId - numberOfDraws + 1; // Added +1 to avoid off-by-one errors
-
-
-  // Ensure the start draw ID is valid
-  if (startDrawId < 0) {
-    console.warn(`Start draw ID (${startDrawId}) is out of bounds. Returning 0.`);
-    return 0;
-  }
-
-  // Fetch the contribution data between the draw periods
+async function getPrizePoolData(prizePoolContract, vaultAddress, lastAwardedDrawId) {
   try {
-    console.log("getting contribution for draw",startDrawId,"through draw",lastAwardedDrawId)
-    const contributed = await prizePoolContract.getContributedBetween(vaultAddress, startDrawId, lastAwardedDrawId);
-    return ethers.utils.formatUnits(contributed, 18);
+    const contributedBetween = await prizePoolContract.getContributedBetween(vaultAddress, lastAwardedDrawId - 6, lastAwardedDrawId);
+    return ethers.utils.formatUnits(contributedBetween, 18);
   } catch (error) {
-    console.error(`Error fetching contributed data for period: ${periodSeconds} seconds`, error);
+    console.error('Error fetching prize pool data:', error);
     return 0;
   }
 }
 
-
-async function getContributed24h(prizePoolContract, vaultAddress, lastAwardedDrawId, drawPeriodSeconds) {
-  if (drawPeriodSeconds > oneDayInSeconds) {
-    console.log(vaultAddress,"draw period is longer than one day")
-    return 0; // Skip if draw period exceeds 24 hours
+async function getContributed24h(prizePoolContract, vaultAddress, lastAwardedDrawId) {
+  try {
+    const contributed24h = await prizePoolContract.getContributedBetween(vaultAddress, lastAwardedDrawId, lastAwardedDrawId);
+    return ethers.utils.formatUnits(contributed24h, 18);
+  } catch (error) {
+    console.error('Error fetching contributed24h data:', error);
+    return 0;
   }
-  return await getContributedPeriod(prizePoolContract, vaultAddress, lastAwardedDrawId, oneDayInSeconds, drawPeriodSeconds);
 }
 
-async function getContributed7d(prizePoolContract, vaultAddress, lastAwardedDrawId, drawPeriodSeconds) {
-  if (drawPeriodSeconds > sevenDaysInSeconds) {
-    console.log(vaultAddress,"draw period is longer than seven days")
-    return 0; // Skip if draw period exceeds 7 days
-  }
-  return await getContributedPeriod(prizePoolContract, vaultAddress, lastAwardedDrawId, sevenDaysInSeconds, drawPeriodSeconds);
-}
-
-async function getContributed28d(prizePoolContract, vaultAddress, lastAwardedDrawId, drawPeriodSeconds) {
-  return await getContributedPeriod(prizePoolContract, vaultAddress, lastAwardedDrawId, twentyEightDaysInSeconds, drawPeriodSeconds);
-}
-
-
-async function updateContributedBetween(vaults, prizePoolContract, lastAwardedDrawId, chainName, chainId, prizePoolAddress,drawPeriodSeconds) {
+async function updateContributedBetween(vaults, prizePoolContract, lastAwardedDrawId, chainName, chainId, prizePoolAddress) {
   const prizeData = await fetch7dPrizeData(chainId, prizePoolAddress);
   if (!prizeData) {
     console.error('Failed to fetch 7d prize data, returning existing vault data.');
@@ -150,18 +109,13 @@ async function updateContributedBetween(vaults, prizePoolContract, lastAwardedDr
 
 //update metrics every 6 hours
     if (currentTime - lastUpdateTime >= 6 * 60 * 60 * 1000) {
-console.log("getting contributions for vault",vault.vault,vault.symbol,"draw period seconds",drawPeriodSeconds)
-if(vault.symbol==="przPOOL"){lastAwardedDrawId = lastAwardedDrawId + 1} // use open draw for przPOOL because contributions are  after draw   
-   const contributed24h = await getContributed24h(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
-      const contributed7d = await getContributed7d(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
-      const contributed28d = await getContributed28d(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
-    
+      const contributedBetween = await getPrizePoolData(prizePoolContract, vault.vault, lastAwardedDrawId);
+      const contributed24h = await getContributed24h(prizePoolContract, vault.vault, lastAwardedDrawId);
       const won7d = getVault7dPrize(prizeData, vault.vault, lastAwardedDrawId);
       const prizes7d = getVaultPrizes(prizeData, vault.vault, lastAwardedDrawId, 7);
       vault.prizes7d = prizes7d
-      vault.contributed7d = contributed7d;
+      vault.contributed7d = contributedBetween;
       vault.contributed24h = contributed24h;
-      vault.contributed28d = contributed28d;
       vault.won7d = won7d;
 
       try {
@@ -358,27 +312,14 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
 
   let lastAwardedDrawId;
   const prizePoolContract = new ethers.Contract(prizePool, ABI.PRIZEPOOL, PROVIDERS[chainName]);
-
-let drawPeriodSeconds;
-try {
-  drawPeriodSeconds = await prizePoolContract.drawPeriodSeconds();
-  if (typeof drawPeriodSeconds === 'undefined' || isNaN(drawPeriodSeconds)) {
-    console.error('drawPeriodSeconds is undefined or invalid. Defaulting to 0.');
-    drawPeriodSeconds = 0;  // Set a fallback value
-  }
-} catch (error) {
-  console.error('Error fetching drawPeriodSeconds:', error);
-  drawPeriodSeconds = 0;  // Set a fallback value in case of error
-}
-
   try {
     lastAwardedDrawId = await prizePoolContract.getLastAwardedDrawId();
   } catch (error) {
     console.error('Error fetching last awarded draw id:', error);
     return;
   }
-console.log("getting contributed between for prize pool",prizePool,"draw period",drawPeriodSeconds)
-  const updatedVaults = await updateContributedBetween(existingData, prizePoolContract, lastAwardedDrawId, chainName, chainId, prizePool,drawPeriodSeconds);
+
+  const updatedVaults = await updateContributedBetween(existingData, prizePoolContract, lastAwardedDrawId, chainName, chainId, prizePool);
 
 
   fs.writeFileSync(`./data/vaults-${prizePool}.json`, JSON.stringify(updatedVaults, null, 2), 'utf8');
@@ -429,3 +370,4 @@ const logError = (error) => {
 };
 
 module.exports = { UpdateV5Vaults };
+

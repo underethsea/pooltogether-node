@@ -15,6 +15,10 @@ const hasSwapper = CONFIG?.SWAPPERS?.[CHAINNAME] ?? false;
 const hasUniFlashLiquidator = ADDRESS[CHAINNAME]?.UNIFLASHLIQUIDATOR ?? false
 const hasFlashLiquidator = ADDRESS[CHAINNAME]?.FLASHLIQUIDATOR ?? false
 const hasGasOracle = ADDRESS[CHAINNAME]?.GASORACLE ?? false
+const getSignerForChain = (chain) => {
+  return chain === "ETHEREUM" ? PROVIDERS.SIGNER_FLASHBOTS : PROVIDERS[chain];
+};
+
 const CONTRACTS = {
   /*  WINBOOSTERSIGNER: {
     [CHAINNAME]: new ethers.Contract(
@@ -60,10 +64,12 @@ UNIFLASHLIQUIDATORSIGNER: {
       [CHAINNAME]: new ethers.Contract(
         CONFIG.SWAPPERS[CHAINNAME],
         ABI.SWAPPER,
-        SIGNER
+SIGNER      
+//getSignerForChain(CHAINNAME)
       ),
     }
   } : {}),
+
 ...(hasFlashLiquidator ? {
 FLASHLIQUIDATORSIGNER: {
 [CHAINNAME]: new ethers.Contract(
