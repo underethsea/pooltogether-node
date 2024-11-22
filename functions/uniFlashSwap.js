@@ -145,8 +145,8 @@ async function FlashLiquidate(
 // Example usage
 const go = async () => {
   // Example usage of createSwapPath function
-  const liquidationPair = "0xeebdd08a67130e3a56e30ef950d56033b7d1d9f1";
-  const tokenIn = "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452"; // OP address
+  const liquidationPair = "0x1eceF235f5354DBDf53e32912921ed086cDa49E2";
+  const tokenIn = ""; 
   const tokenOut = "0x4200000000000000000000000000000000000006"; // WETH address
   const fee = 100; // 0.01% fee
   const profitThreshold = ethers.utils.parseUnits(".00001", 18);

@@ -38,7 +38,7 @@ async function PrizeSwim(pairAddress,
     ];
 
    // console.log('Prize token exchange args:', swimArgs);
-
+//console.log("---------------------------------------",CONTRACTS.SWAPPERSIGNER[CHAINNAME])
  const gasEstimate = await GasEstimate(
           CONTRACTS.SWAPPERSIGNER[CHAINNAME],
           'prizeSwim',
@@ -66,6 +66,7 @@ async function LapThePoolBestOption(pairAddress,
   profitThreshold
 ) {
   try {
+
     const [paraswapResult, odosResult] = await Promise.allSettled([
       ParaswapQuote(CHAINID, CONFIG.SWAPPERS[CHAINNAME], depositTokenAddress, pairDecimals,
         amtOut.toString(), ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS, ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS),
