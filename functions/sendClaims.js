@@ -4,7 +4,7 @@ const { CONTRACTS } = require("../constants/contracts");
 const { CONFIG } = require("../constants/config");
 const { ADDRESS } = require("../constants/address.js");
 const { ABI } = require("../constants/abi");
-const { PROVIDERS, SIGNER } = require("../constants/providers")
+const { PROVIDERS, SIGNER } = require("../constants/providers");
 //console.log(ABI.VAULT)
 const chalk = require("chalk");
 //const ethers = require("ethers");
@@ -17,14 +17,20 @@ const { GasEstimate } = require("../utilities/gas.js");
 
 const { getChainConfig } = require("../chains");
 
-const NodeCache = require('node-cache');
-const { ethers } = require('ethers');
+const NodeCache = require("node-cache");
+const { ethers } = require("ethers");
 
 // Initialize the cache with a suitable TTL (e.g., 30 minutes)
 const myCache = new NodeCache({ stdTTL: 1800 }); // Cache expires in 30 minutes
 
 const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
+
+let PRIORITYFEE = CONFIG.PRIORITYFEE;
+if (CHAINID === 100) {
+  PRIORITYFEE = "1";
+}
+const PRIORITYFEEPARSED = ethers.utils.parseUnits(PRIORITYFEE, 9);
 
 const section = chalk.hex("#47FDFB");
 
@@ -48,6 +54,7 @@ const chalkLoss = (message) => {
   console.log(chalk.red(message));
 };
 
+/*
 // todo batch claims to CONFIG.BATCHSIZE
 const SendClaims = async (
   drawId,
@@ -71,110 +78,20 @@ const SendClaims = async (
   const groupedData = groupDataByVaultAndTier(vaultWins);
   // console.log(groupedData);
 
+
   for (const key in groupedData) {
     const group = groupedData[key];
     let { vault, tier, winners, prizeIndices } = group;
     const claimerContract = await getClaimerContract(vault)
-    // Separate the last-in-line winners
-    let lastInLineWinners = [];
-    let regularWinners = [];
-    let lastInLinePrizeIndices = [];
-    let regularPrizeIndices = [];
 
-    for (let i = 0; i < winners.length; i++) {
-      const winner = winners[i];
-      const indices = prizeIndices[i];
 
-      if (LAST_IN_LINE.includes(winner)) {
-        console.log(winner, " moved to back of the line");
-        lastInLineWinners.push(winner);
-        lastInLinePrizeIndices.push(indices);
-      } else {
-        regularWinners.push(winner);
-        regularPrizeIndices.push(indices);
-      }
-    }
-
-    // Sort regular winners as needed
-
-    // Append last-in-line winners to the end
-    winners = [...regularWinners, ...lastInLineWinners];
-    prizeIndices = [...regularPrizeIndices, ...lastInLinePrizeIndices];
-
-    const originIndiceLength = prizeIndices.flat().length;
-    /*
-    winners = winners.slice(0, MAXWINNERS);
-    prizeIndices = prizeIndices.slice(0, MAXWINNERS);
-    const totalPrizes = prizeIndices.flat().length;
-    const originIndiceLength = prizeIndices.flat().length;
-
-    // Calculate the number of batches needed
-    const numBatches = Math.ceil(totalPrizes / MAXINDICES);
-
-    // Calculate prizes per batch (as evenly distributed as possible)
-    const basePrizesPerBatch = Math.floor(totalPrizes / numBatches);
-    let extraPrizes = totalPrizes % numBatches;
-
-    let finalWinners = [];
-    let finalPrizeIndices = [];
-    let currentTotalIndices = 0;
-
-    for (let i = 0; i < winners.length; i++) {
-      let prizesForThisBatch = basePrizesPerBatch;
-      if (extraPrizes > 0) {
-        prizesForThisBatch++;
-        extraPrizes--;
-      }
-      const currentIndices = prizeIndices[i];
-
-      if (currentTotalIndices + currentIndices.length <= prizesForThisBatch) {
-        finalWinners.push(winners[i]);
-        finalPrizeIndices.push(currentIndices);
-        currentTotalIndices += currentIndices.length;
-      } else {
-        const remainingSpace = prizesForThisBatch - currentTotalIndices;
-        finalWinners.push(winners[i]);
-        finalPrizeIndices.push(currentIndices.slice(0, remainingSpace));
-        currentTotalIndices += remainingSpace;
-      }
-
-      if (currentTotalIndices === prizesForThisBatch) {
-        currentTotalIndices = 0;
-      }
-    }
-
-*/
-
-    // Flatten prizeIndices for easy manipulation while keeping track of original indices
-    const flatPrizeIndices = [];
-    const originalIndexMap = []; // Maps flattened index back to original [winnerIndex, prizeIndex]
-    prizeIndices.forEach((indices, winnerIndex) => {
-      indices.forEach((index) => {
-        flatPrizeIndices.push(index);
-        originalIndexMap.push([winnerIndex, index]);
-      });
-    });
-
-    // If the total exceeds MAXINDICES, slice the arrays to limit the total indices
-    const limitedPrizeIndices = flatPrizeIndices.slice(0, MAXINDICES);
-    const limitedIndexMap = originalIndexMap.slice(0, MAXINDICES);
-
-    // Reconstruct the prizeIndices array to match the winners array structure, now limited by MAXINDICES
-    const newPrizeIndices = Array(winners.length)
-      .fill()
-      .map(() => []);
-    limitedIndexMap.forEach(([winnerIndex, index]) => {
-      newPrizeIndices[winnerIndex].push(index);
-    });
-
-    // Filter out winners without prizeIndices after the limit
-    const finalWinners = winners.filter(
-      (_, i) => newPrizeIndices[i].length > 0
+    const { finalWinners, finalPrizeIndices } = processWinnersAndPrizes(
+      winners,
+      prizeIndices,
+      MAXINDICES,
+      LAST_IN_LINE
     );
-    const finalPrizeIndices = newPrizeIndices.filter(
-      (indices) => indices.length > 0
-    );
-
+    
     // Now finalWinners and finalPrizeIndices are ready for use, and respect MAXINDICES
 
     winners = finalWinners;
@@ -183,6 +100,7 @@ const SendClaims = async (
     // console.log(winners)
     // console.log(prizeIndices)
 
+// todo look at skippin this and basing it on gas estimate
     let minFeePerPrizeToClaim = await claimerContract.computeFeePerClaim(tier, prizeIndices.flat().length);
     //minFeeToClaim = minFeeToClaim.div(prizeIndices.flat().length)
     //minFeeToClaim = ethers.BigNumber.from(minFeeToClaim); // ensure it's a BigNumber
@@ -196,144 +114,24 @@ const SendClaims = async (
     //minFeeToClaim = minFeeToClaim.div(totalIndicesBN);
 
     console.log("");
-    console.log(section("   ---- transaction parameters -----"));
-
-    if (prizeIndices.flat().length < originIndiceLength) {
-      console.log("prize claims cropped to max indices of ", MAXINDICES);
-    }
-
-    console.log("vault ", vault, "tier ", tier);
-    console.log("winners ", winners);
-    console.log("prize indices being claimed", prizeIndices);
-    console.log(
-      "fee recipient",
-      feeRecipient,
-      "min fee",
-      minFeePerPrizeToClaim.toString()
-    );
-
-    //console.log("gas limit with +2%",gasLimitWithBuffer)
-    console.log(
-      "..... winners ",
-      winners.length,
-      " indices ",
-      prizeIndices.flat().length
-    );
+    logTransactionParameters(vault, tier, finalWinners, finalPrizeIndices, feeRecipient, minFeePerPrizeToClaim);
 
     console.log(section("     ---- profitability -----"));
 
-    let feeEstimate = await claimerContract.callStatic.claimPrizes(
-      vault,
-      tier,
-      winners,
-      prizeIndices,
-      feeRecipient,
-      minFeePerPrizeToClaim
-    );
 
-    //console.log("fee estimate",feeEstimate)
-    const estimatedPrizeTokenReward = parseInt(feeEstimate) / 1e18;
+  
 
-    // backtest winners
-    /*for (const key in groupedData) {
-    const group = groupedData[key];
-    const { vault, tier, winners, prizeIndices } = group;
+    const { estimatedPrizeTokenReward, estimateNetFromClaims, estimateNetPercentage } =
+    await calculateGasAndProfitability(claimerContract, vault, tier, winners, prizeIndices, feeRecipient, minFeePerPrizeToClaim, ethPrice, prizeTokenPrice);
+  
 
-    for (let i = 0; i < winners.length; i++) {
-        const winner = winners[i];
-        const winnerPrizeIndices = prizeIndices[i];
-
-        for (const prizeIndex of winnerPrizeIndices) {
-            // Call the isWinner function
-            const isActualWinner = await CONTRACTS.PRIZEPOOL["OPGOERLI"].isWinner(vault, winner, tier, prizeIndex);
-
-            if (!isActualWinner) {
-                console.error(`Error: Winner ${winner} with prize index ${prizeIndex} in vault ${vault} and tier ${tier} was not an actual winner!`);
-            } else {
-                console.log(`Confirmed: Winner ${winner} with prize index ${prizeIndex} in vault ${vault} and tier ${tier} is a valid winner.`);
-            }
-        }
-    }
-        }*/
-
-    /*const gasPrice = await gasPriceNow()
-
-        const gasPriceToSend = ethers.utils.parseUnits(
-          gasPrice.toString(),
-          "gwei"
-        );
-        */
-
-    // Specify the function and its arguments
-    const functionName = "claimPrizes";
-    const args = [
-      vault,
-      tier,
-      winners,
-      prizeIndices,
-      feeRecipient,
-      minFeePerPrizeToClaim,
-    ];
-
-    // Encode the function call
-    const data = claimerContract.interface.encodeFunctionData(functionName, args);
-
-    // calculate total gas cost in wei
-    /*console.log("gas estimate",CONTRACTS.CLAIMER[CHAINNAME].address,
-      "claimPrizes",
-      args,
-      CONFIG.PRIORITYFEE,
-      500000 + (50000*prizeIndices.flat()-1))
-*/
-    const web3TotalGasCost = await GasEstimate(
-      claimerContract,
-      "claimPrizes",
-      args,
-      CONFIG.PRIORITYFEE
-      //{},
-      //500000 + (50000*prizeIndices.flat()-1),
-    );
-
-    /*    const web3TotalGasCost = await web3GasEstimate(
-      data,
-      CHAINID,
-      CONFIG.WALLET,
-      ADDRESS[CHAINNAME].CLAIMER
-    );
-*/
-    const web3TotalGasCostUSD =
-      (Number(web3TotalGasCost).toFixed(2) * ethPrice) / 1e18;
-
-    console.log(
-      "Gas Estimate  " +
-        web3TotalGasCost.toString() +
-        "wei ($" +
-        web3TotalGasCostUSD.toFixed(2) +
-        ")",
-      " @ $" + ethPrice,
-      "ETH"
-    );
-
-    const estimateNetFromClaims =
-      prizeTokenPrice * estimatedPrizeTokenReward - web3TotalGasCostUSD;
-    const estimateNetPercentage =
-      (prizeTokenPrice * estimatedPrizeTokenReward) / web3TotalGasCostUSD;
-    console.log(
-      PRIZETOKEN_SYMBOL,
-      "reward ",
-      estimatedPrizeTokenReward,
-      " ($" +
-        (prizeTokenPrice * estimatedPrizeTokenReward).toFixed(2) +
-        ") @ $" +
-        prizeTokenPrice,
-      PRIZETOKEN_SYMBOL
-    );
     //ETH: ${totalGasCostEther.toFixed(2)}
 
     //  let txToEstimate = contract.populateTransaction.claimPrizes(vault, tier, winners, prizeIndices, feeRecipient, minFeeToClaim);
     //let estimate = await estimateGas(txToEstimate)
 
     //console.log(estimateNetFromClaims,">",MINPROFIT)
+    logProfitability(estimateNetFromClaims, MINPROFIT, estimateNetPercentage, MINPROFITPERCENTAGE);
     if (
       estimateNetFromClaims > MINPROFIT &&
       estimateNetPercentage > MINPROFITPERCENTAGE
@@ -360,10 +158,12 @@ const SendClaims = async (
 
       // crop to max indices
 
-      let finalWinners = [];
-      let finalPrizeIndices = [];
+let finalWinners = [];
+let finalPrizeIndices = [];
 
-      let currentTotalIndices = 0;
+let remainingPrizeIndices = prizeIndices; // Track remaining prize indices
+let currentTotalIndices = 0;
+
 
       for (let i = 0; i < winners.length; i++) {
         const currentIndices = prizeIndices[i];
@@ -410,6 +210,7 @@ const SendClaims = async (
           prizeIndices.flat().length - 1,
           "prizes"
         );
+console.log("RETURNING FOR DEBUG");return;
         try {
           tx = await claimerContract.claimPrizes(
             vault,
@@ -422,7 +223,7 @@ const SendClaims = async (
               gasLimit: BigInt(
                 700000 + 149000 * (prizeIndices.flat().length - 1)
               ),
-              maxPriorityFeePerGas: "1000001",
+              maxPriorityFeePerGas: PRIORITYFEEPARSED,
             }
           );
           receipt = await tx.wait();
@@ -431,16 +232,36 @@ const SendClaims = async (
           console.log(e);
         }
       }
-      if (receipt && receipt.gasUsed !== undefined) {
-        await processReceipt(receipt, ethPrice, prizeTokenPrice);
-      } else {
-        console.log(
-          "......not above profit threshold of $",
-          MINPROFIT.toFixed(2),
-          " & ",
-          (MINPROFITPERCENTAGE * 100).toFixed(2)+
-          "%"
-        );
+
+if (receipt ){
+console.log("got receipt")
+//&& receipt.gasUsed !== undefined) {
+//  await processReceipt(receipt, ethPrice, prizeTokenPrice);
+
+  // Remove claimed indices and recheck for remaining ones
+console.log("prize indices",prizeIndices.flat().length)
+console.log("prize ind",prizeIndices)
+console.log("finalPrizeIndices",finalPrizeIndices.flat().length)
+  remainingPrizeIndices = filterClaimedIndices(prizeIndices, finalPrizeIndices);
+
+console.log("remaining prize indices",remainingPrizeIndices.length)
+  if (remainingPrizeIndices.length > 0) {
+    console.log("More prize indices detected for the same vault/tier, rechecking profitability...");
+    
+    // Loop through remaining prize indices and try claiming again if profitable
+    prizeIndices = remainingPrizeIndices;
+    winners = finalWinners; // Reuse the same winners
+    continue; // Repeat the claim process for remaining prize indices
+  
+} else {
+  console.log(
+    "......not above profit threshold of $",
+    MINPROFIT.toFixed(2),
+    " & ",
+    (MINPROFITPERCENTAGE * 100).toFixed(2) + "%"
+  );
+}
+
         console.log(
           "......estimateNetFromClaims: $",
           estimateNetFromClaims.toFixed(2),
@@ -465,6 +286,99 @@ const SendClaims = async (
     await delay(600); // wait .6 seconds so to not overload RPC calls per second
   }
   return;
+};
+
+*/
+
+const SendClaims = async (drawId, vaultWins, prizeTokenPrice, ethPrice) => {
+  console.log("total wins to claim ", vaultWins.length);
+
+  // Group data by vault and tier
+  const groupedData = groupDataByVaultAndTier(vaultWins);
+
+  for (const key in groupedData) {
+    const group = groupedData[key];
+    let { vault, tier, winners, prizeIndices } = group;
+
+    const claimerContract = await getClaimerContract(vault);
+
+    // Create batches upfront
+    const batches = createClaimBatches(winners, prizeIndices, MAXINDICES);
+
+    // Iterate over each batch
+    for (const batch of batches) {
+      const { winners: batchWinners, prizeIndices: batchPrizeIndices } = batch;
+
+      console.log(
+        `Processing batch with ${batchWinners.length} winners and ${
+          batchPrizeIndices.flat().length
+        } indices`
+      );
+
+      // Calculate gas and profitability for the batch
+      const minFeePerPrizeToClaim = await claimerContract.computeFeePerClaim(
+        tier,
+        batchPrizeIndices.flat().length
+      );
+      const profitabilityData = await calculateGasAndProfitability(
+        claimerContract,
+        vault,
+        tier,
+        batchWinners,
+        batchPrizeIndices,
+        CONFIG.WALLET,
+        minFeePerPrizeToClaim,
+        ethPrice,
+        prizeTokenPrice
+      );
+
+      const { estimateNetFromClaims, estimateNetPercentage } =
+        profitabilityData;
+
+      if (
+        estimateNetFromClaims > MINPROFIT &&
+        estimateNetPercentage > MINPROFITPERCENTAGE
+      ) {
+        console.log("Sending claim for this batch...");
+
+        // Send claim transaction for this batch
+        let tx, receipt;
+        //console.log("RETURN FOR DEBUG");return
+        try {
+          tx = await claimerContract.claimPrizes(
+            vault,
+            tier,
+            batchWinners,
+            batchPrizeIndices,
+            CONFIG.WALLET,
+            minFeePerPrizeToClaim,
+            {
+              gasLimit: BigInt(
+                700000 + 149000 * (batchPrizeIndices.flat().length - 1)
+              ),
+              maxPriorityFeePerGas: PRIORITYFEEPARSED,
+            }
+          );
+          receipt = await tx.wait();
+          console.log(
+            `Claim transaction successful: ${receipt.transactionHash}`
+          );
+
+          // Process the receipt (log gas usage, prize amounts, etc.)
+          await processReceipt(receipt, ethPrice, prizeTokenPrice);
+        } catch (error) {
+          console.log("Error sending claim:", error);
+        }
+      } else {
+        console.log(
+          `Profitability threshold not met for this batch. Skipping...`
+        );
+      }
+
+      // Optionally delay between batches to avoid hitting RPC rate limits
+      await delay(600);
+    }
+  }
 };
 
 function groupDataByVaultAndTier(vaultWins) {
@@ -538,6 +452,183 @@ function checkIfWinHasBeenClaimed(
   return false; // Win has not been claimed
 }
 
+// Function to process winners and prize indices
+function processWinnersAndPrizes(
+  winners,
+  prizeIndices,
+  maxIndices,
+  lastInLineList
+) {
+  let lastInLineWinners = [];
+  let regularWinners = [];
+  let lastInLinePrizeIndices = [];
+  let regularPrizeIndices = [];
+
+  for (let i = 0; i < winners.length; i++) {
+    const winner = winners[i];
+    const indices = prizeIndices[i];
+
+    if (lastInLineList.includes(winner)) {
+      lastInLineWinners.push(winner);
+      lastInLinePrizeIndices.push(indices);
+    } else {
+      regularWinners.push(winner);
+      regularPrizeIndices.push(indices);
+    }
+  }
+
+  winners = [...regularWinners, ...lastInLineWinners];
+  prizeIndices = [...regularPrizeIndices, ...lastInLinePrizeIndices];
+
+  const flatPrizeIndices = prizeIndices.flat();
+  const limitedPrizeIndices = flatPrizeIndices.slice(0, maxIndices);
+
+  const newPrizeIndices = Array(winners.length)
+    .fill()
+    .map(() => []);
+  limitedPrizeIndices.forEach((index, i) => {
+    newPrizeIndices[i % winners.length].push(index);
+  });
+
+  const finalWinners = winners.filter((_, i) => newPrizeIndices[i].length > 0);
+  const finalPrizeIndices = newPrizeIndices.filter(
+    (indices) => indices.length > 0
+  );
+
+  return { finalWinners, finalPrizeIndices };
+}
+
+async function calculateGasAndProfitability(
+  claimerContract,
+  vault,
+  tier,
+  winners,
+  prizeIndices,
+  feeRecipient,
+  minFeePerPrizeToClaim,
+  ethPrice,
+  prizeTokenPrice
+) {
+  const feeEstimate = await claimerContract.callStatic.claimPrizes(
+    vault,
+    tier,
+    winners,
+    prizeIndices,
+    feeRecipient,
+    minFeePerPrizeToClaim
+  );
+
+  const estimatedPrizeTokenReward =
+    parseInt(feeEstimate) /
+    Math.pow(10, ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS);
+
+  const args = [
+    vault,
+    tier,
+    winners,
+    prizeIndices,
+    feeRecipient,
+    minFeePerPrizeToClaim,
+  ];
+
+  const web3TotalGasCost = await GasEstimate(
+    claimerContract,
+    "claimPrizes",
+    args,
+    PRIORITYFEE
+  );
+
+  const web3TotalGasCostUSD =
+    (Number(web3TotalGasCost).toFixed(2) * ethPrice) / 1e18;
+
+  console.log(
+    "Gas Estimate  " +
+      web3TotalGasCost.toString() +
+      "wei ($" +
+      web3TotalGasCostUSD.toFixed(2) +
+      ")",
+    " @ $" + ethPrice,
+    "ETH"
+  );
+
+  const estimateNetFromClaims =
+    prizeTokenPrice * estimatedPrizeTokenReward - web3TotalGasCostUSD;
+  const estimateNetPercentage =
+    (prizeTokenPrice * estimatedPrizeTokenReward) / web3TotalGasCostUSD;
+
+  console.log(
+    PRIZETOKEN_SYMBOL,
+    "reward ",
+    estimatedPrizeTokenReward,
+    " ($" +
+      (prizeTokenPrice * estimatedPrizeTokenReward).toFixed(2) +
+      ") @ $" +
+      prizeTokenPrice,
+    PRIZETOKEN_SYMBOL
+  );
+
+  return {
+    estimatedPrizeTokenReward,
+    estimateNetFromClaims,
+    estimateNetPercentage,
+  };
+}
+
+// Utility function for logging transaction parameters
+const logTransactionParameters = (
+  vault,
+  tier,
+  winners,
+  prizeIndices,
+  feeRecipient,
+  minFeePerPrizeToClaim
+) => {
+  console.log(section("   ---- transaction parameters -----"));
+  console.log("vault ", vault, "tier ", tier);
+  console.log("winners ", winners);
+  console.log("prize indices being claimed", prizeIndices);
+  console.log(
+    "fee recipient",
+    feeRecipient,
+    "min fee",
+    minFeePerPrizeToClaim.toString()
+  );
+  console.log(
+    "..... winners ",
+    winners.length,
+    " indices ",
+    prizeIndices.flat().length
+  );
+};
+
+// Utility function for logging profitability
+const logProfitability = (
+  estimateNetFromClaims,
+  MINPROFIT,
+  estimateNetPercentage,
+  MINPROFITPERCENTAGE
+) => {
+  console.log(section("     ---- profitability -----"));
+  if (
+    estimateNetFromClaims > MINPROFIT &&
+    estimateNetPercentage > MINPROFITPERCENTAGE
+  ) {
+    console.log(
+      "minimum profit met, estimated net after costs = $",
+      estimateNetFromClaims
+    );
+  } else {
+    console.log(
+      "minimum profit NOT met, estimated net = $",
+      estimateNetFromClaims.toFixed(2),
+      " | MINPROFIT",
+      MINPROFIT,
+      " %",
+      MINPROFITPERCENTAGE
+    );
+  }
+};
+
 async function processReceipt(receipt, ethPrice, prizeTokenPrice) {
   let L2transactionCost,
     alchemyReceipt,
@@ -598,9 +689,11 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
         totalFee += fee;
         console.log(
           "prize payout ",
-          payout > 0 ? (payout / 1e18).toFixed(6) : "canary",
+          payout > 0
+            ? (payout / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS).toFixed(6)
+            : "canary",
           " fee collected ",
-          (fee / 1e18).toFixed(6)
+          (fee / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS).toFixed(6)
         );
       }
     });
@@ -631,16 +724,20 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
 
     console.log(
       "total payout ",
-      (totalPayout / 1e18).toFixed(6),
+      (totalPayout / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS).toFixed(6),
       " total fee collected ",
-      (totalFee / 1e18).toFixed(6)
+      (totalFee / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS).toFixed(6)
     );
 
     const netFromClaims =
-      (totalFee / 1e18) * prizeTokenPrice - totalTransactionCost * ethPrice;
+      (totalFee / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS) * prizeTokenPrice -
+      totalTransactionCost * ethPrice;
     const netFromClaimMessage =
       "$" +
-      (prizeTokenPrice * (totalFee / 1e18)).toFixed(4) +
+      (
+        prizeTokenPrice *
+        (totalFee / ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS)
+      ).toFixed(4) +
       " fee collected  - $" +
       (ethPrice * totalTransactionCost).toFixed(4) +
       " gas cost = $" +
@@ -655,41 +752,115 @@ console.log("total gas cost",ethers.utils.formatEther(totalActual))
   }
 }
 
-
 async function getClaimerContract(vaultAddress) {
-    try {
-        // Check the cache for the claimer address
-        const cacheKey = `claimer_${vaultAddress}`;
-        let claimerAddress = myCache.get(cacheKey);
+  try {
+    // Check the cache for the claimer address
+    const cacheKey = `claimer_${vaultAddress}`;
+    let claimerAddress = myCache.get(cacheKey);
 
-        if (claimerAddress) {
-            console.log('Using cached claimer address ' + claimerAddress);
-        } else {
-            // If not cached, fetch the claimer address from the vault contract
-            const vaultContract = new ethers.Contract(vaultAddress, ABI.VAULT, PROVIDERS[CHAINNAME]);
-            claimerAddress = await vaultContract.claimer();
+    if (claimerAddress) {
+      console.log("Using cached claimer address " + claimerAddress);
+    } else {
+      // If not cached, fetch the claimer address from the vault contract
+      const vaultContract = new ethers.Contract(
+        vaultAddress,
+        ABI.VAULT,
+        PROVIDERS[CHAINNAME]
+      );
+      claimerAddress = await vaultContract.claimer();
 
-            // Convert claimer address to lowercase
-            claimerAddress = claimerAddress.toLowerCase();
+      // Convert claimer address to lowercase
+      claimerAddress = claimerAddress.toLowerCase();
 
-            // Verify the claimer address is in the array ADDRESS[CHAINNAME].CLAIMERS
-            const validClaimers = ADDRESS[CHAINNAME].CLAIMERS.map(addr => addr.toLowerCase());
-            if (!validClaimers.includes(claimerAddress)) {
-                console.warn(`Claimer address ${claimerAddress} is not in the valid claimers list. Using default claimer address.`);
-                claimerAddress = validClaimers[0]; // Use the first address from the valid claimers list
-            }
+      // Verify the claimer address is in the array ADDRESS[CHAINNAME].CLAIMERS
+      const validClaimers = ADDRESS[CHAINNAME].CLAIMERS.map((addr) =>
+        addr.toLowerCase()
+      );
+      if (!validClaimers.includes(claimerAddress)) {
+        console.warn(
+          `Claimer address ${claimerAddress} is not in the valid claimers list. Using default claimer address.`
+        );
+        claimerAddress = validClaimers[0]; // Use the first address from the valid claimers list
+      }
 
-            // Store the claimer address in the cache
-            myCache.set(cacheKey, claimerAddress);
-            console.log('Updated cache for claimer ' + claimerAddress);
-        }
-
-        // Create and return the claimer contract object
-        return new ethers.Contract(claimerAddress, ABI.CLAIMER, SIGNER);
-    } catch (error) {
-        console.error('Error fetching claimer address:', error);
-        throw error; // Re-throw the error after logging it
+      // Store the claimer address in the cache
+      myCache.set(cacheKey, claimerAddress);
+      console.log("Updated cache for claimer " + claimerAddress);
     }
+
+    // Create and return the claimer contract object
+    return new ethers.Contract(claimerAddress, ABI.CLAIMER, SIGNER);
+  } catch (error) {
+    console.error("Error fetching claimer address:", error);
+    throw error; // Re-throw the error after logging it
+  }
+}
+
+function filterClaimedIndices(remainingIndices, claimedIndices) {
+  return remainingIndices
+    .map((indices, index) => {
+      const claimedForWinner = claimedIndices[index] || []; // Get the claimed indices for the current winner or default to an empty array
+      return indices.filter((i) => !claimedForWinner.includes(i)); // Filter out claimed indices for this winner
+    })
+    .filter((arr) => arr.length > 0); // Remove empty arrays where all indices were claimed
+}
+
+function createClaimBatches(winners, prizeIndices, maxIndices) {
+  let batches = [];
+  let currentBatchWinners = [];
+  let currentBatchPrizeIndices = [];
+  let currentTotalIndices = 0;
+
+  for (let i = 0; i < winners.length; i++) {
+    const currentWinner = winners[i];
+    const currentIndices = prizeIndices[i];
+
+    // Split current indices into smaller chunks if they exceed maxIndices
+    let remainingIndices = [...currentIndices]; // copy the current winner's indices
+
+    while (remainingIndices.length > 0) {
+      const availableSpace = maxIndices - currentTotalIndices;
+
+      if (remainingIndices.length <= availableSpace) {
+        // Add remaining indices to the current batch
+        currentBatchWinners.push(currentWinner);
+        currentBatchPrizeIndices.push(remainingIndices);
+        currentTotalIndices += remainingIndices.length;
+        remainingIndices = [];
+      } else {
+        // Split the current winner's indices to fit the current batch
+        const indicesForBatch = remainingIndices.slice(0, availableSpace);
+        remainingIndices = remainingIndices.slice(availableSpace);
+
+        currentBatchWinners.push(currentWinner);
+        currentBatchPrizeIndices.push(indicesForBatch);
+        currentTotalIndices += indicesForBatch.length;
+      }
+
+      // If the current batch is full, push it to the batches array and start a new batch
+      if (currentTotalIndices >= maxIndices) {
+        batches.push({
+          winners: [...currentBatchWinners],
+          prizeIndices: [...currentBatchPrizeIndices],
+        });
+
+        // Reset batch variables
+        currentBatchWinners = [];
+        currentBatchPrizeIndices = [];
+        currentTotalIndices = 0;
+      }
+    }
+  }
+
+  // Add the last batch if it's not empty
+  if (currentBatchWinners.length > 0) {
+    batches.push({
+      winners: [...currentBatchWinners],
+      prizeIndices: [...currentBatchPrizeIndices],
+    });
+  }
+
+  return batches;
 }
 
 module.exports = { groupDataByVaultAndTier };

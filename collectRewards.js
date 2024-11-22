@@ -16,6 +16,10 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const CACHE_TTL_HOURS = CONFIG.REWARDS_CLAIM_WAIT || 8;
 const cache = new NodeCache({ stdTTL: CACHE_TTL_HOURS * 60 * 60 }); // TTL in seconds
 
+let PRIORITYFEE = CONFIG.PRIORITYFEE
+if(CHAINNAME==="GNOSIS"){PRIORITYFEE = "1"}
+const PRIORITYFEEPARSED = ethers.utils.parseUnits(PRIORITYFEE,9)
+
 async function CollectRewards(prizeTokenPrice, ethPrice) {
   const PRIZEPOOL_CONTRACT = CONTRACTS.PRIZEPOOLWITHSIGNER[CHAINNAME];
 
@@ -62,7 +66,7 @@ async function CollectRewards(prizeTokenPrice, ethPrice) {
       PRIZEPOOL_CONTRACT,
       functionName,
       args,
-      CONFIG.PRIORITYFEE
+      PRIORITYFEE
     );
 
     const web3TotalGasCostETH = parseFloat(web3TotalGasCost) / 1e18;
@@ -86,7 +90,7 @@ async function CollectRewards(prizeTokenPrice, ethPrice) {
 
     // Proceed to claim rewards
     const transactionOptions = {
-      maxPriorityFeePerGas: ethers.utils.parseUnits(CONFIG.PRIORITYFEE,9),
+      maxPriorityFeePerGas: PRIORITYFEEPARSED,
     };
 
     const submittedTx = await PRIZEPOOL_CONTRACT.withdrawRewards(

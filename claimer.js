@@ -104,29 +104,31 @@ async function go() {
 
   console.log(section("----- contract data ------"));
 
-  let newWinners;
+  let newWinners = null
   console.log(section("----- getting winners -----"));
 
-  if (CONFIG.USEAPI === "none") {
-    newWinners = await GetWinnersByTier(
-      CHAINNAME,
-      numberOfTiers,
-      lastDrawId,
-      tierTimestamps,
-      CONFIG.TIERSTOCLAIM,
-      prizesForTier,
-      "latest"
-    );
-  } else if (CONFIG.USEAPI === "g9") {
-    newWinners = await FetchG9ApiPrizes(
-      CHAINID,
-      ADDRESS[CHAINNAME].PRIZEPOOL,
-      lastDrawId,
-      CONFIG.TIERSTOCLAIM,
-      claims
-    );
-  } else {
-    console.log("using pooltime api for winner calculations");
+
+if (CONFIG.USEAPI === "none") {
+  newWinners = await GetWinnersByTier(
+    CHAINNAME,
+    numberOfTiers,
+    lastDrawId,
+    tierTimestamps,
+    CONFIG.TIERSTOCLAIM,
+    prizesForTier,
+    "latest"
+  );
+} else if (CONFIG.USEAPI === "g9") {
+  newWinners = await FetchG9ApiPrizes(
+    CHAINID,
+    ADDRESS[CHAINNAME].PRIZEPOOL,
+    lastDrawId,
+    CONFIG.TIERSTOCLAIM,
+    claims
+  );
+
+  if (newWinners === null) {
+    console.log("g9 API returned null, trying pooltime API...");
     newWinners = await FetchApiPrizes(
       CHAINID,
       lastDrawId,
@@ -134,10 +136,32 @@ async function go() {
       claims
     );
   }
+} else {
+  console.log("using pooltime API for winner calculations");
+  newWinners = await FetchApiPrizes(
+    CHAINID,
+    lastDrawId,
+    CONFIG.TIERSTOCLAIM,
+    claims
+  );
 
   if (newWinners === null) {
-    console.log("ERROR fetching API");
-  } else {
+    console.log("pooltime API returned null, trying g9 API...");
+    newWinners = await FetchG9ApiPrizes(
+      CHAINID,
+      ADDRESS[CHAINNAME].PRIZEPOOL,
+      lastDrawId,
+      CONFIG.TIERSTOCLAIM,
+      claims
+    );
+  }
+}
+
+if (newWinners === null) {
+  console.log("ERROR fetching API from both sources");
+}
+
+   else {
     let winVsClaimStats;
     ({ updatedWinners: newWinners, stats: winVsClaimStats } =
       removeAlreadyClaimed(newWinners, claims, lastDrawId));
@@ -231,9 +255,10 @@ function scheduleNextRun() {
   // Calculate the next execution time
   const nextExecutionTime = new Date(Date.now() + randomTime);
   const formattedNextExecutionTime = nextExecutionTime.toLocaleTimeString();
-
-  console.log(
-    "-------------------------------------------bot will run again in " +
+let keyCropped = "key "
+if(process.env.ALCHEMY_KEY){keyCropped+=process.env.ALCHEMY_KEY.substring(0,8)}
+  console.log(keyCropped,
+    "-----------------------------bot will run again in " +
       formattedTime +
       " (" +
       formattedNextExecutionTime +

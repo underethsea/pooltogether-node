@@ -42,6 +42,11 @@ const ParaswapQuote = require("./functions/paraswapQuote.js");
 const ethers = require("ethers");
 const chalk = require("chalk");
 
+let PRIORITYFEE = CONFIG.PRIORITYFEE;
+if (CHAINNAME === "GNOSIS") {
+  PRIORITYFEE = "1.5";
+}
+let PRIORITYFEEPARSED = ethers.utils.parseUnits(PRIORITYFEE, 9).toString();
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -234,8 +239,14 @@ async function go() {
       console.log("no pairs to liquidate right now");
       if (lowestWaitTime < Infinity) {
         if (!firstRun) {
+          let keyCropped = "key ";
+          if (process.env.ALCHEMY_KEY) {
+            keyCropped += process.env.ALCHEMY_KEY.substring(0, 9);
+          }
           const weWait = lowestWaitTime * 1000 - minTimeInMilliseconds;
-          console.log(`waiting for ${(weWait / 1000).toFixed(0)} seconds.`);
+          console.log(
+            `${keyCropped} waiting for ${(weWait / 1000).toFixed(0)} seconds.`
+          );
           await delay(weWait);
         } else {
           firstRun = false;
@@ -266,7 +277,8 @@ async function go() {
         //  console.log("NO GECKO IDS in constants/address.js");
       }
 
-      const ids = [...geckos, "pooltogether", "ethereum"];
+      const prizeTokenGeckoId = ADDRESS[CHAINNAME].PRIZETOKEN.GECKO;
+      const ids = [...geckos, "pooltogether", prizeTokenGeckoId];
       //const cacheKey = generateCacheKey(ids);
       // let combinedPrices = cache.get(cacheKey);
       //console.log("ids:",ids)
@@ -445,6 +457,8 @@ pairs =  pairs.concat(uniV2Pairs)
         const vaultAddress = pairs[z].VAULT;
         const noVault =
           pairs[z].NOVAULT !== undefined ? pairs[z].NOVAULT : false;
+        const useRouter =
+          pairs[z].USEROUTER !== undefined ? pairs[z].USEROUTER : false;
         const pairOutPrice = pairs[z].PRICE;
         const pairIsUniV2 = pairs[z].UNIV2;
         const pairIsFlash = pairs[z].FLASH;
@@ -610,11 +624,15 @@ console.log("paraswap router",paraswap.txParams.to)
                 " gross $" +
                 (outValue - prizeTokenValue).toFixed(2)
             );
-
+            console.log("1");
             if (
               !CONFIG.SWAPPERS?.[CHAINNAME] ||
               CONFIG.SWAPPERS[CHAINNAME].length === 0
             ) {
+              console.log("2");
+              let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
+                CHAINNAME
+              ].balanceOf(CONFIG.WALLET);
               if (maxToSendWithSlippage.gt(walletPrizeTokenBalance)) {
                 console.log(
                   "not enough prize token to estimate and send liquidation"
@@ -649,7 +667,12 @@ console.log("paraswap router",paraswap.txParams.to)
                     : predictedProfitableAmtIn.toString(),
               });
             } else {
+              console.log("3");
+              console.log("out", outValue, "prizet", prizeTokenValue);
+              console.log("pthresh", profitThreshold);
               const gasBudgetUSD = outValue - prizeTokenValue - profitThreshold;
+              console.log("ethprice", ethPrice);
+              console.log("gas bud", gasBudgetUSD);
               // console.log("gas budget USD", gasBudgetUSD);
               const gasBudgetETH = ethers.BigNumber.from(
                 parseInt((gasBudgetUSD / ethPrice) * 1e18).toString()
@@ -657,6 +680,7 @@ console.log("paraswap router",paraswap.txParams.to)
               const profitThresholdETH = ethers.BigNumber.from(
                 parseInt((profitThreshold / ethPrice) * 1e18).toString()
               );
+              console.log("4");
               console.log("profit thrshold ETH", profitThresholdETH.toString());
               console.log("gas budget in ETH", gasBudgetETH.toString());
               //console.log(" no vault?", noVault);
@@ -682,7 +706,8 @@ console.log("paraswap router",paraswap.txParams.to)
                 if (
                   CONFIG.SWAPPERS?.[CHAINNAME]?.length > 0 &&
                   vaultDepositToken.toLowerCase() !==
-                    ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()
+                    ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase() &&
+                  !useRouter
                 ) {
                   console.log(
                     "Swapppppper",
@@ -700,7 +725,7 @@ console.log("paraswap router",paraswap.txParams.to)
                   //async function Swapper(pairAddress,vaultAddress,depositTokenAddress,amtOut,amtIn,gasBudget){
                   if (noVault) {
                     // best option
-
+                    console.log("no vault");
                     const swapGo = await OutAndBackBestOption(
                       pairAddress,
                       pairOutAsset,
@@ -730,7 +755,7 @@ const swapGo = await OutAndBackParaswap(
                     gasBudgetETH
                   );*/
                   } else {
-                    // 1 inch
+                    console.log("lap the pool"); // 1 inch
                     /*
                   const swapGo = await LapThePool(
                     pairAddress,
@@ -754,6 +779,8 @@ pairAddress,
                     profitThresholdETH
 )
 */
+
+                    //console.log("returned for testing");return // return for testing
                     const bestOptionGo = await LapThePoolBestOption(
                       pairAddress,
                       vaultAddress,
@@ -763,6 +790,7 @@ pairAddress,
                       maxToSendWithSlippage,
                       profitThresholdETH
                     );
+
                     // 1 inch
                     /*
                   const swapGo = await LapThePool(
@@ -776,7 +804,8 @@ pairAddress,
                   }
                 } else if (
                   vaultDepositToken.toLowerCase() ===
-                  ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase()
+                    ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS.toLowerCase() ||
+                  useRouter
                 ) {
                   if (rawPrizeTokenExchange) {
                     console.log("raw prize token exchange");
@@ -797,7 +826,7 @@ pairAddress,
                       CONTRACTS.LIQUIDATIONROUTERSIGNER[CHAINNAME],
                       method,
                       args,
-                      CONFIG.PRIORITYFEE
+                      PRIORITYFEE
                     );
 
                     const maxToSend = maxToSendWithSlippage.add(gasEstimate);
@@ -810,7 +839,10 @@ pairAddress,
                         bestOptionOut,
                         maxToSendWithSlippage,
                         unixTimestamp,
-                        { maxPriorityFeePerGas: "1000001", gasLimit: "700000" }
+                        {
+                          maxPriorityFeePerGas: PRIORITYFEEPARSED,
+                          gasLimit: "850000",
+                        }
                       );
                       const receipt = await tx.wait();
                       console.log(receipt.transactionHash);
@@ -818,14 +850,154 @@ pairAddress,
                       console.log("not profitable");
                     }
                   } else {
-                    console.log("prize token exchange");
-                    await PrizeSwim(
-                      pairAddress,
-                      vaultAddress,
-                      bestOptionOut,
-                      maxToSendWithSlippage,
-                      profitThresholdETH
-                    );
+                    if (!useRouter) {
+                      console.log("prize token exchange");
+                    } else {
+                      console.log("explicit use liquidation router flag");
+                    }
+                    //console.log("returned testing****");return // return for testing
+                    if (
+                      CHAINNAME !== "ETHEREUM" &&
+                      CHAINNAME !== "SCROLL" &&
+                      CHAINNAME !== "GNOSIS"
+                    ) {
+                      await PrizeSwim(
+                        pairAddress,
+                        vaultAddress,
+                        bestOptionOut,
+                        maxToSendWithSlippage,
+                        profitThresholdETH
+                      );
+                    } else {
+                      let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
+                        CHAINNAME
+                      ].balanceOf(CONFIG.WALLET);
+                      console.log(walletPrizeTokenBalance.toString());
+                      const method = functionName;
+                      web3TotalGasCost = await GasEstimate(
+                        CONTRACTS.LIQUIDATIONROUTERSIGNER[CHAINNAME],
+                        method,
+                        args,
+                        PRIORITYFEE
+                      );
+
+                      console.log(
+                        "Gas Estimate " +
+                          Number(web3TotalGasCost) / 1e18 +
+                          " ETH"
+                      );
+                      web3TotalGasCostUSD =
+                        (Number(web3TotalGasCost).toFixed(2) * ethPrice) / 1e18;
+                      //console.log("Real Gas Estimate through Web3: $" + web3TotalGasCostUSD.toFixed(2))
+
+                      /*const poolOutFormatted = maxToSendWithSlippage / 1e18;
+            const maxOutFormatted = bestOptionOut / Math.pow(10, pairDecimals);
+
+            const prizeTokenValue = poolOutFormatted * prizeTokenPrice;
+            const outValue = maxOutFormatted * pairOutPrice;
+              */
+                      // const gasCouldBe = web3TotalGasCostUSD * 5.3
+                      const gasCouldBe = web3TotalGasCostUSD * 0.2;
+
+                      //console.log("gas could BE $",gasCouldBe.toFixed(4))
+                      //console.log("out value",outValue)
+                      //console.log("greater than zero??",outValue - (prizeTokenValue +gasCouldBe))
+
+                      const profit =
+                        outValue - prizeTokenValue - web3TotalGasCostUSD;
+                      const totalCost = prizeTokenValue + web3TotalGasCostUSD;
+
+                      console.log(
+                        poolOutFormatted.toFixed(4),
+                        prizeTokenSymbol + " ($",
+                        prizeTokenValue.toFixed(2),
+                        ") for ",
+                        maxOutFormatted.toFixed(4),
+                        " ",
+                        pairOutSymbol,
+                        " ($",
+                        outValue.toFixed(2),
+                        ") = $",
+                        profit.toFixed(2),
+                        " prwswapofit after $",
+                        web3TotalGasCostUSD,
+                        " in est gas cost"
+                      );
+
+                      if (
+                        profit < profitThreshold ||
+                        totalCost * profitPercentage > outValue
+                      ) {
+                        console.log(
+                          "not meeting profit threshold of $",
+                          profitThreshold,
+                          " AND > ",
+                          (profitPercentage * 100).toFixed(0),
+                          "%"
+                        );
+                        continue;
+                      }
+                      console.log("ok we got enough profit, lets go");
+
+                      //return // BREAK BEFORE SENDING SWAP
+                      console.log("YES HERE");
+                      console.log(walletPrizeTokenBalance.toString(), "ETH");
+                      let txReceipt;
+                      if (maxToSendWithSlippage.gt(walletPrizeTokenBalance)) {
+                        console.log(
+                          "not enough prize token to send liquidation"
+                        );
+                        continue;
+                      }
+
+                      let swapCheck;
+                      try {
+                        // check that swap conditions are as expected before sending
+                        swapCheck =
+                          await contractWSigner.callStatic.computeExactAmountIn(
+                            bestOptionOut
+                          );
+                      } catch (e) {
+                        console.log(e);
+                        swapCheck = ethers.BigNumber.from(0);
+                      }
+                      if (swapCheck.gt(bestOptionIn)) {
+                        console.log(
+                          "swap conditions have changed. need to recalculate."
+                        );
+                        continue;
+                      }
+                      // else{console.log("swap check",swapCheck.toString(),"best option in",bestOptionIn.toString())}
+                      try {
+                        tx = await CONTRACTS.LIQUIDATIONROUTERSIGNER[
+                          CHAINNAME
+                        ].swapExactAmountOut(
+                          pairAddress,
+                          CONFIG.WALLET,
+                          bestOptionOut,
+                          maxToSendWithSlippage,
+                          unixTimestamp,
+                          {
+                            maxPriorityFeePerGas: PRIORITYFEEPARSED,
+                            gasLimit: "850000",
+                          }
+                        );
+
+                        txReceipt = await tx.wait();
+
+                        // subtract max amount sent from balance (todo replace with actual instead of max for accuracy)
+                        walletPrizeTokenBalance = walletPrizeTokenBalance.sub(
+                          maxToSendWithSlippage
+                        );
+                      } catch (e) {
+                        console.log(e);
+                        break;
+                      }
+                      console.log(
+                        section("---- liquidated tx complete -------")
+                      );
+                      console.log("liquidated tx", txReceipt.transactionHash);
+                    }
                   }
                 } else {
                   // calculate total gas cost in wei
@@ -840,7 +1012,7 @@ pairAddress,
                     CONTRACTS.LIQUIDATIONROUTERSIGNER[CHAINNAME],
                     method,
                     args,
-                    CONFIG.PRIORITYFEE
+                    PRIORITYFEE
                   );
 
                   console.log(
@@ -933,7 +1105,10 @@ pairAddress,
                       bestOptionOut,
                       maxToSendWithSlippage,
                       unixTimestamp,
-                      { maxPriorityFeePerGas: "1000001", gasLimit: "700000" }
+                      {
+                        maxPriorityFeePerGas: PRIORITYFEEPARSED,
+                        gasLimit: "850000",
+                      }
                     );
                     /*
                   tx = await CONTRACTS.LIQUIDATIONROUTERSIGNER[
@@ -944,7 +1119,7 @@ pairAddress,
                 bestOptionOut,
                 maxToSendWithSlippage,
                 unixTimestamp,
-                { maxPriorityFeePerGas: "1000011",    gasLimit: "700000" }
+                { maxPriorityFeePerGas: "1000011",    gasLimit: "850000" }
                 );*/
 
                     txReceipt = await tx.wait();
@@ -1257,8 +1432,14 @@ console.log(
 }
 function executeAfterRandomTime(minTime, maxTime) {
   const randomTime = minTime + Math.random() * (maxTime - minTime);
+  let keyCropped = "key ";
+  if (process.env.ALCHEMY_KEY) {
+    keyCropped += process.env.ALCHEMY_KEY.substring(0, 9);
+  }
   console.log(
-    `Scheduling next run in ${(randomTime / 1000).toFixed(0)} seconds.`
+    `${keyCropped} Scheduling next run in ${(randomTime / 1000).toFixed(
+      0
+    )} seconds.`
   );
 
   setTimeout(async () => {
