@@ -23,6 +23,7 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function approveSwappers(spenders) {
   const swapperAddress = CONFIG.SWAPPERS[CHAINNAME];
+  console.log("swapper address",swapperAddress)
   const swapperContract = new ethers.Contract(
     swapperAddress,
     ABI.SWAPPER,
@@ -128,7 +129,7 @@ async function approveSingleAsset(assetAddress, spender) {
     );
 
     // Send the transaction for approval with maxPriorityFeePerGas included
-   /* const tx = await swapperContract.approveToken(
+/*    const tx = await swapperContract.approveToken(
       assetAddress,
       spender,
       ethers.constants.MaxUint256,
@@ -154,8 +155,8 @@ async function approveSingleAsset(assetAddress, spender) {
 //const spenders = ["0x6A000F20005980200259B80c5102003040001068","0x19cEeAd7105607Cd444F5ad10dd51356436095a1"]
 // arb
 const spenders = [
-  "0x6A000F20005980200259B80c5102003040001068",
-  "0xa669e7A0d4b3e4Fa48af2dE86BD4CD7126Be4e13",
+//  "0x6A000F20005980200259B80c5102003040001068",
+"0xCf5540fFFCdC3d510B18bFcA6d2b9987b0772559"
 ];
 approveSwappers(spenders);
 
