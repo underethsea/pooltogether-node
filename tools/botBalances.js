@@ -3,6 +3,12 @@ const { ethers } = require('ethers');
 
 // Define the constants for each chain
 const chains = {
+  SCROLL: {
+    rpcEndpoint: `https://rpc.scroll.io`,
+    wallet: '0x67CdC1dC837e0d6362bf046E1195C7aCD08Af06d',
+    swapper: '0xf152CEC8B04695705772012764D2ABE2e5cbfd38',
+    wethAddress: '0x5300000000000000000000000000000000000004',
+  },
   OPTIMISM: {
     rpcEndpoint: `https://opt-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
     wallet: '0x67CdC1dC837e0d6362bf046E1195C7aCD08Af06d',
@@ -21,6 +27,14 @@ const chains = {
     swapper: '0xf152CEC8B04695705772012764D2ABE2e5cbfd38',
     wethAddress: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
   }
+,
+  ETHEREUM: {
+    rpcEndpoint: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_KEY}`,
+    wallet: '0x67CdC1dC837e0d6362bf046E1195C7aCD08Af06d',
+    swapper: '0xf152CEC8B04695705772012764D2ABE2e5cbfd38',
+    wethAddress: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+  }
+
 };
 
 // ERC20 ABI for balanceOf function
