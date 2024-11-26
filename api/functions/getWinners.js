@@ -4,9 +4,9 @@ const  { db, dbFinal } = require('./dbConnection.js')
 async function GetWinners(chainId,prizePool) {
 try{
         const currentDB = (prizePool === "") ? db : dbFinal;
-
+prizePool = prizePool.toLowerCase()
     let winners = {};
-    const queryString = "SELECT * from wins WHERE network='" + chainId + "' and prizepool=LOWER('"+prizePool+"');";
+    const queryString = "SELECT * from wins WHERE network='" + chainId + "' and prizepool='"+prizePool+"';";
     console.log(queryString)
     const query = await currentDB.any(queryString);
   

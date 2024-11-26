@@ -23,29 +23,27 @@ const queryWithoutCondition = (skip) => `
 }`;
 
 const fetchGraphQL = async (query) => {
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ query }),
-  });
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query }),
+    });
 
-  const responseBody = await response.json();
-  return responseBody.data.users;
-};
+    // Check if the response is OK before parsing
+    if (!response.ok) {
+      console.error(`HTTP Error: ${response.status} ${response.statusText}`);
+      const errorBody = await response.text();
+      console.error(`Response body: ${errorBody}`);
+      throw new Error(`Failed to fetch: ${response.statusText}`);
+    }
 
-const fetchAllUsers = async (queryGenerator) => {
-  let allUsers = [];
-  let skip = 0;
-  let hasMore = true;
-
-  while (hasMore) {
-    const users = await fetchGraphQL(queryGenerator(skip));
-    allUsers = allUsers.concat(users);
-    skip += 100;
-    hasMore = users.length === 100;
+    const responseBody = await response.json();
+    return responseBody.data.users;
+  } catch (error) {
+    console.error("Error fetching GraphQL:", error);
+    throw error; // Re-throw to propagate the error
   }
-
-  return allUsers;
 };
 
 const checkDelegateBalances = async () => {

@@ -236,10 +236,10 @@ function groupPlayersByVaultForFoundry(chain, prizePool, players) {
 }
 
 // Uncomment the appropriate line to run for the desired chain and block
-PrizeCalcToDb(10, 125592259 , maxTiersToCalculate = 7, debug=true); // optimism 
+//PrizeCalcToDb(10, 125592259 , maxTiersToCalculate = 7, debug=true); // optimism 
 //PrizeCalcToDb(1, "latest", maxTiersToCalculate = 7, debug=true)
 //PrizeCalcToDb(42161, "latest",maxTiersToCalculate = 7, debug=true); // arbitrum
-// PrizeCalcToDb(8453, "latest",maxTiersToCalculate = 6, debug=true); // base
+// PrizeCalcToDb(8453, "latest",maxTiersToCalculate = 7, debug=true); // base
 // FoundryPrizeWinsToDb(42161, 221234069);
 // PrizeCalcToDb(8453,"latest",maxTiersToCalculate = 6, debug= true)
 //PrizeCalcToDb(534352,"latest",maxTiersToCalculate = 7, multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11",debug=true); // scroll

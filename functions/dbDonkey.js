@@ -1,7 +1,70 @@
 const { DB } = require("./dbConnection");
   const pgp = require('pg-promise')();
 
-async function AddClaim(network,prizepool, claim) {
+async function AddClaim(network, prizepool, claim) {
+    prizepool = prizepool.toLowerCase();
+
+    try {
+        // Define query and parameters for checking existence
+        const checkClaimExistsQuery = `
+            SELECT EXISTS (
+                SELECT 1 FROM claims 
+                WHERE network = $1 
+                  AND block = $2 
+                  AND hash = $3 
+                  AND draw = $4 
+                  AND vault = $5 
+                  AND winner = $6 
+                  AND payout = $7 
+                  AND miner = $8 
+                  AND fee = $9 
+                  AND tier = $10 
+                  AND index = $11 
+                  AND prizepool = $12
+            )
+        `;
+
+        // Create params array for the query
+        const params = [
+            network,
+            claim.block,
+            claim.hash,
+            claim.drawId,
+            claim.vault,
+            claim.winner,
+            claim.payout.toString(), // Ensure consistent type
+            claim.miner,
+            claim.fee.toString(),   // Ensure consistent type
+            claim.tier,
+            claim.index,
+            prizepool
+        ];
+
+        // Execute the query
+        const exists = await DB.one(checkClaimExistsQuery, params);
+
+        // If claim exists, return early
+        if (exists.exists) {
+            console.log(`Duplicate claim found: tx ${claim.hash}, winner ${claim.winner}`);
+            return "existing";
+        }
+
+        // Add the claim if it doesn't exist
+        const addClaimQuery = `
+            INSERT INTO claims (network, block, hash, draw, vault, winner, payout, miner, fee, tier, index, prizepool) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+        `;
+        await DB.any(addClaimQuery, params);
+
+        console.log(`${network}: Claim added to db, tx ${claim.hash}, winner ${claim.winner}, tier/index ${claim.tier}/${claim.index}, amt ${claim.payout}`);
+        return "added";
+    } catch (error) {
+        console.error("Failed to process claim:", error);
+        return "error";
+    }
+}
+
+/*async function AddClaim(network,prizepool, claim) {
 prizepool = prizepool.toLowerCase()
     try {
         // Check if claim already exists
@@ -36,7 +99,7 @@ prizepool = prizepool.toLowerCase()
         ]);
 
         if (existingClaim) {
-            console.log("Duplicate claim found in db, skipping adding it again: tx ", claim.hash," winner ",claim.winner);
+            console.log("Dup claim found in db, skipping: tx ", claim.hash," winner ",claim.winner);
             return "existing";
         }
 
@@ -67,7 +130,7 @@ return "added";
 return "error";    
 }
 }
-
+*/
 
 
 

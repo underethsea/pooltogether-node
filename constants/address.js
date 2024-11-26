@@ -122,7 +122,7 @@ const ADDRESS = {
         GECKO: "ethereum",
         VAULTICON: "https://app.cabana.fi/icons/pWETH.svg",
       },
-      ,
+      
       {
         VAULT: "0x29499e2eb8ff1d076a35c275aeddd613afb1fa9b",
         LIQUIDATIONPAIR: "0x0000000000000000000000000000000000000000",

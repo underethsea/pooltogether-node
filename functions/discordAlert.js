@@ -64,11 +64,11 @@ const chain = chainName ? chainName : CHAINNAME
     }
 
     const payAmount = parseInt(claim.payout) / 1e18;
-
+prizepool = prizepool.toLowerCase()
     const existingClaim = await db.oneOrNone(`
       SELECT 1 FROM v5claims 
       WHERE network = $1 AND block = $2 AND hash = $3 AND draw = $4 AND vault = $5 
-      AND winner = $6 AND payout = $7 AND miner = $8 AND fee = $9 AND tier = $10 AND index = $11 AND LOWER(prizepool) = LOWER($12)
+      AND winner = $6 AND payout = $7 AND miner = $8 AND fee = $9 AND tier = $10 AND index = $11 AND prizepool = $12
 
     `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool]);
 
@@ -91,7 +91,7 @@ if (!existingClaim) {
         */
         await tellUser(subscriber.discord, message);
       } else {
-        console.log(`Subscriber with wallet ${subscriber.wallet} does not have a Discord ID.`);
+        console.log(`Subscriber ${subscriber.wallet} doesn't have Discord ID.`);
       }
     }
 
@@ -101,12 +101,17 @@ if (!existingClaim) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool.toLowerCase()]);
 
-    console.log(network, "claim added to db, tx ", claim.hash, " winner ", claim.winner, " tier/index ", claim.tier, "/", claim.index, "amt", claim.payout.toString());
+    console.log(network, "claim added to db, tx ", claim.hash, 
+   " winner ", claim.winner, 
+   " tier/index ", claim.tier, 
+   "/", claim.index, 
+   "amt", claim.payout.toString()
+    );
   } catch (error) {
     console.error("Failed to alert user or update database:", error);
   }
 } else {
-  console.log("Claim previously alerted for ", claim.winner, " draw ", claim.drawId, " vault ", claim.vault, " tier ", claim.tier);
+  console.log("Claim prev alerted for ", claim.winner, " draw ", claim.drawId, " vault ", claim.vault, " tier ", claim.tier);
 }
 
  
@@ -121,11 +126,11 @@ async function tellUser(user, message) {
     const discordUser = await client.users.fetch(user, false);
     if (testModeNoAlerts !== true) {
       await discordUser.send(message);
-      console.log("Message sent to user:", user, " Message:", message);
+      console.log("Message to user:", user, " Message:", message);
     }
   } catch (error) {
     console.log("Could not alert user:", error);
-    throw new Error("Failed to send alert to user.");  // Propagate the error to be caught in DiscordNotifyClaimPrize
+    throw new Error("Failed to alert user.");  // Propagate the error to be caught in DiscordNotifyClaimPrize
   }
 }
 /*

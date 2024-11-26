@@ -20,9 +20,10 @@ const cnFinal = {
 
 
 async function GetClaims(chainId, prizePool, dbFinal) {
+prizePool = prizePool.toLowerCase()
     try {
         let claims = {};
-        const queryString = "SELECT * from claims WHERE network=$1 and prizepool=LOWER($2)";
+        const queryString = "SELECT * from claims WHERE network=$1 and prizepool=$2";
 
         // Decide which DB to use based on the prizePool value
         const currentDB = (prizePool === "") ? db : dbFinal;

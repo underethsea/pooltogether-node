@@ -238,7 +238,7 @@ const v5cnFinal = {
 };
 const v5dbFinal = pgp(v5cnFinal);
 
-function delay(ms) {
+async function delay(ms) {
   logit("waiting", ms / 1000, "seconds");
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -253,9 +253,13 @@ async function go() {
   } catch (e) {
     logit("express error:", e);
   }
-
-  await update();
-  await fetchAndUpdateStats();
+console.log("running update")
+try{
+  await update();}
+catch(e){console.log("error in update()",e)}
+console.log("going to fetch and update stats")
+try{
+  await fetchAndUpdateStats();}catch(e){console.log("error in fetch and update",e)}
   try {
     await openV5Pooler();
     await openPlayerEndpoints();
@@ -278,7 +282,10 @@ async function go() {
 
   while (true) {
     // looping
-    await update();
+console.log("running update from while")
+console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).length);
+  
+  await update();
    
     let isFirstRun = true;
 
@@ -301,9 +308,12 @@ async function go() {
       }
     }
     lessFrequentCount += 1;
-    await delay(45000)
+console.log("waiting 45 seconds")    
+await delay(45000)
     await fetchAndUpdateStats();
-  }
+console.log("waiting 5 minutes")
+await delay(300000) 
+ }
 }
 
 async function update() {
@@ -313,14 +323,16 @@ async function update() {
   const prizepools = chains
     .filter((chain) => !chain.hideFromApp)
     .map((chain) => chain.prizePool);
-  try {
+
+/*  try {
     const leaders = await PrizeLeaderboard(prizepools);
     await publish(JSON.stringify(leaders), "/prizeleaderboard");
   } catch (error) {
     console.error("Error calling PrizeLeaderboard:", error);
-  }
+  }*/
   let allPoolsUniqueWinners = new Set();
-  for (let chain of chains) {
+console.log(`Current time: ${new Date().toISOString()}`);  
+for (let chain of chains) {
     let allDrawsOverview = [];
     let allDrawsOverviewClaims = [];
 
@@ -404,25 +416,29 @@ async function fetchAndUpdateStats() {
 
 */
 
-  try {
-    // Fetch Gecko prices
-//await delay(60000)
-    priceResults.geckos = await GeckoPrice(pricesToFetch);
-    if (
-      priceResults.geckos &&
-      priceResults.geckos.ethereum > 0 &&
-      priceResults.geckos.optimism > 0
-    ) {
-      ethPrice = priceResults.geckos["ethereum"];
-      // Fetch UNI prices and convert to USD using ETH price
-      let uniAssets;
-      try {
-        const uniPrices = await FindAndPriceUniv2Assets();
-        // logit("UNI PRICES", uniPrices);
-        // logit("ETH price", ethPrice);
-        logit("");
-        logit("");
+try {
+  console.log("getting gecko prices await running fetch pt 1");
+  priceResults.geckos = await GeckoPrice(pricesToFetch);
+  console.log("running fetch pt 1b");
 
+  if (
+    priceResults.geckos &&
+    priceResults.geckos.ethereum > 0 &&
+    priceResults.geckos.optimism > 0
+  ) {
+    ethPrice = priceResults.geckos["ethereum"];
+
+    // Fetch UNI prices and convert to USD using ETH price
+    let uniAssets = [];
+    try {
+      console.log("runnning fetch pt 1c");
+      const uniPrices = await FindAndPriceUniv2Assets();
+      console.log("running fetch pt 1d");
+
+      // Check if uniPrices is valid
+      if (!uniPrices || Object.keys(uniPrices).length === 0) {
+        console.warn("UNI Prices are empty or undefined");
+      } else {
         // Flatten the uniPrices object into an array
         const flattenedUniPrices = Object.entries(uniPrices).flatMap(
           ([chain, assets]) =>
@@ -438,37 +454,67 @@ async function fetchAndUpdateStats() {
           ...asset,
           price: asset.price * ethPrice, // Convert UNI prices to USD
         }));
-      } catch (e) {
-        logit(e);
       }
-      logit("uni asssets", uniAssets);
-      const chainsAssetsPrices = createChainsAssetsPrices(
+    } catch (e) {
+      console.error("Error fetching UNI prices:", e);
+      logit(e);
+    }
+
+    logit("uni assets", uniAssets);
+
+    let chainsAssetsPrices = {};
+    try {
+      chainsAssetsPrices = createChainsAssetsPrices(
         ADDRESS,
         WHITELIST_REWARDS,
         ADDITIONAL_GECKO_MAPPING,
         priceResults.geckos
       );
       logit("created chain asset prices", chainsAssetsPrices);
+    } catch (e) {
+      console.error("Error creating chain asset prices:", e);
+      logit(e);
+    }
 
-      // Merge UNI and Gecko prices
+    // Merge UNI and Gecko prices
+    try {
       priceResults.assets = mergeChainsAssetsPrices(
         uniAssets,
         chainsAssetsPrices
       );
-
-      // Add current date and time
-      const currentTime = new Date().toISOString();
-      priceResults["timestamp"] = currentTime;
-      newPrices = true;
-      await publish(JSON.stringify(priceResults), "/prices");
-      logit("...published /prices at", currentTime);
-    } else {
-      logit("price is missing in Gecko prices. No new prices fetched.");
+    } catch (e) {
+      console.error("Error merging UNI and Gecko prices:", e);
+      logit(e);
     }
-  } catch (e) {
-    logit("price fetch bombed=======================", e);
-  }
 
+    // Add current date and time
+    const currentTime = new Date().toISOString();
+    priceResults["timestamp"] = currentTime;
+    newPrices = true;
+
+    console.log("running fetch pt 1f publishing prices!");
+    if (!priceResults || Object.keys(priceResults).length === 0) {
+      console.error("No prices available to publish");
+    } else {
+      try {
+        await publish(JSON.stringify(priceResults), "/prices");
+        logit("...published /prices at", currentTime);
+      } catch (e) {
+        console.error("Error publishing prices:", e);
+        logit(e);
+      }
+    }
+  } else {
+    logit(
+      "running fetch, price is missing in Gecko prices. No new prices fetched."
+    );
+  }
+} catch (e) {
+  console.error("Error in the fetch flow between part 1d and 1f:", e);
+  logit("running fetch, price fetch bombed=======================", e);
+}
+
+console.log("running fetch part 2")
   let pendingPrize = {};
   // todo meta poolers
   let vaultOverview = [];
@@ -587,6 +633,7 @@ async function fetchAndUpdateStats() {
   }
   await publish(vaultOverview, "/vaults");
   metaOverview = { pendingPrize: pendingPrize, prices: priceResults };
+console.log("publishing overview")
   try {
     await publish(JSON.stringify(metaOverview), "/overview");
   } catch (e) {
@@ -671,6 +718,12 @@ async function updateChain(chainNumber, prizePool) {
   const bigWinners = [];
   let drawCount = 0;
 
+// Get all draw numbers as integers
+const drawNumbers = Object.keys(v5Winners).map(Number).sort((a, b) => a - b);
+
+// Determine the last 5 draws (or fewer if total is less than 5)
+const recentDrawNumbers = drawNumbers.slice(-5);
+
   for (const drawNumber in v5Winners) {
     try {
       draws.push(drawNumber);
@@ -678,10 +731,15 @@ async function updateChain(chainNumber, prizePool) {
 
       const winnersArray = JSON.stringify(winnerResults);
 
+  // Only publish if the drawNumber is one of the recent 5
+    if (recentDrawNumbers.has(Number(drawNumber))) {
       await publish(
         winnersArray,
         "/" + chainNumber + pathSuffix + "-draw" + drawNumber
       );
+
+}
+
       drawCount++;
 
       // tally big winners
@@ -820,6 +878,7 @@ function tallyPrizeResults(chain, wins) {
 async function updateV5Players(chainNumber, prizePool = "", subgraph) {
 if(prizePool!=="0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A"){
   try {
+    console.log("getting players",subgraph)
     const allVaults = await GetPlayers(chainNumber, prizePool, subgraph);
     logit("Total vaults fetched:", allVaults.length);
 
@@ -903,6 +962,12 @@ async function openApi() {
 }
 
 async function publish(json, name) {
+/*console.log("running publish, current routes:")
+console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).length);
+
+ logit("Publishing data to route:", name);
+  logit("Data:", JSON.stringify(json).slice(0, 100) + "..."); // Log first 100 chars for brevity
+*/
   // Check if the route already exists
   if (app._router && app._router.stack) {
     const existingRoute = app._router.stack.find((layer) => {
@@ -977,7 +1042,7 @@ async function openPlayerEndpoints() {
         ON c.network = d.network AND c.prizepool = d.prizepool AND c.draw = d.draw
       WHERE 
         c.winner = $1 
-AND CAST(c.payout AS numeric) > 0
+  AND c.payout != '0';  -- Compare payout directly as text
     `;
 
       try {
