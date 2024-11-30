@@ -38,6 +38,7 @@ const GetPrizePoolData = async (block="latest") => {
       reserve,
       maxFeePortionOfPrize,
       firstDrawOpensAt,
+      lastAwardedDrawAwardedAt
     ] = await Multicall([
       //CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee({blockTag: block}),
       CONTRACTS.PRIZEPOOL[CHAINNAME].lastAwardedDrawAwardedAt({blockTag: block}),
@@ -52,6 +53,7 @@ const GetPrizePoolData = async (block="latest") => {
       CONTRACTS.PRIZEPOOL[CHAINNAME].reserve({blockTag: block}),
       CONTRACTS.CLAIMER[CHAINNAME].maxFeePortionOfPrize({blockTag: block}),
       CONTRACTS.PRIZEPOOL[CHAINNAME].firstDrawOpensAt({blockTag: block}),
+      CONTRACTS.PRIZEPOOL[CHAINNAME].lastAwardedDrawAwardedAt({blockTag: block}),
     ]);
 
 lastCompletedDrawStartedAt = parseInt(firstDrawOpensAt) + ((lastDrawId) * parseInt(drawPeriodSeconds))
@@ -116,8 +118,8 @@ for (let i = 0; i < numberOfTiers; i++) {
   const prizeCount = multicallResult[startIndex + 2];
   //const tierMaxClaimFee = multicallResult[startIndex + 3];
   const tierRemainingLiquidity = multicallResult[startIndex + 3]; 
-  console.log("tier ", i, " prize size ", (Number(prizeSize) / 1e18).toFixed(5), " remaining liquidity ", (Number(tierRemainingLiquidity)/ 1e18).toFixed(5), 
-" max fee ",((Number(prizeSize) / 1e18) * (Number(maxFeePortionOfPrize) / 1e18)).toFixed(5));
+  console.log("tier ", i, " prize size ", (Number(prizeSize) / 1e18).toFixed(6), " remaining liquidity ", (Number(tierRemainingLiquidity)/ 1e18).toFixed(5), 
+" max fee ",((Number(prizeSize) / 1e18) * (Number(maxFeePortionOfPrize) / 1e18)).toFixed(7));
 
   tierTimestamps.push({ startTimestamp, endTimestamp });
   prizeSizes.push(prizeSize)
@@ -152,17 +154,23 @@ for (let i = 0; i < numberOfTiers; i++) {
   );
 
   const now = Math.floor(Date.now() / 1000); // convert current time to seconds
+// console.log("now",now)
+// console.log("last completed draw started at",lastCompletedDrawStartedAt.toString())
+// console.log("draw period seconds",drawPeriodSeconds)
 
+//console.log("last awarded draw awarded at",lastAwardedDrawAwardedAt.toString())
   const timeSinceLastDrawStarted =
     now - lastCompletedDrawStartedAt - drawPeriodSeconds;
   const timeUntilNextDraw = drawPeriodSeconds - timeSinceLastDrawStarted;
-
+const timeSinceAwarding = (now - parseInt(lastAwardedDrawAwardedAt)) / 60 / 60
+console.log("Prize pool was awarded",timeSinceAwarding.toFixed(2),"hours ago")
+/*
   console.log(
     `Time since open draw started ${Math.round(
       timeSinceLastDrawStarted / 60
     )} minutes`,
     ` Time until next draw ${Math.round(timeUntilNextDraw / 60)} minutes`
-  );
+  );*/
   console.log();
 
   //console.log("max claim fees ", maxFee)

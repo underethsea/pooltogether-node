@@ -55,7 +55,7 @@ async function GasEstimate(
 
     const serialized = ethers.utils.serializeTransaction(tx);
     let l1Fee = ethers.BigNumber.from(0);  // Default to 0 if GASORACLE is not available
-console.log("priority fee wei",priorityFeeWei,"max fee wei",maxFeeWei)
+//console.log("priority fee wei",priorityFeeWei,"max fee wei",maxFeeWei)
 if (typeof CONTRACTS !== 'undefined' && CONTRACTS?.GASORACLE?.[CHAINNAME]) {
       l1Fee = await CONTRACTS.GASORACLE[CHAINNAME].getL1Fee(serialized);
    }
@@ -72,13 +72,13 @@ else{l2executionFee = gasEstimate.mul(feeData.gasPrice)}
     //        console.log("combined", ethers.utils.formatEther(totalFee), "ETH");
     console.log(
       "l1 fee",
-      ethers.utils.formatEther(l1Fee),
+      Number(ethers.utils.formatEther(l1Fee)).toFixed(8),
       "ETH",
       "  l2 fee",
-      ethers.utils.formatEther(l2executionFee),
+      Number(ethers.utils.formatEther(l2executionFee)).toFixed(8),
       "ETH",
       "combined",
-      ethers.utils.formatEther(totalFee),
+      Number(ethers.utils.formatEther(totalFee)).toFixed(8),
       "ETH"
     );
     return totalFee;

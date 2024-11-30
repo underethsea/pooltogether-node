@@ -292,7 +292,7 @@ console.log("remaining prize indices",remainingPrizeIndices.length)
 
 const SendClaims = async (drawId, vaultWins, prizeTokenPrice, ethPrice) => {
   console.log("total wins to claim ", vaultWins.length);
-
+console.log("")
   // Group data by vault and tier
   const groupedData = groupDataByVaultAndTier(vaultWins);
 
@@ -308,9 +308,9 @@ const SendClaims = async (drawId, vaultWins, prizeTokenPrice, ethPrice) => {
     // Iterate over each batch
     for (const batch of batches) {
       const { winners: batchWinners, prizeIndices: batchPrizeIndices } = batch;
-
+console.log("")
       console.log(
-        `Processing batch with ${batchWinners.length} winners and ${
+        `Vault${vault.substring(0,6)} Tier${tier} Batch with ${batchWinners.length} winners and ${
           batchPrizeIndices.flat().length
         } indices`
       );
@@ -559,7 +559,7 @@ async function calculateGasAndProfitability(
   console.log(
     PRIZETOKEN_SYMBOL,
     "reward ",
-    estimatedPrizeTokenReward,
+    estimatedPrizeTokenReward.toFixed(8),
     " ($" +
       (prizeTokenPrice * estimatedPrizeTokenReward).toFixed(2) +
       ") @ $" +

@@ -32,7 +32,11 @@ const { CollectRewards } = require("./collectRewards.js");
 const NodeCache = require("node-cache");
 const nodeCache = new NodeCache();
 
-const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko } = CONFIG;
+const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko,
+ MINPROFIT, MINPROFITPERCENTAGE, MINTOCLAIM 
+//MAXWINNERS, MAXINDICES
+} = CONFIG;
+
 const useApiPriceOverride = true;
 
 const section = chalk.hex("#47FDFB");
@@ -258,12 +262,11 @@ function scheduleNextRun() {
 let keyCropped = "key "
 if(process.env.ALCHEMY_KEY){keyCropped+=process.env.ALCHEMY_KEY.substring(0,8)}
   console.log(keyCropped,
-    "-----------------------------bot will run again in " +
+    "--------------bot will run again in " +
       formattedTime +
       " (" +
       formattedNextExecutionTime +
-      ") ------------ "
-  );
+      ") -------- $"+ MINPROFIT +" min profit %" + MINPROFITPERCENTAGE*100);
 
   setTimeout(() => {
     go(); // Run the main function again

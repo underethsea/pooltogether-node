@@ -141,7 +141,7 @@ async function go() {
         const data = fs.readFileSync(filePath, "utf8");
         return JSON.parse(data);
       } catch (error) {
-        console.error("Error reading or parsing file:", error);
+        console.error("Error reading or parsing file,",filePath);
         return [];
       }
     };
@@ -624,12 +624,10 @@ console.log("paraswap router",paraswap.txParams.to)
                 " gross $" +
                 (outValue - prizeTokenValue).toFixed(2)
             );
-            console.log("1");
             if (
               !CONFIG.SWAPPERS?.[CHAINNAME] ||
               CONFIG.SWAPPERS[CHAINNAME].length === 0
             ) {
-              console.log("2");
               let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
                 CHAINNAME
               ].balanceOf(CONFIG.WALLET);
@@ -667,12 +665,9 @@ console.log("paraswap router",paraswap.txParams.to)
                     : predictedProfitableAmtIn.toString(),
               });
             } else {
-              console.log("3");
-              console.log("out", outValue, "prizet", prizeTokenValue);
-              console.log("pthresh", profitThreshold);
               const gasBudgetUSD = outValue - prizeTokenValue - profitThreshold;
-              console.log("ethprice", ethPrice);
-              console.log("gas bud", gasBudgetUSD);
+//              console.log("ethprice", ethPrice);
+//              console.log("gas bud", gasBudgetUSD);
               // console.log("gas budget USD", gasBudgetUSD);
               const gasBudgetETH = ethers.BigNumber.from(
                 parseInt((gasBudgetUSD / ethPrice) * 1e18).toString()
@@ -680,7 +675,7 @@ console.log("paraswap router",paraswap.txParams.to)
               const profitThresholdETH = ethers.BigNumber.from(
                 parseInt((profitThreshold / ethPrice) * 1e18).toString()
               );
-              console.log("4");
+  //            console.log("4");
               console.log("profit thrshold ETH", profitThresholdETH.toString());
               console.log("gas budget in ETH", gasBudgetETH.toString());
               //console.log(" no vault?", noVault);
@@ -920,7 +915,7 @@ pairAddress,
                         ") = $",
                         profit.toFixed(2),
                         " prwswapofit after $",
-                        web3TotalGasCostUSD,
+                        web3TotalGasCostUSD.toFixed(4),
                         " in est gas cost"
                       );
 
@@ -1052,7 +1047,7 @@ pairAddress,
                     ") = $",
                     profit.toFixed(2),
                     " prwswapofit after $",
-                    web3TotalGasCostUSD,
+                    web3TotalGasCostUSD.toFixed(4),
                     " in est gas cost"
                   );
 
@@ -1439,7 +1434,7 @@ function executeAfterRandomTime(minTime, maxTime) {
   console.log(
     `${keyCropped} Scheduling next run in ${(randomTime / 1000).toFixed(
       0
-    )} seconds.`
+    )} seconds. $${profitThreshold} profitThreshold %${profitPercentage*100}`
   );
 
   setTimeout(async () => {

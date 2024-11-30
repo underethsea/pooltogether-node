@@ -282,7 +282,6 @@ try{
 
   while (true) {
     // looping
-console.log("running update from while")
 console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).length);
   
   await update();
@@ -311,8 +310,8 @@ console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).
 console.log("waiting 45 seconds")    
 await delay(45000)
     await fetchAndUpdateStats();
-console.log("waiting 5 minutes")
-await delay(300000) 
+console.log("waiting 2 minutes")
+await delay(120000) 
  }
 }
 
@@ -324,12 +323,12 @@ async function update() {
     .filter((chain) => !chain.hideFromApp)
     .map((chain) => chain.prizePool);
 
-/*  try {
+try {
     const leaders = await PrizeLeaderboard(prizepools);
     await publish(JSON.stringify(leaders), "/prizeleaderboard");
   } catch (error) {
     console.error("Error calling PrizeLeaderboard:", error);
-  }*/
+  }
   let allPoolsUniqueWinners = new Set();
 console.log(`Current time: ${new Date().toISOString()}`);  
 for (let chain of chains) {
@@ -732,13 +731,13 @@ const recentDrawNumbers = drawNumbers.slice(-5);
       const winnersArray = JSON.stringify(winnerResults);
 
   // Only publish if the drawNumber is one of the recent 5
-    if (recentDrawNumbers.has(Number(drawNumber))) {
+      //if (recentDrawNumbers.has(Number(drawNumber))) {
       await publish(
         winnersArray,
         "/" + chainNumber + pathSuffix + "-draw" + drawNumber
       );
 
-}
+//}
 
       drawCount++;
 

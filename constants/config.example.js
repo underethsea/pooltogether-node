@@ -11,8 +11,8 @@ const CONFIG = {
   useCoinGecko: true, // Use CoinGecko for pricing (false uses 1inch)
   // Timing Configuration for looping claimer and liquidator apps
   // retries will be a random time between min and max
-  minTimeInMilliseconds: 8 * 60 * 1000, // Minimum polling interval (5 * 60 = 5 minutes)
-  maxTimeInMilliseconds: 15 * 60 * 1000, // Maximum polling interval (12 * 60 = 12 minutes)
+  minTimeInMilliseconds: 300000, // Minimum polling interval (300000 = 5 minutes)
+  maxTimeInMilliseconds: 600000, // Maximum polling interval 
 
   // Claimer Configuration
   USEAPI: "pooltime", // "none" or "pooltime" or "g9"
