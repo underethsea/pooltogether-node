@@ -66,7 +66,7 @@ const ADDRESS = {
       },
     ],
     //0xB1C240B8598DfDBd1b9bA221162304a412421a64
-    BOOSTS: [
+    BOOSTS: [/*
       {
         LIQUIDATIONPAIR: "0xB1C240B8598DfDBd1b9bA221162304a412421a64",
         SYMBOL: "xdaiBooster",
@@ -76,7 +76,7 @@ const ADDRESS = {
         ASSETSYMBOL: "WXDAI",
         GECKO: "xdai",
         USEROUTER: true,
-      },
+      },*/
     ],
     PAIRS: [],
   },
@@ -122,7 +122,7 @@ const ADDRESS = {
         GECKO: "ethereum",
         VAULTICON: "https://app.cabana.fi/icons/pWETH.svg",
       },
-      
+
       {
         VAULT: "0x29499e2eb8ff1d076a35c275aeddd613afb1fa9b",
         LIQUIDATIONPAIR: "0x0000000000000000000000000000000000000000",
@@ -173,7 +173,9 @@ const ADDRESS = {
     RNG: "0xf93329e78feff1145fce03a79d5b356588dea215",
     TWABCONTROLLER: "0x4d5f2cd31701f3e5de77b3f89ee7b80eb87b4acc",
     TWABREWARDS: "0x2589ff8614f74704741ee3b51851b4ae812f1a21",
-    LIQUIDATIONROUTER: "0x7c210be12bcef8090610914189a0de43e2192ea0",
+   LIQUIDATIONROUTER: "0x7c210be12bcef8090610914189a0de43e2192ea0",
+//v3 pairs
+   // LIQUIDATIONROUTER: "0x91b718f250a74ad80da828d7d60b13993275d43c",
     VAULTFACTORY: "0x29c102109d6cb2d866cfec380e0e10e9a287a75f",
     PRIZEPOOL: "0x7865d01da4c9ba2f69b7879e6d2483ab6b354d95",
     CLAIMERFACTORY: "0x4457025dff44e3d9085d9195828e7d53fe6a7088",
@@ -246,6 +248,7 @@ const ADDRESS = {
         GECKO: "staked-ether",
         USEROUTER: true,
       },
+/*
       {
         LIQUIDATIONPAIR: "0xeE81F202A9391F7d2e9ec8af26eC301699345265",
         SYMBOL: "v3dai",
@@ -265,7 +268,7 @@ const ADDRESS = {
         ASSETSYMBOL: "v3usdc",
         GECKO: "usd-coin",
         USEROUTER: true,
-      },
+      },*/
     ],
   },
   ARBITRUM: {
@@ -426,7 +429,86 @@ const ADDRESS = {
     ],
 
     VAULTS: [
-      {
+
+
+
+ {
+
+        UNIV2: true,
+
+        //UNDERLYINGLP: "0x6dA98Bde0068d10DDD11b468b197eA97D96F96Bc",
+
+        VAULT: "0x850ec48d2605aad9c3de345a6a357a9a14b8cf1b",
+
+        LIQUIDATIONPAIR: "0x73BfbdeEE993542b792C7e5bfB10b4f26E912294",
+
+        SYMBOL: "przLUSD-POOL",
+
+        NAME: "Prize LUSD POOL",
+
+        DECIMALS: 18,
+
+        ASSET: "0x0b15b1d434f86eCaa83d14398C8Db6d162F3921e",
+
+        ASSETSYMBOL: "vAMMPOOL-LUSDAerodrome",
+
+	ICON: "",
+
+        //GECKO: "usd-coin",
+
+        VAULTICON: "",
+
+      },
+{
+        VAULT: "0x48c773aa0023980c3123acd4ae1d59753f812067",
+        LIQUIDATIONPAIR: "0xe05E85B69FFA8132274d341d64581d2c19A7fb6B",
+        SYMBOL: "GIVETHprzSuperOETHb",
+        NAME: "GIVETH Prize SuperOETHb",
+        DECIMALS: 18,
+        ASSET: "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3",
+        ASSETSYMBOL: "superOETHb",
+        ICON: "",
+        GECKO: "super-oeth",
+        VAULTICON: "",
+      },
+{
+        VAULT: "0xAF2B22B7155da01230D72289DCEcB7C41a5a4bD8",
+        LIQUIDATIONPAIR: "0xbbc7d59a92f5641a0b758ef5e98edddf9b41dde3",
+        SYMBOL: "ClassicprzUSDC",
+        NAME: "Classic Prize USDC",
+        DECIMALS: 18,
+        ASSET: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        ASSETSYMBOL: "USDC",
+        ICON: "",
+        GECKO: "usd-coin",
+        VAULTICON: "",
+      },
+{
+        VAULT: "0x78adc13c9ab327c79d10cab513b7c6bd3b346858",
+        LIQUIDATIONPAIR: "0xB092742AB775D6A2832A605547f95433607F83F2",
+        SYMBOL: "przSuperOETHb",
+        NAME: "Prize SuperOETHb",
+        DECIMALS: 18,
+        ASSET: "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3",
+        ASSETSYMBOL: "superOETHb",
+        ICON: "",
+        GECKO: "super-oeth",
+        VAULTICON: "",
+      },
+{
+        VAULT: "0xd56f6f32473d6321512956a1351d4bcec07914cb",
+        LIQUIDATIONPAIR: "0x62E4c406C7A3aE023B2CED0dF82cdd7d9BAFf9bE",
+        SYMBOL: "przWETH",
+        NAME: "Prize WETH",
+        DECIMALS: 18,
+        ASSET: "0x4200000000000000000000000000000000000006",
+        ASSETSYMBOL: "WETH",
+        ICON: "",
+        GECKO: "weth",
+        VAULTICON: "",
+      },
+
+    {
         VAULT: "0x4e42f783db2d0c5bdff40fdc66fcae8b1cda4a43",
         LIQUIDATIONPAIR: "0xC8598b5fdEEe42A129D515b3f3a67E9D74481fFa",
         SYMBOL: "przWETH",
@@ -449,6 +531,30 @@ const ADDRESS = {
         ICON: "https://assets.coingecko.com/coins/images/14003/standard/PoolTogether.png?1696513732",
         GECKO: "pooltogether",
         VAULTICON: "",
+      },
+{
+        VAULT: "0xada66220fe59c7374ea6a93bd211829d5d0af75d",
+        LIQUIDATIONPAIR: "0xfd119D968acbb7E3abA06A9D91D8fBfab4d04287",
+        SYMBOL: "prsUSDC",
+        NAME: "Prize USDC - Moonwell",
+        DECIMALS: 6,
+        ASSET: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        ASSETSYMBOL: "USDC",
+        //ICON: "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png?1547042389",
+        GECKO: "usd-coin",
+        //VAULTICON: "https://app.cabana.fi/icons/pUSDC.e.svg",
+      },
+{
+        VAULT: "0xdd5e858c0aa9311c4b49bc8d35951f7f069ff46a",
+        LIQUIDATIONPAIR: "0xF256D2aa38aeFED9e617A8C0A7E95bC3d97C7fBf",
+        SYMBOL: "przEURC",
+        NAME: "Prize EURC - Moonwell",
+        DECIMALS: 6,
+        ASSET: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42",
+        ASSETSYMBOL: "EURC",
+        //ICON: "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png?1547042389",
+        GECKO: "euro-coin",
+        //VAULTICON: "https://app.cabana.fi/icons/pUSDC.e.svg",
       },
       {
         VAULT: "0x7f5C2b379b88499aC2B997Db583f8079503f25b9",
@@ -553,7 +659,7 @@ const ADDRESS = {
   },
   {
     LIQUIDATIONPAIR: "0xC5e1f487c71fc6BadA3D9Ab44d57B417aF65710A",
-    SYMBOL:"wethBooster",    
+    SYMBOL:"wethBooster",
     NAME: "booster",
     DECIMALS: 18,
     ASSET: "0x4200000000000000000000000000000000000006",
@@ -834,7 +940,19 @@ const ADDRESS = {
         GECKO: "ethereum",
         VAULTICON: "https://app.cabana.fi/icons/pWETH.svg",
       },
-    ],
+ {
+        VAULT: "0xd05aa5b509105ab1369b213f089198022b0d3e10",
+        LIQUIDATIONPAIR: "0x294a1e8c0b8f67c43f455e39fdf528d9252c02c7",
+        SYMBOL: "przPOOLwins",
+        NAME: "przPOOLwins",
+        DECIMALS: 18,
+        ASSET: "0x4200000000000000000000000000000000000006",
+        ASSETSYMBOL: "WETH",
+        ICON: "",
+        GECKO: "ethereum",
+        VAULTICON: "https://app.cabana.fi/icons/pWETH.svg",
+      },
+  ],
     PAIRS: [
       /*
  {
@@ -1087,7 +1205,25 @@ const WHITELIST_REWARDS = {
 
 const ADDITIONAL_GECKO_MAPPING = {
   BASE: [
-    {
+{
+      TOKEN: "0xA88594D404727625A9437C3f886C7643872296AE",
+      SYMBOL: "WELL",
+      GECKO: "moonwell-artemis",
+
+    },
+{
+	TOKEN: "0x60a3E35Cc302bFA44Cb288Bc5a4F316Fdb1adb42",
+	SYMBOL: "EURC",
+	GECKO: "euro-coin"},
+
+{
+
+    TOKEN: "0xDBFeFD2e8460a6Ee4955A68582F85708BAEA60A3",
+        SYMBOL: "superOETHb",
+        GECKO: "super-oeth"
+
+},
+  {
       TOKEN: "0x4ed4e862860bed51a9570b96d89af5e1b0efefed",
       SYMBOL: "DEGEN",
       GECKO: "degen-base",
