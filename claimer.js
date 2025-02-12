@@ -18,7 +18,7 @@ const { CONTRACTS } = require("./constants/contracts.js");
 const { SIGNER } = require("./constants/providers.js");
 const { ADDRESS } = require("./constants/address.js");
 const { ABI } = require("./constants/abi.js");
-const { CONFIG } = require("./constants/config.js");
+const { Config,CONFIG } = require("./constants/config.js");
 const { FetchApiPrizes } = require("./functions/fetchApiPrizes.js");
 const { FetchG9ApiPrizes } = require("./functions/fetchG9ApiPrizes.js");
 const { GetWinnersByTier } = require("./functions/getWinnersByTier.js");
@@ -33,9 +33,10 @@ const NodeCache = require("node-cache");
 const nodeCache = new NodeCache();
 
 const { minTimeInMilliseconds, maxTimeInMilliseconds, useCoinGecko,
- MINPROFIT, MINPROFITPERCENTAGE, MINTOCLAIM 
+ MINPROFIT, MINPROFITPERCENTAGE, MINTOCLAIM ,
+TIERSTOCLAIM,USEAPI
 //MAXWINNERS, MAXINDICES
-} = CONFIG;
+} = Config(CHAINNAME);
 
 const useApiPriceOverride = true;
 
@@ -112,22 +113,22 @@ async function go() {
   console.log(section("----- getting winners -----"));
 
 
-if (CONFIG.USEAPI === "none") {
+if (USEAPI === "none") {
   newWinners = await GetWinnersByTier(
     CHAINNAME,
     numberOfTiers,
     lastDrawId,
     tierTimestamps,
-    CONFIG.TIERSTOCLAIM,
+    TIERSTOCLAIM,
     prizesForTier,
     "latest"
   );
-} else if (CONFIG.USEAPI === "g9") {
+} else if (USEAPI === "g9") {
   newWinners = await FetchG9ApiPrizes(
     CHAINID,
     ADDRESS[CHAINNAME].PRIZEPOOL,
     lastDrawId,
-    CONFIG.TIERSTOCLAIM,
+    TIERSTOCLAIM,
     claims
   );
 
@@ -136,7 +137,7 @@ if (CONFIG.USEAPI === "none") {
     newWinners = await FetchApiPrizes(
       CHAINID,
       lastDrawId,
-      CONFIG.TIERSTOCLAIM,
+      TIERSTOCLAIM,
       claims
     );
   }
@@ -145,7 +146,7 @@ if (CONFIG.USEAPI === "none") {
   newWinners = await FetchApiPrizes(
     CHAINID,
     lastDrawId,
-    CONFIG.TIERSTOCLAIM,
+    TIERSTOCLAIM,
     claims
   );
 
@@ -155,7 +156,7 @@ if (CONFIG.USEAPI === "none") {
       CHAINID,
       ADDRESS[CHAINNAME].PRIZEPOOL,
       lastDrawId,
-      CONFIG.TIERSTOCLAIM,
+      TIERSTOCLAIM,
       claims
     );
   }
