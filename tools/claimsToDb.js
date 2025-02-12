@@ -22,11 +22,14 @@ const {DiscordNotifyClaimPrize } = require("../functions/discordAlert.js")
 const draw = 947
 const prizepool = "0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55"
 */
-
+/*
 const chainId= 42161
 const draw = 53
 const prizepool = "0x52e7910c4c287848c8828e8b17b8371f4ebc5d42"
-
+*/
+const chainId = 1
+const draw = 4
+const prizepool = "0x7865D01da4C9BA2F69B7879e6d2483aB6B354d95"
 
 /*
 const chainId = 8453
