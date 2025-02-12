@@ -33,20 +33,51 @@ const GeckoIDPrices = async (geckoIds) => {
   if (CONFIG && CONFIG.USEEXPLORERPRICING) {
     prices = await fetchPoolExplorerPrices();
   }
-  // Check if we have all the required prices from PoolExplorer
-  if (prices && geckoIds.every(id => prices[id] !== undefined)) {
-    return geckoIds.map(id => prices[id]);
-  }
+// Check if we have all the required prices from PoolExplorer
+if (prices) {
+    const missingIds = geckoIds.filter(id => prices[id] === undefined);
+
+    if (missingIds.length === 0) {
+        return geckoIds.map(id => prices[id]);
+    }
+
+    console.error('Missing Gecko IDs:', missingIds);
+}
 
   // If PoolExplorer data is not sufficient, fall back to CoinGecko
   const url =
     "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=" +
     geckoIds.join(",") +
     "&order=market_cap_desc&price_change_percentage=24h";
-
+console.log(url)
   try {
+//    let result = await fetch(url);
+//    let geckoData = await result.json();
+let geckoData
+try {
     let result = await fetch(url);
-    let geckoData = await result.json();
+
+    if (!result.ok) {
+        console.error(`Fetch error: ${result.status} ${result.statusText}`);
+        return; // Exit early if the fetch fails
+    }
+
+    geckoData = await result.json();
+
+    if (!Array.isArray(geckoData) && typeof geckoData !== 'object') {
+        console.error('Invalid geckoData format:', geckoData);
+        return; // Exit if geckoData is not iterable
+    }
+
+    // Process geckoData as needed
+    console.log('GeckoData fetched successfully:');
+
+} catch (error) {
+    console.error('Error during fetch or parsing:', error.message, {
+        url,
+        stack: error.stack
+    });
+}
 
     // Create a map to store the prices for each ID
     const pricesMap = new Map();
