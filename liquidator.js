@@ -16,7 +16,7 @@ const { CONTRACTS } = require("./constants/contracts.js");
 const { ADDRESS } = require("./constants/address.js");
 const { PROVIDERS, SIGNER } = require("./constants/providers.js");
 const { ABI } = require("./constants/abi.js");
-const { CONFIG } = require("./constants/config.js");
+const { Config,CONFIG } = require("./constants/config.js");
 const NodeCache = require("node-cache");
 const cache = new NodeCache({ stdTTL: 90 }); // Cache TTL set to 2 minutes
 const { GetLogs } = require("./utilities/getLogs.js");
@@ -42,16 +42,6 @@ const ParaswapQuote = require("./functions/paraswapQuote.js");
 const ethers = require("ethers");
 const chalk = require("chalk");
 
-let PRIORITYFEE = CONFIG.PRIORITYFEE;
-if (CHAINNAME === "GNOSIS") {
-  PRIORITYFEE = "1.5";
-}
-let PRIORITYFEEPARSED = ethers.utils.parseUnits(PRIORITYFEE, 9).toString();
-function delay(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
 const {
   useCoinGecko,
   slippage,
@@ -62,7 +52,20 @@ const {
   ONLYLIQUIDATE,
   DONTLIQUIDATE,
   MIN_LIQUIDATE,
-} = CONFIG;
+
+} = Config(CHAINNAME)
+
+let {PRIORITYFEE} = Config(CHAINNAME)
+if (CHAINNAME === "GNOSIS") {
+  PRIORITYFEE = "1.5";
+}
+let PRIORITYFEEPARSED = ethers.utils.parseUnits(PRIORITYFEE, 9).toString();
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
+
 const fs = require("fs");
 const path = require("path");
 
@@ -387,7 +390,7 @@ let combinedPrices = cache.get("geckoPrices");
       return;
     }
     console.log("prize token $", prizeTokenPrice, " eth $", ethPrice);
-  
+
 for (const pair of uniV2Pairs) {
   try {
     const LPprizeTokenPrice = await uniV2LPPriceInWeth(pair.ASSET, ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS);
@@ -523,10 +526,10 @@ const predictedProfitableAmtIn = ethers.utils.parseUnits(outValueInETH - profitT
           /*  notInProfitRange.push(
                 {pair: pairAddress,
         currentAmtIn: "0",
-        currentAmtOut: maxOut.toString(),        
+        currentAmtOut: maxOut.toString(),
         valueOutProfitabilityPercentage: 0,
                 predictedProfitableAmtIn: 0,
-                waitSeconds: 5 * maxTimeInMilliseconds / 1000, 
+                waitSeconds: 5 * maxTimeInMilliseconds / 1000,
 })*/
         } else {
           // Reset hardWaitUntil if the pair is processed
@@ -561,7 +564,10 @@ const predictedProfitableAmtIn = ethers.utils.parseUnits(outValueInETH - profitT
 
             const now = new Date();
             const oneMinuteFromNow = new Date(now.getTime() + 60000); // Add 60,000 milliseconds (1 minute)
-            const unixTimestamp = Math.floor(oneMinuteFromNow.getTime() / 1000); // Convert to UNIX timestamp
+            const fiveMinutesFromNow = new Date(now.getTime() + 300000);
+		let deadline
+		if(CHAINNAME==="ETHEREUM"){deadline=fiveMinutesFromNow}else{deadline=oneMinuteFromNow}
+            const unixTimestamp = Math.floor(deadline.getTime() / 1000); // Convert to UNIX timestamp
 
             //console.log("now ",now," one min from now ",unixTimestamp);
 
@@ -603,15 +609,16 @@ const predictedProfitableAmtIn = ethers.utils.parseUnits(outValueInETH - profitT
 
             const prizeTokenValue = poolOutFormatted * prizeTokenPrice;
             //const outValue = maxOutFormatted * pairOutPrice;
-
-            /*
+console.log("prize token price",prizeTokenPrice)
+console.log("pair out price",pairOutPrice)
+ /*
 console.log("paraswap params",
 CHAINID,CONFIG.WALLET,
             pairOutAsset,pairDecimals,bestOptionOut.toString(),ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS
 )
             const paraswap = await ParaswapQuote(CHAINID,CONFIG.WALLET,
 pairOutAsset,pairDecimals,bestOptionOut.toString(),ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS)
-console.log("paraswap amt returned",paraswap.priceRoute.destAmount)            
+console.log("paraswap amt returned",paraswap.priceRoute.destAmount)
 console.log("paraswap data",paraswap.txParams.data)
 console.log("paraswap router",paraswap.txParams.to)
 */
@@ -709,10 +716,11 @@ console.log("paraswap router",paraswap.txParams.to)
                     pairAddress,
                     vaultAddress,
                     pairOutAsset,
-                    bestOptionOut.toString(),
-                    maxToSendWithSlippage,
-                    outValue,
-                    prizeTokenValue,
+                    pairDecimals,
+                    "amt out ",bestOptionOut.toString(),
+                    "max to send",maxToSendWithSlippage.toString(),
+                    "out value",outValue,
+                    "prize toke value",prizeTokenValue,
                     gasBudgetETH
                   );
                   //const quote = await Get1inchQuote(pairOutAsset,ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS,bestOptionOut.toString())
@@ -847,11 +855,13 @@ pairAddress,
                   } else {
                     if (!useRouter) {
                       console.log("prize token exchange");
+
                     } else {
                       console.log("explicit use liquidation router flag");
                     }
                     //console.log("returned testing****");return // return for testing
-                    if (
+
+  if (
                       CHAINNAME !== "ETHEREUM" &&
                       CHAINNAME !== "SCROLL" &&
                       CHAINNAME !== "GNOSIS"
@@ -918,10 +928,50 @@ pairAddress,
                         web3TotalGasCostUSD.toFixed(4),
                         " in est gas cost"
                       );
+console.log("====== Debugging Execution Conditions ======");
+console.log("Profit:", profit, "| Type:", typeof profit);
+console.log("Profit Threshold:", profitThreshold, "| Type:", typeof profitThreshold);
+console.log("Total Cost:", totalCost, "| Type:", typeof totalCost);
+console.log("Profit Percentage:", profitPercentage, "| Type:", typeof profitPercentage);
+console.log("Total Cost * Profit %:", totalCost * profitPercentage, "| Type:", typeof (totalCost * profitPercentage));
+console.log("Out Value:", outValue, "| Type:", typeof outValue);
+console.log("===========================================");
+if (Math.sign(profit - profitThreshold) < 0) {
+ console.log(`❌ SIGN Condition failed: Profit ${profit} < Profit Threshold ${profitThreshold}`);
+} else {
+    console.log(`✅ SIGN Profit ${profit} is greater than or equal to Profit Threshold ${profitThreshold}`);
+}
+// Explicitly check and log which condition fails
+if (profit < profitThreshold) {
+    console.log(`❌ Condition failed: Profit ${profit} < Profit Threshold ${profitThreshold}`);
+} else {
+    console.log(`✅ Profit ${profit} is greater than or equal to Profit Threshold ${profitThreshold}`);
+}
+
+if (totalCost * profitPercentage > outValue) {
+    console.log(`❌ Condition failed: Total Cost * Profit % ${totalCost * profitPercentage} > Out Value ${outValue}`);
+} else {
+    console.log(`✅ Total Cost * Profit % ${totalCost * profitPercentage} is less than or equal to Out Value ${outValue}`);
+}
+
+console.log("🚀 OK! We got enough profit, proceeding with liquidation...");
+
+const roundTo = (num, places) => Math.round(num * Math.pow(10, places)) / Math.pow(10, places);
+
+const normalizedProfit = roundTo(profit, 5); // 5 decimal places
+const normalizedThreshold = roundTo(profitThreshold, 5);
+
+console.log("Rounded Profit:", normalizedProfit);
+console.log("Rounded Threshold:", normalizedThreshold);
+
+if (normalizedProfit < normalizedThreshold) {
+    console.log("✅ Rounded comparison: Profit is less than Profit Threshold");
+} else {
+    console.log("❌ Rounded comparison failed!");
+}
 
                       if (
-                        profit < profitThreshold ||
-                        totalCost * profitPercentage > outValue
+normalizedProfit < normalizedThreshold ||                        totalCost * profitPercentage > outValue
                       ) {
                         console.log(
                           "not meeting profit threshold of $",
@@ -1050,9 +1100,32 @@ pairAddress,
                     web3TotalGasCostUSD.toFixed(4),
                     " in est gas cost"
                   );
+console.log("====== Debugging Execution Conditions ======");
+console.log("Profit:", profit, "| Type:", typeof profit);
+console.log("Profit Threshold:", profitThreshold, "| Type:", typeof profitThreshold);
+console.log("Total Cost:", totalCost, "| Type:", typeof totalCost);
+console.log("Profit Percentage:", profitPercentage, "| Type:", typeof profitPercentage);
+console.log("Total Cost * Profit %:", totalCost * profitPercentage, "| Type:", typeof (totalCost * profitPercentage));
+console.log("Out Value:", outValue, "| Type:", typeof outValue);
+console.log("===========================================");
+
+// Explicitly check and log which condition fails
+if (wprofit < profitThreshold) {
+    console.log(`❌ Condition failed: Profit ${profit} < Profit Threshold ${profitThreshold}`);
+} else {
+    console.log(`✅ Profit ${profit} is greater than or equal to Profit Threshold ${profitThreshold}`);
+}
+
+if (totalCost * profitPercentage > outValue) {
+    console.log(`❌ Condition failed: Total Cost * Profit % ${totalCost * profitPercentage} > Out Value ${outValue}`);
+} else {
+    console.log(`✅ Total Cost * Profit % ${totalCost * profitPercentage} is less than or equal to Out Value ${outValue}`);
+}
+
+console.log("🚀 OK! We got enough profit, proceeding with liquidation...");
 
                   if (
-                    profit < profitThreshold ||
+                    profit < profitThreshold &&
                     totalCost * profitPercentage > outValue
                   ) {
                     console.log(
@@ -1173,7 +1246,7 @@ pairAddress,
                       fileData = JSON.parse(
                         fs.readFileSync(dataFilePath, "utf-8")
                       );
-  
+
                     // console.log(
                //  "Initial data read from file:",
                //  JSON.stringify(fileData, null, 2)
@@ -1206,7 +1279,7 @@ pairAddress,
                     ethPrice: ethPrice,
                     date: Date.now(),
                   };
-                
+
                 // console.log("new data for file write", newData);
               // console.log(
                //  "New data to be added:",
@@ -1406,7 +1479,7 @@ pairAddress,
           "min------------ "
       );*/
     } else {
-      console.log(section("No liquidations completed"));
+      //console.log(section("No liquidations completed"));
 
       noAction();
     }
