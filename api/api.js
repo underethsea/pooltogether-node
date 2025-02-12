@@ -68,6 +68,7 @@ const pricesToFetch = [
   "wrapped-bitcoin",
   "gemini-dollar",
   "coinbase-wrapped-staked-eth",
+  "staked-ether",
   "aerodrome-finance",
   "wrapped-steth",
   "angle-usd",
@@ -75,7 +76,10 @@ const pricesToFetch = [
   "crash",
   "based-2",
   "xdai",
-  "weth"
+  "weth",
+  "moonwell-artemis",
+  "euro-coin",
+"super-oeth"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -310,8 +314,8 @@ console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).
 console.log("waiting 45 seconds")    
 await delay(45000)
     await fetchAndUpdateStats();
-console.log("waiting 2 minutes")
-await delay(120000) 
+//console.log("waiting 2 minutes")
+//await delay(120000) 
  }
 }
 

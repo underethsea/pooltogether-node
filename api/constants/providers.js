@@ -6,9 +6,12 @@ require('../../env-setup');
 
 const ethereumEndpoint = "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY;
 const optimismEndpoint = "https://opt-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY;
+const baseEndpoint = "https://base-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+
 const avalancheEndpoint = "https://rpc.ankr.com/avalanche";
 const opSepolia = "https://opt-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY;
 const PROVIDERS = {
+   BASE: new ethers.providers.JsonRpcProvider(baseEndpoint),
     OPSEPOLIA: new ethers.providers.JsonRpcProvider(opSepolia),
     ETHEREUM: new ethers.providers.JsonRpcProvider(ethereumEndpoint),
     OPTIMISM: new ethers.providers.JsonRpcProvider(optimismEndpoint)
