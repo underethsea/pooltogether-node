@@ -7,7 +7,7 @@ const {getChainConfig } = require('../chains');
 const CHAINNAME = getChainConfig().CHAINNAME;
 
 const GetPrizePoolData = async (block="latest") => {
-  let 
+  let
     lastAwardedDrawAwardedAt,
     lastCompletedDrawStartedAt,
     drawPeriodSeconds,
@@ -62,7 +62,7 @@ const multicallRequests = [];
 console.log("number of tiers",numberOfTiers)
 // Iterate over the tiers
 // for (let tier = 0; tier < numberOfTiers; tier++) {
- 
+
 //   multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].calculateTierTwabTimestamps(tier,{blockTag: block}));
 
 //   // multicallRequests.push(CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee(tier));
@@ -104,21 +104,21 @@ for (let tier = 0; tier < numberOfTiers; tier++) {
   //multicallRequests.push(CONTRACTS.CLAIMER[CHAINNAME].computeMaxFee(tier));
    multicallRequests.push(CONTRACTS.PRIZEPOOL[CHAINNAME].getTierRemainingLiquidity(tier,{blockTag: block}));
 
-} 
+}
 
 // Make the multicall
 const multicallResult = await Multicall(multicallRequests);
 const drawClosesAt = await CONTRACTS.PRIZEPOOL[CHAINNAME].drawClosesAt(lastDrawId,{blockTag: block});
 for (let i = 0; i < numberOfTiers; i++) {
-  const startIndex = i * 4; 
+  const startIndex = i * 4;
 
   const startTimestamp = drawClosesAt - (multicallResult[startIndex] * drawPeriodSeconds);
   const endTimestamp = drawClosesAt;
   const prizeSize = multicallResult[startIndex + 1];
   const prizeCount = multicallResult[startIndex + 2];
   //const tierMaxClaimFee = multicallResult[startIndex + 3];
-  const tierRemainingLiquidity = multicallResult[startIndex + 3]; 
-  console.log("tier ", i, " prize size ", (Number(prizeSize) / 1e18).toFixed(6), " remaining liquidity ", (Number(tierRemainingLiquidity)/ 1e18).toFixed(5), 
+  const tierRemainingLiquidity = multicallResult[startIndex + 3];
+  console.log("tier ", i, " prize size ", (Number(prizeSize) / 1e18).toFixed(6), " remaining liquidity ", (Number(tierRemainingLiquidity)/ 1e18).toFixed(5),
 " max fee ",((Number(prizeSize) / 1e18) * (Number(maxFeePortionOfPrize) / 1e18)).toFixed(7));
 
   tierTimestamps.push({ startTimestamp, endTimestamp });
@@ -133,7 +133,7 @@ for (let i = 0; i < numberOfTiers; i++) {
   } catch (error) {
     console.log("Error fetching data:", error);
   }
-  
+
 
   /*console.log(
     "draw started ",
@@ -195,9 +195,9 @@ console.log("Prize pool was awarded",timeSinceAwarding.toFixed(2),"hours ago")
   //     " - ",
   //     tierTimestamps[q]?.endTimestamp.toString()
   //   );
- 
+
 }
-  
+
 /*  console.log("lastDrawId:", lastDrawId);
   console.log("numberOfTiers:", numberOfTiers);
   console.log("tierTimestamps:", tierTimestamps);

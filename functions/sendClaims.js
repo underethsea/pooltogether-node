@@ -91,7 +91,7 @@ const SendClaims = async (
       MAXINDICES,
       LAST_IN_LINE
     );
-    
+
     // Now finalWinners and finalPrizeIndices are ready for use, and respect MAXINDICES
 
     winners = finalWinners;
@@ -119,11 +119,11 @@ const SendClaims = async (
     console.log(section("     ---- profitability -----"));
 
 
-  
+
 
     const { estimatedPrizeTokenReward, estimateNetFromClaims, estimateNetPercentage } =
     await calculateGasAndProfitability(claimerContract, vault, tier, winners, prizeIndices, feeRecipient, minFeePerPrizeToClaim, ethPrice, prizeTokenPrice);
-  
+
 
     //ETH: ${totalGasCostEther.toFixed(2)}
 
@@ -247,12 +247,12 @@ console.log("finalPrizeIndices",finalPrizeIndices.flat().length)
 console.log("remaining prize indices",remainingPrizeIndices.length)
   if (remainingPrizeIndices.length > 0) {
     console.log("More prize indices detected for the same vault/tier, rechecking profitability...");
-    
+
     // Loop through remaining prize indices and try claiming again if profitable
     prizeIndices = remainingPrizeIndices;
     winners = finalWinners; // Reuse the same winners
     continue; // Repeat the claim process for remaining prize indices
-  
+
 } else {
   console.log(
     "......not above profit threshold of $",
