@@ -24,7 +24,7 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
 const MANUAL_GAS_LIMIT = 1150000;
 const RETRYTIME = CONFIG.RNGRETRY * 1000;
-const DONTSEND =false; // true to not send the txs
+const DONTSEND = false; // true to not send the txs
 
 const prizeTokenSymbol = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
 const prizeTokenGeckoId = ADDRESS[CHAINNAME].PRIZETOKEN.GECKO;
@@ -267,17 +267,29 @@ async function handleOpenDraw(openDrawId) {
   }
 }
 
+const MAX_TIMEOUT = 2147483647; // Max timeout for setTimeout (~24.8 days)
+const POLLING_INTERVAL = 1000 * 60 * 10; // Polling interval (10 minutes)
+
 async function handleExpiredDraw(openDrawClosesAt) {
-  const waitTime = parseInt(openDrawClosesAt) * 1000 - Date.now() + 7200;
-  if (waitTime > 0) {
-const currentTime = new Date();
-const futureTime = new Date(currentTime.getTime() + waitTime);
+  const targetTime = parseInt(openDrawClosesAt) * 1000 + 7200; // Target timestamp in ms
 
-console.log(`Waiting ${waitTime / 1000} seconds until the next draw closes.`);
-console.log(`The next draw will close at approximately: ${futureTime.toLocaleString()}`);
+  const checkTime = () => {
+    const currentTime = Date.now();
+    const remainingTime = targetTime - currentTime;
 
-    setTimeout(checkAndCompleteRng, waitTime);
-  }
+    if (remainingTime <= 0) {
+      console.log("Wait is over, checking auction...");
+      checkAndCompleteRng(); // Replace with your actual function
+    } else if (remainingTime > MAX_TIMEOUT) {
+      console.log(`Waiting ~${Math.ceil(MAX_TIMEOUT / (1000 * 60 * 60 * 24))} days (max timeout chunk).`);
+      setTimeout(checkTime, MAX_TIMEOUT);
+    } else {
+      console.log(`Waiting ${remainingTime / 1000} seconds until the next draw closes.`);
+      setTimeout(checkTime, remainingTime); // Final short timeout
+    }
+  };
+
+  checkTime(); // Start the check process
 }
 
 async function handleCloseDraw(drawIdToAward, openDrawId) {
@@ -292,7 +304,7 @@ async function handleCloseDraw(drawIdToAward, openDrawId) {
           ADDRESS[CHAINNAME].PRIZETOKEN.DECIMALS
         )} ${prizeTokenSymbol}`
       );
- 
+
 console.log("PRIORITYFEEE",PRIORITYFEE,"feeData.maxFeePerGas",feeData.maxFeePerGas.toString())
       const gasEstimate = await GasEstimate(
         CONTRACTS.DRAWMANAGERWITHSIGNER[CHAINNAME],
@@ -312,7 +324,7 @@ console.log("PRIORITYFEEE",PRIORITYFEE,"feeData.maxFeePerGas",feeData.maxFeePerG
           } else {
             const finishTx = await CONTRACTS.DRAWMANAGERWITHSIGNER[CHAINNAME].finishDraw(CONFIG.WALLET, {
               maxPriorityFeePerGas: PRIORITYFEEPARSED,
-                  maxFeePerGas: feeData.maxFeePerGas,         
+                  maxFeePerGas: feeData.maxFeePerGas,
    });
             console.log("Sending transaction, waiting for confirmation...");
             const finishReceipt = await finishTx.wait();
