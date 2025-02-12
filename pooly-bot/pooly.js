@@ -82,10 +82,11 @@ readdirSync('./src/events').forEach(async file => {
 
 const chainNames = Object.keys(ADDRESS);
 
-chainNames.forEach(chain => {
+/*chainNames.forEach(chain => {
   liquidationEvent(client, chain);
   vaultEvent(client, chain);
 });
+*/
 
 // Node.js listeners
 process.on("unhandledRejection", e => {
