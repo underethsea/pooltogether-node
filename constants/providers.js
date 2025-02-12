@@ -12,7 +12,7 @@ if (!process.env.ALCHEMY_KEY) {
 // Check if PRIVATE_KEY environment variable is missing
 if (!process.env.PRIVATE_KEY) {
   console.error("!!!!!!!!!!!!!!!!!!!!**************************************************************************      Missing .env variable: PRIVATE_KEY");
-} 
+}
 
 // const ethereumEndpoint = "https://mainnet.infura.io/v3/" + process.env.ETHEREUM_KEY;
 // const ethereumEndpoint = "https://eth-mainnet.alchemyapi.io/v2/"
@@ -23,7 +23,7 @@ if (!process.env.PRIVATE_KEY) {
 // const optimismEndpoint = "https://opt-mainnet.g.alchemy.com/v2/" + process.env.POLYGON_KEY;
 // const avalancheEndpoint = "https://rpc.ankr.com/avalanche";
 const gnosisEndpoint = "https://gnosis-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
-//const scrollEndpoint = "https://scroll-mainnet-public.unifra.io" 
+//const scrollEndpoint = "https://scroll-mainnet-public.unifra.io"
 const scrollEndpoint = "https://scroll-mainnet.g.alchemy.com/v2/"  + process.env.ALCHEMY_KEY
 const goerliEndpoint = "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 const mumbaiEndpoint = "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
@@ -43,7 +43,7 @@ const arbEndpoint = "https://arb-mainnet.g.alchemy.com/v2/" + process.env.ALCHEM
 //const arbEndpoint = "https://arbitrum-mainnet.infura.io/v3/" + process.env.INFURA_KEY
 const ws_arbEndpoint = "wss://arbitrum-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
 const ws_opEndpoint = "wss://optimism-mainnet.infura.io/ws/v3/" +  process.env.INFURA_KEY
-// const baseSepoliaEndpoint = "https://sepolia.base.org" 
+// const baseSepoliaEndpoint = "https://sepolia.base.org"
 const baseSepoliaEndpoint = "https://base-sepolia.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const mainnetEndpoint = "https://eth.llamarpc.com"
 const arbSepoliaEndpoint = "https://sepolia-rollup.arbitrum.io/rpc"
@@ -63,7 +63,10 @@ const PROVIDERS = {
 GNOSIS: new ethers.providers.JsonRpcProvider(gnosisEndpoint),
   SCROLL: new ethers.providers.JsonRpcProvider(scrollEndpoint),
   FLASHBOTS: new ethers.providers.JsonRpcProvider(flashbotsEndpoint),
-    ETHEREUM:  new ethers.providers.JsonRpcProvider(mainnetEndpoint),
+ETHEREUM:  new ethers.providers.JsonRpcProvider(mainnetEndpoint),
+// flashbots
+//ETHEREUM:  new ethers.providers.JsonRpcProvider(flashbotsEndpoint),
+//ETHEREUM:  new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     MAINNET: new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     OPSEPOLIA: new ethers.providers.JsonRpcProvider(opSepoliaEndpoint),
     //  GOERLI: new ethers.providers.JsonRpcProvider(goerliEndpoint),
