@@ -15,7 +15,7 @@ const Prizes = async () => {
     const totalPrizeInDollars = totalPrize * ethereumPrice;
 
     const sortedPrizes = Object.entries(prizeData).sort(
-      ([, a], [, b]) => parseInt(b.prizes.prizePoolPrizeBalance) - parseInt(a.prizes.prizePoolPrizeBalance)
+      ([, a], [, b]) => parseFloat(b.prizes.prizePoolPrizeBalance) - parseFloat(a.prizes.prizePoolPrizeBalance)
     );
 
     return {
