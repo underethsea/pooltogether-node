@@ -9,13 +9,13 @@ const Prizes = async () => {
 
     // Calculate total prize in Ether
     const totalPrize = Object.values(prizeData).reduce((acc, prize) => {
-      return acc + parseInt(prize.total) / 1e18;
+      return acc + parseFloat(prize.prizes.prizePoolPrizeBalance);
     }, 0);
 
     const totalPrizeInDollars = totalPrize * ethereumPrice;
 
     const sortedPrizes = Object.entries(prizeData).sort(
-      ([, a], [, b]) => parseInt(b.total) - parseInt(a.total)
+      ([, a], [, b]) => parseInt(b.prizes.prizePoolPrizeBalance) - parseInt(a.prizes.prizePoolPrizeBalance)
     );
 
     return {
@@ -23,13 +23,11 @@ const Prizes = async () => {
       totalPrizeInDollars,
       prizes: sortedPrizes.map(([chain, prizeData]) => {
         const tier0 = prizeData.prizes.tierData.find((tier) => tier.tier === 0);
-        const tier1 = prizeData.prizes.tierData.find((tier) => tier.tier === 1);
 
         return {
           chain,
-          totalPrize: parseInt(prizeData.total) / 1e18,
+          totalPrize: parseFloat(prizeData.prizes.prizePoolPrizeBalance) ,
           tier0Prize: tier0 ? tier0.value : null,
-          tier1Prize: tier1 ? tier1.value : null,
         };
       }),
     };
