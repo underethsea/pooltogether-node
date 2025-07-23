@@ -328,8 +328,9 @@ async function go() {
           console.error(`Error setting price for pair ${pair.ASSET}: ${error}`);
         }
       }
-
-      pairs.map((pair, index) => (pair.PRICE = geckoPrices[index]));
+console.log("gecko prices",geckoPrices)
+console.log("pairs",pairs)
+ pairs.map((pair, index) => (pair.PRICE = geckoPrices[index]));
       pairs = pairs.concat(uniV2Pairs);
     }
 
@@ -864,7 +865,8 @@ pairAddress,
   if (
                       CHAINNAME !== "ETHEREUM" &&
                       CHAINNAME !== "SCROLL" &&
-                      CHAINNAME !== "GNOSIS"
+                      CHAINNAME !== "GNOSIS" &&
+CHAINNAME !== "WORLD"
                     ) {
                       await PrizeSwim(
                         pairAddress,
@@ -874,11 +876,13 @@ pairAddress,
                         profitThresholdETH
                       );
                     } else {
+console.log("here prizetoken balance")
                       let walletPrizeTokenBalance = await CONTRACTS.PRIZETOKEN[
                         CHAINNAME
                       ].balanceOf(CONFIG.WALLET);
                       console.log(walletPrizeTokenBalance.toString());
                       const method = functionName;
+console.log("gas est")
                       web3TotalGasCost = await GasEstimate(
                         CONTRACTS.LIQUIDATIONROUTERSIGNER[CHAINNAME],
                         method,
