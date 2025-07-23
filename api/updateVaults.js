@@ -9,10 +9,17 @@ const { PROVIDERS } = require('../constants/providers.js');
 const { OwnerInfo } = require("./functions/getVaultOwner.js");
 const updateTimeFile = './data/lastUpdateV5Vaults.json';
 const { Multicall } = require("../utilities/multicall.js")
-const BLACKLIST = ['0x019ff7c88119bffce03cfa163148bc2e051f5905'].map(address => address.toLowerCase());
+const BLACKLIST = [
+'0xA0be8Ac4A90E080138C8c7B1Da7BfEb7C3AbBc1b', // fluid eth vault
+'0x36e5d788c8809c2cf5b0e919bfe5687404893428', // cauliflower ethereum
+'0x32b27D1aB97607BF276ce3C915ef9d66fB35b73C', // test nuts plus
+'0x4fd55e86485be48111b0ad17558da666458b01b6', // moxie base
+'0x8ce0931af3fdb13c655bada9cbccc69056b97105', // dead usdc on scroll
+'0x8adf2192d779b015e2dcfd8ef3ba115081ea2ec2', // harvest usdc base
+'0x019ff7c88119bffce03cfa163148bc2e051f5905'].map(address => address.toLowerCase());
 const DEPRECATED_NO_DEPOSIT = ['0xf1d934d5a3c6e530ac1450c92af5ba01eb90d4de','0x8c2f27b7819eb1bb7e3b5c407c5e1839186d5aba'].map(address => address.toLowerCase());
 const DEPRECATED_NO_ACCESS = [].map(address => address.toLowerCase());
-
+const SPECIAL_ACCESS = ['0x8ad5959c9245b64173d4c0c3cd3ff66dac3cab0e'].map(address => address.toLowerCase());
 const INVALID_VAULTS = './data/invalidVaults.json'; // File to store invalid vaults
 const oneDayInSeconds = 24 * 60 * 60;
 const sevenDaysInSeconds = 7 * oneDayInSeconds;
@@ -155,7 +162,10 @@ if(vault.symbol==="przPOOL"){lastAwardedDrawId = lastAwardedDrawId + 1} // use o
    const contributed24h = await getContributed24h(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
       const contributed7d = await getContributed7d(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
       const contributed28d = await getContributed28d(prizePoolContract, vault.vault, lastAwardedDrawId, drawPeriodSeconds);
-    
+     let drawsToGo = 7
+                if(chainName ==="ETHEREUM"){drawsToGo = 1}
+                const vaultPortion = await prizePoolContract.getVaultPortion(vault.vault,lastAwardedDrawId + 1 - drawsToGo,lastAwardedDrawId+1)
+            
       const won7d = getVault7dPrize(prizeData, vault.vault, lastAwardedDrawId);
       const prizes7d = getVaultPrizes(prizeData, vault.vault, lastAwardedDrawId, 7);
       vault.prizes7d = prizes7d
@@ -163,6 +173,7 @@ if(vault.symbol==="przPOOL"){lastAwardedDrawId = lastAwardedDrawId + 1} // use o
       vault.contributed24h = contributed24h;
       vault.contributed28d = contributed28d;
       vault.won7d = won7d;
+      vault.vp = Number(vaultPortion)/1e18
 
       try {
         const ownerInfo = await OwnerInfo(vault.vault, PROVIDERS[chainName]);
@@ -180,7 +191,10 @@ if(vault.symbol==="przPOOL"){lastAwardedDrawId = lastAwardedDrawId + 1} // use o
     let status;
     if (DEPRECATED_NO_DEPOSIT.includes(vault.vault)) {
       status = 1;
-    } else if (DEPRECATED_NO_ACCESS.includes(vault.vault)) {
+    } else if  (SPECIAL_ACCESS.includes(vault.vault)) {
+      status = 2;
+    }
+      else if (DEPRECATED_NO_ACCESS.includes(vault.vault)) {
       status = 0;
     }
 
@@ -313,7 +327,10 @@ async function UpdateV5Vaults(vaults, prizePool, chainName, chainId) {
         const symbol = await contract.symbol();
         const decimals = await contract.decimals();
         const owner = await contract.owner();
-        const liquidationPair = await contract.liquidationPair();
+        let liquidationPair
+try{
+        liquidationPair = await contract.liquidationPair();}
+catch(e){console.log("no liquidation pair");liquidationPair = ""}
         const assetContract = new ethers.Contract(asset, ABI.ERC20, PROVIDERS[chainName]);
         const assetSymbol = await assetContract.symbol();
         console.log("made it past all fetching")

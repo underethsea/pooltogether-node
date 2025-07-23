@@ -1,7 +1,7 @@
 const axios = require("axios");
 const http = require("http");
 const https = require("https");
-
+require('../../env-setup');
 const agent = new https.Agent({ keepAlive: true });
 
 /**
@@ -27,8 +27,15 @@ async function safeAxiosPost(url, payload, maxRetries = 5, initialDelay = 5000) 
     while (retries < maxRetries) {
         try { 
             //console.log(`[${new Date().toISOString()}] Attempting request... Retry: ${retries}`);
+
+const headers = url.includes("satsuma")
+  ? { 'x-api-key': process.env.SATSUMA_API_KEY }
+  : {};
+
+console.log("Request headers:", headers);
             const response = await axios.post(url, payload, {
                 timeout: 10000, // 10 seconds timeout
+		headers,
                 httpsAgent: agent, // Use keep-alive connections
             });
             //console.log(`[${new Date().toISOString()}] Request succeeded on attempt ${retries + 1}`);

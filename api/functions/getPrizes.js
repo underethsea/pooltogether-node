@@ -25,17 +25,19 @@ async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
     return cachedData;
   }
 
-  const prizepoolContract = new ethers.Contract(prizepoolAddress, ABI.PRIZEPOOLFINAL, PROVIDERS[chainName]);
+  const prizepoolContract = new ethers.Contract(prizepoolAddress, ABI.PRIZEPOOL, PROVIDERS[chainName]);
 
   try {
     const [
       drawPeriodSeconds,
       nextDrawId,
-      numberOfTiers
+      numberOfTiers,
+      firstDrawTime,
     ] = await Promise.all([
       prizepoolContract.drawPeriodSeconds(),
       prizepoolContract.getOpenDrawId(),
-      prizepoolContract.numberOfTiers()
+      prizepoolContract.numberOfTiers(),
+      prizepoolContract.firstDrawOpensAt(),
     ]);
 
     // Get prize token details from ADDRESS[chainName].PRIZETOKEN
@@ -88,6 +90,7 @@ async function GetPrizes(chainName, prizepoolAddress, cacheDuration = 600) {
     const data = {
       drawPeriodSeconds,
       nextDrawId,
+      firstDrawTime: parseInt(firstDrawTime.toString()),
       numberOfTiers,
       prizePoolPrizeBalance: convertedPrizePoolPrizeBalance.toString(),
       tierData
