@@ -60,7 +60,7 @@ const FetchG9ApiPrizes = async (chain, prizePool, draw) => {
     );
     if (jsonData) {
       const aggregatedPrizes = await fetchAndAggregatePrizes(jsonData);
-      console.log(aggregatedPrizes);
+      //console.log(aggregatedPrizes);
       return aggregatedPrizes;
     } else {
       return null;
