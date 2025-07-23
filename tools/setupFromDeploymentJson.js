@@ -6,10 +6,10 @@ const fs = require('fs');
 //const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-mainnet/prod.deploy.3/deployments/optimism/contracts.json"
 //https://github.com/GenerationSoftware/pt-v5-testnet/blob/main/deployments/baseSepolia/contracts.json
 // const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/baseSepolia/contracts.json"
-const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/arbitrumSepolia/contracts.json"
-
-
-const jsonFile = require('./gnosisDeployment.json')
+//const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-testnet/main/deployments/arbitrumSepolia/contracts.json"
+const url = "https://raw.githubusercontent.com/GenerationSoftware/pt-v5-mainnet/main/deployments/world/contracts.json"
+ 
+//const jsonFile = require('./gnosisDeployment.json')
 
 // Mapping of types to their corresponding keys (case-insensitive)
 const typeKeyMapping = {
@@ -128,8 +128,8 @@ async function main() {
         // Fetch JSON data from the URL
         
         let jsonData
-        if (jsonFile){jsonData=jsonFile}else{jsonData = await fetchData(url)}
-        
+        //if (jsonFile){jsonData=jsonFile}else{jsonData = await fetchData(url)}
+        jsonData = await fetchData(url)
         // Extract contracts array from JSON data
         const contracts = jsonData.contracts || [];
 

@@ -145,11 +145,12 @@ async function compareSingleDraw(chain, prizePool, drawId) {
 // Usage for comparing all draws
  
 //const chain = '42161';
+//const prizePool = '0x52E7910C4C287848C8828e8b17b8371f4Ebc5D42';
 //const chain = '8453';
 
 // op
-const chain = '10'
-const prizePool = '0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55';
+//const chain = '10'
+//const prizePool = '0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55';
 
 // arb
 //const prizePool = '0x52e7910c4c287848c8828e8b17b8371f4ebc5d42'
@@ -159,7 +160,9 @@ const prizePool = '0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55';
 //const totalDraws = 42;
 
 //compareDraws(chain, prizePool, totalDraws);
-
+//world
+const chain = '480'
+const prizePool = '0x99ffb0A6c0CD543861c8dE84dd40E059FD867dcF'
 // Usage for comparing a single draw with detailed discrepancies
-const specificDrawId = '101';
+const specificDrawId = '46';
 compareSingleDraw(chain, prizePool, specificDrawId);
