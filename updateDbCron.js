@@ -16,6 +16,9 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
 
 // Now import the required modules
+const fs = require("fs");
+const path = require("path");
+
 const { ethers } = require('ethers');
 const { ABI } = require('./constants/abi');
 const { PROVIDERS } = require('./constants/providers');
@@ -25,7 +28,9 @@ const { AddClaim } = require('./functions/dbDonkey');
 const { SendMessageToChannel, DiscordNotifyClaimPrize } = require('./functions/discordAlert');
 const { DB } = require("./functions/dbConnection");
 const { PrizeCalcToDb } = require("./functions/prizeCalcToDb");
-const MAX_TIERS_CALCULATE = 6;
+
+const MAX_TIERS_CALCULATE = CHAINNAME === "WORLD" ? 6 :7;
+console.log("calculating ",MAX_TIERS_CALCULATE,"tiers")
 const DRAW_AWARD_INTERVAL = 90 * 60 * 1000; // 90 minutes in milliseconds
 
 async function checkDrawPrizeCalc(currentBlock) {
@@ -45,7 +50,17 @@ async function checkDrawPrizeCalc(currentBlock) {
 
     if (drawStatus === "not exists" || drawStatus === "not finished") {
             await SendMessageToChannel("1225048554708406282", "Found missing prize data for "+CHAINNAME)
-        await PrizeCalcToDb(CHAINID, "latest", MAX_TIERS_CALCULATE, true);
+if(ADDRESS[CHAINNAME].MULTICALL){
+PrizeCalcToDb(
+  CHAINID,                         // chainId
+  "latest",                   // block
+  MAX_TIERS_CALCULATE,                          // maxTiersToCalculate
+  true,                       // debug
+  1000,                        // multicallBatchSize
+  ADDRESS[CHAINNAME].MULTICALL // multicallAddress
+);
+}else{       
+ await PrizeCalcToDb(CHAINID, "latest", MAX_TIERS_CALCULATE, true);}
     }
 }
 
@@ -81,15 +96,28 @@ async function checkDrawEntry(network, drawId, prizepool) {
 async function checkClaimedPrizeEvents(currentBlock) {
     const provider = PROVIDERS[CHAINNAME];
     const contract = new ethers.Contract(ADDRESS[CHAINNAME].PRIZEPOOL, ABI.PRIZEPOOL, provider);
-    let eightHoursOfBlocks = 150500; // Assuming ~2 secs per block + buffer 
+    let eightHoursOfBlocks = 150000; // Assuming ~2 secs per block + buffer 
+    if(CHAINNAME ==="WORLD"){eightHoursOfBlocks = parseInt(eightHoursOfBlocks/6)}
     if (CHAINNAME==="ARBITRUM"){eightHoursOfBlocks *= 10}
-    const events = await contract.queryFilter({
-        address: ADDRESS[CHAINNAME].PRIZEPOOL,
-        topics: [TOPICS.CLAIMEDPRIZE]
-    }, currentBlock - eightHoursOfBlocks, 'latest');
+ if(CHAINNAME === "BASE"){eightHoursOfBlocks=24000}
+const fromBlock = getLastBlock(CHAINNAME) || (currentBlock - eightHoursOfBlocks);
+let events;
+  try {
+    events = await contract.queryFilter({
+      address: ADDRESS[CHAINNAME].PRIZEPOOL,
+      topics: [TOPICS.CLAIMEDPRIZE]
+    }, fromBlock, currentBlock);
+  } catch (error) {
+    console.error(`Failed to fetch claim events for ${CHAINNAME}:`, error);
+    return; // Don't write block number if fetch fails
+  }
+   
+
 
     if (events.length > 0) {
-        console.log(events.length, "claim events");
+        
+console.log(events.length, "claim events");
+  setLastBlock(CHAINNAME, currentBlock);
 
         const claimLogs = events.map((claim) => {
             const decodedLog = contract.interface.parseLog(claim);
@@ -133,36 +161,64 @@ async function checkClaimedPrizeEvents(currentBlock) {
     } else {
         console.log(`No ClaimedPrize events found on ${CHAINNAME}.`);
     }
+  setLastBlock(CHAINNAME, currentBlock);
 }
 
 let lastClaimCheckTime = 0;
+
 async function main() {
+  const provider = PROVIDERS[CHAINNAME];
+  const currentBlock = await provider.getBlockNumber();
+  const now = Date.now();
+
+  // Run prize calc — even if it throws, don't stop
+  try {
+    await checkDrawPrizeCalc(currentBlock);
+  } catch (error) {
+    console.error("Prize calculation failed:", error);
+    await SendMessageToChannel("1225048554708406282", `❌ Prize calc failed on ${CHAINNAME}`);
+  }
+
+  // Always try to run claim check if enough time has passed
+  if (now - lastClaimCheckTime >= 8 * 60 * 60 * 1000) {
     try {
-        const provider = PROVIDERS[CHAINNAME];
-        const currentBlock = await provider.getBlockNumber();
-        
-        // Check the awarding part every 2 hours
-        await checkDrawPrizeCalc(currentBlock);
-
-        // Get the current time
-        const now = Date.now();
-
-        // Check the claiming part every 8 hours
-        if (now - lastClaimCheckTime >= 8 * 60 * 60 * 1000) { // 8 hours in milliseconds
-            await checkClaimedPrizeEvents(currentBlock);
-            lastClaimCheckTime = now; // Update the last run time
-        }
+      await checkClaimedPrizeEvents(currentBlock);
+      lastClaimCheckTime = now;
     } catch (error) {
-        console.error("An error occurred in main:", error);
-    } finally {
-        scheduleNextRun();
+      console.error("Claim check failed:", error);
+      await SendMessageToChannel("1225048554708406282", `❌ Claim check failed on ${CHAINNAME}`);
     }
+  }
+
+  scheduleNextRun();
+}
+
+const LAST_BLOCK_FILE = path.join(__dirname, "lastBlockDbCron.json");
+
+function getLastBlock(chainName) {
+  try {
+    const data = fs.readFileSync(LAST_BLOCK_FILE, "utf-8");
+    const json = JSON.parse(data);
+    return json[chainName] || null;
+  } catch (err) {
+    return null;
+  }
+}
+
+function setLastBlock(chainName, blockNumber) {
+  let data = {};
+  try {
+    data = JSON.parse(fs.readFileSync(LAST_BLOCK_FILE, "utf-8"));
+  } catch (e) {
+    // file may not exist yet
+  }
+  data[chainName] = blockNumber;
+  fs.writeFileSync(LAST_BLOCK_FILE, JSON.stringify(data, null, 2));
 }
 
 
-
 function scheduleNextRun() {
-    setTimeout(main, 2 * 60 * 60 * 1000); // Schedule next run in 2 hours
+    setTimeout(main, 4 * 60 * 60 * 1000); // Schedule next run in 4 hours
 }
 
 // Initial run
