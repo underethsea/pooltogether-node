@@ -19,6 +19,7 @@ const { GetPlayers } = require("./functions/getPlayers");
 const { GetPrizes } = require("./functions/getPrizes");
 const { GetClaims } = require("./functions/getClaims");
 const { GetTwabPromotions } = require("./functions/getTwabRewards");
+const { GetMetaTwabRewards } = require("./functions/getMetaTwabRewards");
 const { UpdateV5Vaults } = require("./updateVaults");
 const { PublishPrizeHistory } = require("./publishPrizeHistory");
 const { FindAndPriceUniv2Assets } = require("./functions/uniV2Prices");
@@ -55,6 +56,7 @@ const { PROVIDERS } = require("../constants/providers");
 // var sanitizer = require('sanitize');
 const waitTime = 120000;
 const pricesToFetch = [
+  "morpho",
   "higher",
   "arbitrum",
   "tether",
@@ -79,7 +81,9 @@ const pricesToFetch = [
   "weth",
   "moonwell-artemis",
   "euro-coin",
-"super-oeth"
+"super-oeth",
+"worldcoin-wld",
+"usds"
 ];
 
 const poolToken = "0x395Ae52bB17aef68C2888d941736A71dC6d4e125";
@@ -297,6 +301,9 @@ console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).
         const rewardsV5 = await GetTwabPromotions();
         publish(JSON.stringify(rewardsV5), "/twabrewards");
         logit("...published ", "/twabrewards");
+     const rewardsMeta = await GetMetaTwabRewards();
+        publish(JSON.stringify(rewardsMeta), "/metatwabrewards");
+        logit("...published ", "/metatwabrewards");
       } catch (e) {
         logit("update twab rewards failed", e);
       }
@@ -311,8 +318,8 @@ console.log(app._router.stack.map((layer) => layer.route?.path).filter(Boolean).
       }
     }
     lessFrequentCount += 1;
-console.log("waiting 45 seconds")    
-await delay(45000)
+   console.log("waiting 45 seconds")    
+    await delay(45000)
     await fetchAndUpdateStats();
 //console.log("waiting 2 minutes")
 //await delay(120000) 
@@ -334,8 +341,9 @@ try {
     console.error("Error calling PrizeLeaderboard:", error);
   }
   let allPoolsUniqueWinners = new Set();
-console.log(`Current time: ${new Date().toISOString()}`);  
-for (let chain of chains) {
+  console.log(`Current time: ${new Date().toISOString()}`);  
+  for (let chain of chains) {
+   console.log("working on chain ",chain)
     let allDrawsOverview = [];
     let allDrawsOverviewClaims = [];
 
@@ -517,7 +525,7 @@ try {
   logit("running fetch, price fetch bombed=======================", e);
 }
 
-console.log("running fetch part 2")
+//console.log("running fetch part 2")
   let pendingPrize = {};
   // todo meta poolers
   let vaultOverview = [];
@@ -525,12 +533,20 @@ console.log("running fetch part 2")
     let v5Prizes;
    if(chain.hideFromApp !== true){
     pendingPrize[chain.name] = {};  
- try {
+    try {
       const prizePoolContract = new ethers.Contract(
         chain.prizePool,
         ABI.PRIZEPOOL,
         PROVIDERS[chain.name]
       );
+       const lastDrawId =  await prizePoolContract.getLastAwardedDrawId()
+       let TotalContributed7d
+    if(chain.name==="ETHEREUM"){
+       TotalContributed7d = await prizePoolContract.getTotalContributedBetween(lastDrawId,lastDrawId).div(4)
+    }else{
+     TotalContributed7d = await prizePoolContract.getTotalContributedBetween(lastDrawId-6,lastDrawId)
+      }
+    pendingPrize[chain.name].contributed7d = TotalContributed7d.toString()
       const wethPrizeBalance = await prizePoolContract.accountedBalance();
       pendingPrize[chain.name].total = wethPrizeBalance.toString();
       logit("got pending prize", chain.name, wethPrizeBalance.toString());
@@ -636,7 +652,7 @@ console.log("running fetch part 2")
   }
   await publish(vaultOverview, "/vaults");
   metaOverview = { pendingPrize: pendingPrize, prices: priceResults };
-console.log("publishing overview")
+  console.log("publishing overview")
   try {
     await publish(JSON.stringify(metaOverview), "/overview");
   } catch (e) {
@@ -691,7 +707,8 @@ async function updateHolders(chainNumber) {
 }
 
 async function updateChain(chainNumber, prizePool) {
-  let claims;
+console.log("updating chain",chainNumber) 
+ let claims;
   let uniqueWinners;
   try {
     [claims, uniqueWinners] = await PublishV5Claims(chainNumber, prizePool);
@@ -710,6 +727,7 @@ async function updateChain(chainNumber, prizePool) {
   logit("...published", prizeHistory.length, "draws", drawHistoryPath);
 
   const pathSuffix = prizePool === "" ? "" : `-${prizePool}`;
+  console.log("running getwinners",chainNumber)  
   let v5Winners = await GetWinners(chainNumber, prizePool);
   /*const v5PrizeResults = await GetPrizeResults(chainNumber, prizePool);
   const prizeResultsPath = "/" + chainNumber + pathSuffix + "-prizeresults";
@@ -905,9 +923,23 @@ if(prizePool!=="0xe32e5E1c5f0c80bD26Def2d0EA5008C107000d6A"){
         vault: vaultData.vault,
         poolers: poolerCount,
       });
-
+/*
       let topic = "/vault-" + vaultData.vault + "-poolers";
-      await publish(vaultData.poolers, topic);
+      await publish(vaultData.poolers, topic);*/
+const sorted = vaultData.poolers
+  .map(p => ({ ...p, balance: BigInt(p.balance) }))
+  .sort((a, b) => (b.balance > a.balance ? 1 : -1));
+
+const top = sorted.slice(0, 1000);
+const totalBalance = sorted.reduce((sum, p) => sum + p.balance, 0n);
+
+let topic = "/vault-" + vaultData.vault + "-poolers";
+await publish({
+  poolers: top.map(p => ({ address: p.address, balance: p.balance.toString() })),
+  totalBalance: totalBalance.toString(),
+  uniqueCount: vaultData.poolers.length
+}, topic);
+
     }
 
     let summaryTopic = `/${chainNumber}`;
