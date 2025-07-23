@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 const { CONTRACTS } = require("../constants/contracts");
-const { CONFIG } = require("../constants/config");
+const { Config,CONFIG } = require("../constants/config.js");
 const { ADDRESS } = require("../constants/address.js");
 const { ABI } = require("../constants/abi");
 const { PROVIDERS, SIGNER } = require("../constants/providers");
@@ -26,7 +26,8 @@ const myCache = new NodeCache({ stdTTL: 1800 }); // Cache expires in 30 minutes
 const CHAINNAME = getChainConfig().CHAINNAME;
 const CHAINID = getChainConfig().CHAINID;
 
-let PRIORITYFEE = CONFIG.PRIORITYFEE;
+
+let PRIORITYFEE = Config(CHAINNAME).PRIORITYFEE;
 if (CHAINID === 100) {
   PRIORITYFEE = "1";
 }
@@ -41,7 +42,7 @@ const {
   MAXINDICES,
   //USESANTA,
   LAST_IN_LINE,
-} = CONFIG;
+} = Config(CHAINNAME);
 
 // const PRIZETOKEN_ADDRESS = ADDRESS[CHAINNAME].PRIZETOKEN.ADDRESS;
 const PRIZETOKEN_SYMBOL = ADDRESS[CHAINNAME].PRIZETOKEN.SYMBOL;
@@ -293,6 +294,7 @@ console.log("remaining prize indices",remainingPrizeIndices.length)
 const SendClaims = async (drawId, vaultWins, prizeTokenPrice, ethPrice) => {
   console.log("total wins to claim ", vaultWins.length);
 console.log("")
+console.log("prize oken price",prizeTokenPrice,"eth price",ethPrice)
   // Group data by vault and tier
   const groupedData = groupDataByVaultAndTier(vaultWins);
 
@@ -326,7 +328,7 @@ console.log("")
         tier,
         batchWinners,
         batchPrizeIndices,
-        CONFIG.WALLET,
+        Config(CHAINNAME).WALLET,
         minFeePerPrizeToClaim,
         ethPrice,
         prizeTokenPrice
@@ -350,7 +352,7 @@ console.log("")
             tier,
             batchWinners,
             batchPrizeIndices,
-            CONFIG.WALLET,
+            Config(CHAINNAME).WALLET,
             minFeePerPrizeToClaim,
             {
               gasLimit: BigInt(

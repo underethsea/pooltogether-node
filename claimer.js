@@ -102,8 +102,8 @@ async function go() {
     ethPrice = priceData[1];
   } else {
     const priceResponse = await priceData.json();
-    prizeTokenPrice = priceResponse.prices.geckos["ethereum"];
-    ethPrice = prizeTokenPrice;
+    prizeTokenPrice = priceResponse.prices.geckos[ADDRESS[CHAINNAME].PRIZETOKEN.GECKO];
+    ethPrice = priceResponse.prices.geckos["ethereum"]
     console.log("got price from api", prizeTokenPrice);
   }
 
