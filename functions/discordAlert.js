@@ -76,7 +76,10 @@ prizepool = prizepool.toLowerCase()
 
 if (!existingClaim) {
   try {
-    for (const subscriber of subscribers) {
+    
+
+
+for (const subscriber of subscribers) {
       if (subscriber.discord) {
         const labelMessage = subscriber.label ? `${subscriber.label}` : "";
         const message = " 🏆 WINNER " + claim.chainName + " `" +
@@ -89,7 +92,13 @@ if (!existingClaim) {
         console.log("telllllling them")
         console.log("----------------")
         */
-        await tellUser(subscriber.discord, message);
+
+try {
+    await tellUser(subscriber.discord, message);
+  } catch (e) {
+    console.error(`Failed to alert ${subscriber.discord} (${subscriber.wallet}):`, e);
+  }
+
       } else {
         console.log(`Subscriber ${subscriber.wallet} doesn't have Discord ID.`);
       }
@@ -101,7 +110,7 @@ if (!existingClaim) {
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
     `, [claim.network, claim.block, claim.hash, claim.drawId, claim.vault, claim.winner, claim.payout, claim.miner, claim.fee, claim.tier, claim.index, prizepool.toLowerCase()]);
 
-    console.log(network, "claim added to db, tx ", claim.hash, 
+    console.log(claim.network, "claim added to db, tx ", claim.hash, 
    " winner ", claim.winner, 
    " tier/index ", claim.tier, 
    "/", claim.index, 

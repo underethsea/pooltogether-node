@@ -11,6 +11,22 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 async function delay(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
+/**
+ * Adds a base delay with optional jitter.
+ * @param {number} baseDelay - The minimum delay in milliseconds.
+ * @param {number} failureCount - Number of consecutive failures (optional).
+ */
+/**
+ * Adds a base delay with optional jitter.
+ * @param {number} baseDelay - The minimum delay in milliseconds.
+ * @param {number} failureCount - Number of consecutive failures (optional).
+ */
+async function coolDelay(baseDelay = 200, failureCount = 0) {
+    const jitter = Math.random() * 50; // Random delay between 0-50 ms
+    const calculatedDelay = baseDelay + jitter + failureCount * 50;
+    await new Promise((resolve) => setTimeout(resolve, calculatedDelay));
+}
+
 
 /**
  * Handles HTTP POST with retry logic and adaptive delays.
@@ -20,15 +36,24 @@ async function delay(ms) {
  * @param {number} initialDelay - Initial delay before retrying (in ms).
  * @returns {Promise<Object>} - The response data.
  */
+
 async function safeAxiosPost(url, payload, maxRetries = 5, initialDelay = 5000) {
     let retries = 0;
     let delayMs = initialDelay;
 
     while (retries < maxRetries) {
+        const headers = url.includes("satsuma")
+            ? { 'x-api-key': process.env.SATSUMA_API_KEY }
+            : {};
         try {
+            // Add a base delay before each request to avoid rate limits
+            await coolDelay(200); 
+
             const response = await axios.post(url, payload, {
-                timeout: 10000, // 10 seconds timeout
+                timeout: 10000,
+                headers,
             });
+
             return response;
         } catch (error) {
             retries++;
@@ -40,8 +65,8 @@ async function safeAxiosPost(url, payload, maxRetries = 5, initialDelay = 5000) 
             }
 
             console.log(`[${new Date().toISOString()}] Retrying after ${delayMs / 1000}s...`);
-            await delay(delayMs + Math.random() * 1000); // Add jitter
-            delayMs *= 2; // Exponential backoff
+            await coolDelay(delayMs); // Exponential backoff with jitter
+            delayMs *= 2;
         }
     }
 }
@@ -53,6 +78,7 @@ async function safeAxiosPost(url, payload, maxRetries = 5, initialDelay = 5000) 
  * @param {number} endTimestamp - The end timestamp for balance filtering.
  * @returns {Promise<Array>} - Aggregated results from all pages.
  */
+
 async function makeRobustGraphQlQuery(subgraphURL, startTimestamp, endTimestamp) {
     const maxPageSize = 900;
     let lastId = "";
@@ -107,16 +133,17 @@ async function makeRobustGraphQlQuery(subgraphURL, startTimestamp, endTimestamp)
 
             if (failureCount >= 3) {
                 console.error(`[${new Date().toISOString()}] Skipping this query after multiple failures.`);
-                break; // Skip to the next page after repeated failures
+                break;
             }
         }
 
-        const adaptiveDelay = 200 + failureCount * 100; // Increase delay on repeated failures
-        await delay(adaptiveDelay);
+        // Always add a consistent delay between successful requests
+        await coolDelay(200, failureCount); 
     }
 
     return results;
 }
+
 
 /**
  * Fetches TWAB player data and organizes it into a flat structure.
