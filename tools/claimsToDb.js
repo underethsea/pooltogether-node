@@ -17,7 +17,7 @@ const CHAINNAME = getChainConfig().CHAINNAME;
 const {GetRecentClaims} = require("../functions/getRecentClaims.js")
 const {AddClaim} = require("../functions/dbDonkey.js")
 const {DiscordNotifyClaimPrize } = require("../functions/discordAlert.js")
-
+const { ADDRESS } = require("../constants/address.js")
 /*const chainId = 10
 const draw = 947
 const prizepool = "0xF35fE10ffd0a9672d0095c435fd8767A7fe29B55"
@@ -27,10 +27,14 @@ const chainId= 42161
 const draw = 53
 const prizepool = "0x52e7910c4c287848c8828e8b17b8371f4ebc5d42"
 */
-const chainId = 1
+/*const chainId = 1
 const draw = 4
 const prizepool = "0x7865D01da4C9BA2F69B7879e6d2483aB6B354d95"
-
+*/
+const chain = "WORLD"
+const chainId = ADDRESS[chain].CHAINID
+const draw = 6
+const prizepool = ADDRESS[chain].PRIZEPOOL
 /*
 const chainId = 8453
 const draw = 23 
@@ -41,7 +45,7 @@ const draw = 20
 const prizepool = "0x52e7910c4c287848c8828e8b17b8371f4ebc5d42"
 */
 
-async function insertClaims(chainId,prizePool,fromBlock=-500000,toBlock="latest") {
+async function insertClaims(chainId,prizePool,fromBlock=-100000,toBlock="latest") {
   const claims = await GetRecentClaims(chainId,fromBlock,toBlock)
   console.log("got claims",claims.length)
 const filteredClaims = claims.filter(claim => claim.drawId === draw);
