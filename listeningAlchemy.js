@@ -3,8 +3,7 @@ const { ethers } = require('ethers');
 
 const EXPECTED_PONG_BACK = 60000; // 1 minute
 const KEEP_ALIVE_CHECK_INTERVAL = 30 * 60 * 1000; // 30 minutes
-const MAX_TIERS_CALCULATE = 7
-
+let MAX_TIERS_CALCULATE = 7
 // Assuming the chain name/id is the first argument, default to 'OPTIMISM' if not provided
 const chainKey = process.argv[2] || '';
 
@@ -41,8 +40,10 @@ const alchemyNetworkMap = {
   OPTIMISM: Network.OPT_MAINNET,
   SCROLL: Network.SCROLL_MAINNET,
   ARBITRUM: Network.ARB_MAINNET,
-  ETHEREUM: Network.ETH_MAINNET
-  
+  ETHEREUM: Network.ETH_MAINNET,
+  GNOSIS: Network.GNOSIS_MAINNET,
+  SCROLL: Network.SCROLL_MAINNET,
+  WORLD: Network.WORLDCHAIN_MAINNET
 };
 
 // Determine Alchemy Network based on CHAINNAME
@@ -128,31 +129,39 @@ async function listen() {
 
 // Function for performing calculations after a draw is awarded
 async function startCalculation(chainId, drawCompletedEvent) {
-  const maxRetries = 60;
+  const maxRetries = 120;
   const retryDelay = 60000;
   const lockTimeout = 30 * 60 * 1000;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    if (fs.existsSync(lockFilePath)) {
-      const lockTime = fs.readFileSync(lockFilePath, 'utf8');
-      const lockDate = new Date(parseInt(lockTime, 10));
-      const currentDate = new Date();
 
-      if (currentDate - lockDate > lockTimeout) {
-        console.log('Lock file is older than 30 minutes. Proceeding with calculation.');
-      } else {
-        console.log(`Calculation in progress. Attempt ${attempt} failed. Retrying in 1 minute...`);
-        await delay(retryDelay);
-        continue;
-      }
-    }
+if (fs.existsSync(lockFilePath)) {
+  const lockTime = fs.readFileSync(lockFilePath, 'utf8');
+  const lockDate = new Date(parseInt(lockTime, 10));
+  const currentDate = new Date();
+
+  const skipLockCheck = [480,10].includes(chainId); // Add other chainIds here if needed
+
+  if (!skipLockCheck && currentDate - lockDate <= lockTimeout) {
+    console.log(`Calculation in progress. Attempt ${attempt} failed. Retrying in 1 minute...`);
+    await delay(retryDelay);
+    continue;
+  }
+
+  if (!skipLockCheck) {
+    console.log('Lock file is older than 30 minutes. Proceeding with calculation.');
+  } else {
+    console.log('Bypassing lock file timeout check for chain', chainId);
+  }
+}
+
 
     fs.writeFileSync(lockFilePath, Date.now().toString());
     let multicallAddress = null;
-    if (chainId === 534352 || chainId === 100) {
+    if (chainId === 534352 || chainId === 100 || chainId === 480) {
       multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11";
     }
-
+if(CHAINID === 480){MAX_TIERS_CALCULATE=6}
     try {
       // Run prize calculations and update the DB
       await PrizeCalcToDb(

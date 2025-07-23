@@ -166,7 +166,10 @@ async function startCalculation(chainId, drawCompletedEvent) {
     try {
 if (chainId===534352 || chainId === 100)
 {      multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11";}
-      //console.log('Starting FoundryPrizeWinsToDb calculation...');
+    
+if(chainId === 480 )
+{multicallAddress = "0xcA11bde05977b3631167028862bE2a173976CA11"}
+  //console.log('Starting FoundryPrizeWinsToDb calculation...');
       
 await PrizeCalcToDb(
       chainId,
