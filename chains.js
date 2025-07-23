@@ -1,7 +1,9 @@
 const { CONFIG } = require('./constants/config');
 
+
 const CHAINS = {
   OPTIMISM: { name: "Optimism", id: 10, opchain: true },
+  WORLD: { name: "World", id: 480, opchain: true},
   ETHEREUM: { name: "Ethereum", id: 1 },
   POLYGON: { name: "Polygon", id: 137 },
   BASESEPOLIA: { name: "BaseSepolia", id: 84532, testnet: true, opchain: true },
