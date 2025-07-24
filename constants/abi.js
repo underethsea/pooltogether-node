@@ -15,7 +15,9 @@ const GASORACLE = require('./abis/gasoracle')
 const SWAPPER = require('./abis/swapper')
 const UNIFLASHLIQUIDATOR = require('./abis/uniflashliquidator')
 const FLASHLIQUIDATOR = require('./abis/flashliquidator')
+const METAREWARDS = require("./abis/metarewards")
 const ABI = {
+  METAREWARDS: METAREWARDS,
   SWAPPER: SWAPPER,
   TOKENFAUCET: TOKENFAUCET,
   TWABCONTROLLER: TWABCONTROLLER,
