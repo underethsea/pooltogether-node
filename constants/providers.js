@@ -23,6 +23,7 @@ if (!process.env.PRIVATE_KEY) {
 // const optimismEndpoint = "https://opt-mainnet.g.alchemy.com/v2/" + process.env.POLYGON_KEY;
 // const avalancheEndpoint = "https://rpc.ankr.com/avalanche";
 const gnosisEndpoint = "https://gnosis-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
+const worldEndpoint = "https://worldchain-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
 //const scrollEndpoint = "https://scroll-mainnet-public.unifra.io"
 const scrollEndpoint = "https://scroll-mainnet.g.alchemy.com/v2/"  + process.env.ALCHEMY_KEY
 const goerliEndpoint = "https://eth-goerli.g.alchemy.com/v2/" + process.env.ALCHEMY_KEY
@@ -78,7 +79,7 @@ ETHEREUM:  new ethers.providers.JsonRpcProvider(mainnetEndpoint),
     ARBITRUM: new ethers.providers.JsonRpcProvider(arbEndpoint),
     ARBSEPOLIA: new ethers.providers.JsonRpcProvider(arbSepoliaEndpoint),
     BASE: new ethers.providers.JsonRpcProvider(baseEndpoint),
-
+    WORLD: new ethers.providers.JsonRpcProvider(worldEndpoint),
     // POLYGON: new ethers.providers.JsonRpcProvider(polygonEndpoint),
     // AVALANCHE: new ethers.providers.JsonRpcProvider(
     //     avalancheEndpoint
